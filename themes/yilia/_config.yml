@@ -6,8 +6,8 @@ menu:
 
 # SubNav
 subnav:
-  github: “http://github.com/zhanfangzxc”
-  weibo: "#"
+  github: //github.com/zhanfangzxc
+  weibo: //http://weibo.com/zhaoshanfly
   rss: "#"
   zhihu: "#"
   #douban: "#"
@@ -31,7 +31,7 @@ google_analytics: ''
 favicon: /favicon.png
 
 #你的头像url
-avatar: ""
+avatar: http://img4.duitang.com/uploads/item/201405/07/20140507210553_NQGUP.thumb.600_0.jpeg
 #是否开启分享
 share: true
 #是否开启多说评论，填写你在多说申请的项目名称 duoshuo: duoshuo-key
