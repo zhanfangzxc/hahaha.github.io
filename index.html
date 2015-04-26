@@ -233,6 +233,80 @@
 
 
   
+    <article id="post-数据库" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/09/21/数据库/" class="article-date">
+  	<time datetime="2014-09-21T06:20:40.000Z" itemprop="datePublished">2014-09-21</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/09/21/数据库/">Realm用法</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Realm使用方法</strong></p>
+<blockquote>
+<p>在Android Studio中使用Realm</p>
+</blockquote>
+<ul>
+<li><p>下载 <figure class="highlight"><figcaption><span>```该网站上的Realm压缩包</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- &#22312; Android Studio&#20013;&#21019;&#24314;Android&#39033;&#30446;&#10;- &#22797;&#21046;&#21387;&#32553;&#21253;&#20013;&#30340;```realm```&#25991;&#20214;&#22841;&#21040;&#20320;&#25152;&#21019;&#24314;&#30340;&#39033;&#30446;&#30340;&#26681;&#30446;&#24405;&#19979;&#10;- &#22797;&#21046;&#21387;&#32553;&#21253;&#20013;&#30340;```realm-annotations-processor-VERSION.jar```&#25991;&#20214;&#21040;app/libs&#30446;&#24405;&#19979;&#10;- &#22312;&#25152;&#21019;&#24314;&#30340;&#26681;&#30446;&#24405;&#19979;&#30340;settings.gradle&#25991;&#20214;&#19979;&#65292;&#28155;&#21152;&#19979;&#38754;&#19968;&#34892;&#20195;&#30721;-&#9;-&#62;</span><br></pre></td></tr></table></figure></p>
+<p>  include ‘:realm’</p>
+  <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">- </span>在所创建的项目的根目录中的build.gradle文件中添加下面一行代码</span><br></pre></td></tr></table></figure>
+<p>  classpath ‘com.meenbedankt.gradle:plugins:android-apt:1.4’</p>
+  <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">- </span>在所创建的项目的app/build.gradle文件中添加如下代码</span><br></pre></td></tr></table></figure>
+<p>  apply plugin: ‘com.neenbedankt.android-apt’</p>
+  <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">	</span></span><br><span class="line"><span class="bullet">- </span>替换所创建的项目中的app/build.gradle文件下的dependencies节点</span><br></pre></td></tr></table></figure>
+<p>  dependencies{</p>
+<pre><code>apt <span class="function"><span class="title">fileTree</span><span class="params">(dir: <span class="string">'libs'</span>,include: [<span class="string">'*.jar'</span>])</span></span>
+compile <span class="function"><span class="title">project</span><span class="params">(<span class="string">':realm'</span>)</span></span>
+</code></pre><p>  }</p>
+  <figure class="highlight ocaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">	</span><br><span class="line">- 最后一步：执行如下操作``<span class="tag">`Tools</span>-&gt;<span class="type">Android</span>-&gt;<span class="type">Sync</span> <span class="type">Project</span> <span class="keyword">with</span> <span class="type">Gradle</span> <span class="type">Filse</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接着就可以在你的项目中使用Realm了</p>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Android/">Android</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a  href="/2014/09/21/数据库/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+  
   
 </div>
       <footer id="footer">
