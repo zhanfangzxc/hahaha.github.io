@@ -185,43 +185,137 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-配置hexo网站" class="article article-type-post" itemscope itemprop="blogPost">
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2015" class="archive-year">2015</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2015/09/15/翻译-RecyclerView布局动画/" class="archive-article-date">
-  	<time datetime="2015-09-15T02:34:37.000Z" itemprop="datePublished">9月 15</time>
+    <div class="article-meta">
+      <a href="/2015/09/15/配置hexo网站/" class="article-date">
+  	<time datetime="2015-09-15T03:39:55.000Z" itemprop="datePublished">2015-09-15</time>
 </a>
-        </div>
-    	 
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
   
     <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/09/15/翻译-RecyclerView布局动画/">[翻译]RecyclerView布局动画</a>
+      <a class="article-title" href="/2015/09/15/配置hexo网站/">配置hexo网站</a>
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+      <div class="clearfix"></div>
+    </div>
+    
   </div>
-</article>
   
-    </div></section>
+</article>
+
+
+
+
+
+
+  
+    <article id="post-翻译-RecyclerView布局动画" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/09/15/翻译-RecyclerView布局动画/" class="article-date">
+  	<time datetime="2015-09-15T02:34:37.000Z" itemprop="datePublished">2015-09-15</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/09/15/翻译-RecyclerView布局动画/">[翻译]RecyclerView布局动画</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>##为RecyclerView设置布局动画<br><strong>翻译原文</strong>：<a href="http://antonioleiva.com/layout-animations-on-recyclerview/" target="_blank" rel="external">http://antonioleiva.com/layout-animations-on-recyclerview/</a><br><strong>相关源码</strong>：<a href="https://github.com/antoniolg/MaterializeYourApp" target="_blank" rel="external">https://github.com/antoniolg/MaterializeYourApp</a></p>
+<blockquote>
+<p>前言</p>
+</blockquote>
+<p>自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。</p>
+<p><img src="http://antonioleiva.com/wp-content/uploads/2015/09/layout_animation_recyclerview.gif" alt="展示图片"></p>
+<p>我尝试了很多方案去获得这个效果，在以后一个解决反感，被很多人提到，那就是使用<strong><em>RecyclerView::notifyItemInserted()</em></strong>方法，但是这个方法不能提供太多对于动画顺序的控制，所以看起来并不是个好的解决方案，另外一个，实际上是可行的，只有在必要的时候才在<strong><em>onBind()</em></strong>方法中包含元素动画，但是代码是相当微妙和侵入式的(因为我们是在Adapter中添加的动画)，所以要想使它正常运行比较困难。</p>
+<p>##开始拯救布局动画吧！</p>
+<p>终于，解决方案看起来比预期的更简单，必须承认我之前没怎么使用过布局动画，所以这个选项并不是立刻出现在我的脑海中的，但是当我寻找解决方案的时候，我发现了这个了不起的<a href="https://gist.github.com/Musenkishi/8df1ab549857756098ba" target="_blank" rel="external">Musenkishi发布的gist</a>给我提供了一个解决方案，但是问题是RecyclerView默认是不使用布局动画的，但是这段代码可以让它使用GridLayoutAnimations就像使用GridView那样，这是完整的gist:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/*&#10; * Copyright (C) 2014 Freddie (Musenkishi) Lust-Hed&#10; *&#10; * Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);&#10; * you may not use this file except in compliance with the License.&#10; * You may obtain a copy of the License at&#10; *&#10; *      http://www.apache.org/licenses/LICENSE-2.0&#10; *&#10; * Unless required by applicable law or agreed to in writing, software&#10; * distributed under the License is distributed on an &#34;AS IS&#34; BASIS,&#10; * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.&#10; * See the License for the specific language governing permissions and&#10; * limitations under the License.&#10; */&#10; &#10;package com.musenkishi.gists.view;&#10;&#10;import android.content.Context;&#10;import android.support.v7.widget.GridLayoutManager;&#10;import android.support.v7.widget.RecyclerView;&#10;import android.util.AttributeSet;&#10;import android.view.View;&#10;import android.view.ViewGroup;&#10;import android.view.animation.GridLayoutAnimationController;&#10;&#10;/**&#10; * An extension of RecyclerView, focused more on resembling a GridView.&#10; * Unlike &#123;@link android.support.v7.widget.RecyclerView&#125;, this view can handle&#10; * &#123;@code &#60;gridLayoutAnimation&#62;&#125; as long as you provide it a&#10; * &#123;@link android.support.v7.widget.GridLayoutManager&#125; in&#10; * &#123;@code setLayoutManager(LayoutManager layout)&#125;.&#10; *&#10; * Created by Freddie (Musenkishi) Lust-Hed.&#10; */&#10;public class GridRecyclerView extends RecyclerView &#123;&#10;&#10;    public GridRecyclerView(Context context) &#123;&#10;        super(context);&#10;    &#125;&#10;&#10;    public GridRecyclerView(Context context, AttributeSet attrs) &#123;&#10;        super(context, attrs);&#10;    &#125;&#10;&#10;    public GridRecyclerView(Context context, AttributeSet attrs, int defStyle) &#123;&#10;        super(context, attrs, defStyle);&#10;    &#125;&#10;&#10;    @Override&#10;    public void setLayoutManager(LayoutManager layout) &#123;&#10;        if (layout instanceof GridLayoutManager)&#123;&#10;            super.setLayoutManager(layout);&#10;        &#125; else &#123;&#10;            throw new ClassCastException(&#34;You should only use a GridLayoutManager with GridRecyclerView.&#34;);&#10;        &#125;&#10;    &#125;&#10;&#10;    @Override&#10;    protected void attachLayoutAnimationParameters(View child, ViewGroup.LayoutParams params, int index, int count) &#123;&#10;&#10;        if (getAdapter() != null &#38;&#38; getLayoutManager() instanceof GridLayoutManager)&#123;&#10;&#10;            GridLayoutAnimationController.AnimationParameters animationParams =&#10;                    (GridLayoutAnimationController.AnimationParameters) params.layoutAnimationParameters;&#10;&#10;            if (animationParams == null) &#123;&#10;                animationParams = new GridLayoutAnimationController.AnimationParameters();&#10;                params.layoutAnimationParameters = animationParams;&#10;            &#125;&#10;&#10;            int columns = ((GridLayoutManager) getLayoutManager()).getSpanCount();&#10;&#10;            animationParams.count = count;&#10;            animationParams.index = index;&#10;            animationParams.columnsCount = columns;&#10;            animationParams.rowsCount = count / columns;&#10;&#10;            final int invertedIndex = count - 1 - index;&#10;            animationParams.column = columns - 1 - (invertedIndex % columns);&#10;            animationParams.row = animationParams.rowsCount - 1 - invertedIndex / columns;&#10;&#10;        &#125; else &#123;&#10;            super.attachLayoutAnimationParameters(child, params, index, count);&#10;        &#125;&#10;    &#125;&#10;&#125;&#10;view raw</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>配置布局动画</p>
+</blockquote>
+<p>布局动画的优点是，我们可以使用xml来定义和使用他，我们只需要定义一个带有相应布局动画的xml.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;gridLayoutAnimation xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;&#10;&#9;android:columnDelay=&#34;15%&#34;&#10;&#9;android:rowDelay=&#34;15%&#34;&#10;&#9;android:animation=&#34;@anim/slide_in_bottom&#34;&#10;&#9;android:animationOrder=&#34;normal&#34;&#10;&#9;android:direction=&#34;top_to_bottom|left_to_right&#34;/&#62;</span><br></pre></td></tr></table></figure>
+<p>我们可以定制我们喜欢的动画：</p>
+<ul>
+<li><strong>columnDelay / rowDelay</strong>:行和列延迟执行动画的时间百分比，这种方法可以用来定义下一行和列中的view可以一个接一个的出现，而不是在同一时间全部出现。</li>
+<li><strong>animation</strong>:用来展示view的动画，我使用了一个从屏幕底部滑动的动画。</li>
+<li><strong>animationOrder</strong>:可以是<strong><em>normal</em></strong>，<strong><em>reverse</em></strong>或者<strong><em>random</em></strong></li>
+<li><strong>direction</strong>:定义items基于列是如何出现的：top_to_bottom,left_to_right,bottom_to_top,and right_to_left是可选的值。</li>
+</ul>
+<p><strong><em>下面是显示的动画</em></strong>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;translate xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;&#10;&#9;android:interpolator=&#34;@android:anim/decelerate_interpolator&#34;&#10;&#9;android:fromYDelta=&#34;100%p&#34;&#10;&#9;android:toYDelta=&#34;0&#34;&#10;&#9;android:duration=&#34;android:integer/config_mediumAnimTime&#34;/&#62;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>调整动画时机</strong></p>
+</blockquote>
+<p>如果你只是这样执行，你将会看到当app打开的时候，布局动画已经执行过了，所以你并不能真正看到动画的执行效果，Lollipop版本之前不能改变什么，因为我们不能有效的知道什么时候进入过渡执行完，但是从Lollipop开始，我们可以使用<strong><em>onEnterAnimationComplete</em></strong>来检查，所以，在<strong><em>onCreate</em></strong>中，如果SDK版本高于Lollipop，作如下更改：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if(Build.VERSION.SDK_INT &#60; Build.VERSION_CODES.LOLLIPOP)&#123;&#10;&#9;setRecyclerAdapter(recyclerView);&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>在Lollipop或者更新的SDK版本上，<strong><em>onEnterAnimationComplete</em></strong>将会被执行，填充RecyclerView和请求一个新的布局动画的时间:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@Override&#10;public void onEnterAnimationComplete()&#123;&#10;&#9;super.onEnterAnimationComplete();&#10;&#9;setRecyclerAdapter(recyclerView);&#10;&#9;recyclerView.scheduleLayoutAnimation();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>结论</p>
+</blockquote>
+<p>你可以轻松设置布局动画来创建其他的进入动画，琢磨动画设置看看你能获得什么。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+  
   
 </div>
       <footer id="footer">
