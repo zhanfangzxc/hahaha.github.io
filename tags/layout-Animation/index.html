@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives: 2015 | ZhaoShanShan’s Blog</title>
+  <title>Tag: layout Animation | ZhaoShanShan’s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="既然选择远方，便只顾风雨兼程">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ZhaoShanShan’s Blog">
-<meta property="og:url" content="http://zhaoshanshan.me/archives/2015/index.html">
+<meta property="og:url" content="http://zhaoshanshan.me/tags/layout-Animation/index.html">
 <meta property="og:site_name" content="ZhaoShanShan’s Blog">
 <meta property="og:description" content="既然选择远方，便只顾风雨兼程">
 <meta name="twitter:card" content="summary">
@@ -184,143 +184,6 @@
 	</div>
 </nav>
       <div class="body-wrap">
-  
-    <article id="post-Android-M-中的运行时权限" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/09/16/Android-M-中的运行时权限/" class="article-date">
-  	<time datetime="2015-09-16T01:33:09.000Z" itemprop="datePublished">2015-09-16</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/09/16/Android-M-中的运行时权限/">Android M 中的运行时权限</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>##Android M 运行时权限</p>
-<p>M 预览版中包含了一个运行时权限的方法:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Activity.shouldShowRequestPermissionRationale()&#10;&#10;app&#22312;&#23454;&#38469;&#26174;&#31034;&#26435;&#38480;&#23545;&#35805;&#26694;&#20043;&#21069;&#26159;&#21542;&#26174;&#31034;&#19968;&#20010;&#23545;&#27491;&#22312;&#35831;&#27714;&#30340;&#26435;&#38480;&#30340;&#35299;&#37322;</span><br></pre></td></tr></table></figure>
-<p>在第一次安装的时候，这个方法会反悔false，因此你可以直接请求权限，如果用户以前拒绝过一个权限的请求，那么再次请求该权限的时候可以显示一个解释该请求用途的的信息。</p>
-<p>当app完全没有机会被授权的时候，调用shouldShowRequestPermissionRationale()则返回false。</p>
-<p>M预览版中还提供了下面这个方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Fragment.shouldShowRequestPermissionRationale()&#10;&#10;&#36825;&#20010;&#26041;&#27861;&#24635;&#26159;&#36820;&#22238;false&#65292;&#25152;&#20197;&#25105;&#20204;&#21487;&#20197;&#35843;&#29992;&#10;&#10;getActivity().shouldShowRequestPermissionRationale();</span><br></pre></td></tr></table></figure>
-<p>###参考文章：<br><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0916/3464.html" target="_blank" rel="external">Android M中权限被拒绝时该如何处理</a></p>
-<p><a href="https://github.com/googlesamples/android-RuntimePermissions" target="_blank" rel="external">运行时权限Sample</a></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/M-权限/">M 权限</a></li></ul>
-	</div>
-
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-  
-    <article id="post-翻译-数据绑定part-1" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/09/15/翻译-数据绑定part-1/" class="article-date">
-  	<time datetime="2015-09-15T05:14:20.000Z" itemprop="datePublished">2015-09-15</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/09/15/翻译-数据绑定part-1/">[翻译]数据绑定part 1</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="数据绑定_-_Part-1">数据绑定 - Part-1</h3><p><strong>翻译原文</strong>：<a href="https://blog.stylingandroid.com/data-binding-part-1/" target="_blank" rel="external">https://blog.stylingandroid.com/data-binding-part-1/</a><br><strong>相关源码</strong>：<a href="https://github.com/StylingAndroid/DataBinding/tree/Part1" target="_blank" rel="external">https://github.com/StylingAndroid/DataBinding/tree/Part1</a></p>
-<blockquote>
-<p>前言</p>
-</blockquote>
-<p>谷歌2015年I/O大会中揭晓了许多开源库和工具，其中一个全新的开源库就是<strong><em>数据绑定</em></strong>，在这个系列的文章中我们将一起探索一下这个开源库所提供的强大的功能。</p>
-<p>在开始之前值得一提的是，在写作这篇文章的时候，数据绑定开源库仍然处于测试阶段，所以在完整版发布之前，一些Api的调用还是有可能改变。</p>
-<p><strong><em>Data Binding</em></strong>提供了一种连接布局和数据源并将数据显示在布局上的机制，这个示例代码使用Twitter Api来获取数据，来实现一个简单的Twitter客户端，这里不打算提供Twitter API和app的基本设计的指导，使用Twitter4j库来检索你的twitter时间轴中的最后50条数据现在在RecyclerView中，所有的代码都是公开的，可以随时在浏览器中检索学习，这系列文章中比较有趣的地方是如何将数据绑定到视图。</p>
-<p>让我们先看一下数据模型:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public class Status&#123;&#10;&#9;private final String name;&#10;&#9;private final String screenName;&#10;&#9;private final String text;&#10;&#9;private final String imageUrl;&#10;&#9;&#10;&#9;public Status(@NonNull String name,@NonNull String screenName,@NonNull String text,@NonNull String imageUrl)&#123;&#10;&#9;&#9;this.name = name;&#10;&#9;&#9;this.screenName = screenName;&#10;&#9;&#9;this.text = text;&#10;&#9;&#9;this.imageUrl = imageUrl;&#10;&#9;&#125;&#10;&#9;&#10;&#9;public String getName()&#123;&#10;&#9;&#9;return name;&#10;&#9;&#125;&#10;&#9;&#10;&#9;public String getScreenName()&#123;&#10;&#9;&#9;return screenName;&#10;&#9;&#125;&#10;&#9;&#10;&#9;public String getText()&#123;&#10;&#9;&#9;return text;&#10;&#9;&#125;&#10;&#9;&#10;&#9;public String getImageUrl()&#123;&#10;&#9;&#9;return imageUrl;&#10;&#9;&#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
-<p>这仅仅是用来绑定到RecyclerView的每一个条目中用来显示给用户的值，这些数据从twitter4j.Status对象中创建，由Twitter4j检索，所以我们需要有一个类用来将twitter4j.status转换为我们创建的Status:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public class StatusMarshaller&#123;&#10;&#9;public List&#60;Status&#62; marshall(List&#60;twitter4j.Status&#62; statues)&#123;&#10;&#9;&#9;for(twitter4j.Status status:statuses)&#123;&#10;&#9;&#9;&#9;newStatues.add(marshall(status));&#10;&#9;&#9;&#125;&#10;&#9;&#9;return newStatuses;&#10;&#9;&#125;&#10;&#9;&#10;&#9;private Status marshall(twitter4j.Status status)&#123;&#10;&#9;&#9;User user = status.getUser();&#10;&#9;&#9;return new Status(user.getName(),user.getScreenName(),status.getText(),user.getBiggerProfileImageURL());&#10;&#9;&#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
-<p>这里没有什么难懂的代码，只是纯粹的java代码，没有关于数据绑定的东西。</p>
-<p>值得一提的是，我们可以直接使用twitter4j.Status对象来进行数据绑定，在最初的例子中会更有效率。数据绑定库是一个MVVM模型,Model是twitter4j.Status,View就是我们的布局，ModelView是我们创建的Status对象，ViewModel是为了更容易使用而设计的数据视图，Model和ViewModel几乎是一样的，而且也很难看出有什么有点，但是当我们深入研究的时候，就能发现其中蕴含的诸多优点。</p>
-<p>接下来就是创建RecyclerView的适配器：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public class StatusAdapter extends RecyclerView.Adapter&#60;StatusViewHolder&#62;&#123;&#10;&#9;  private final List&#60;Status&#62; statuses;&#10;&#9;  private final StatusMarshaller marshaller;&#10;&#9;  &#10;&#9;  public static StatusAdapter newInstance()&#123;&#10;&#9;  &#9;&#9;List&#60;Status&#62; statuses = new ArrayList&#60;&#62;();&#10;&#9;  &#9;&#9;StatusMarshaller = new StatusMarshaller();&#10;&#9;  &#9;&#9;return new StatusAdapter(statuses,marshaller);&#10;&#9;  &#125;&#10;&#9;  &#10;&#9;  StatusAdapter(List&#60;Status&#62; statuses,StatusMarshaller marshaller)&#123;&#10;&#9;  &#9;&#9;this.statuses = statuses;&#10;&#9;  &#9;&#9;this.marshaller = marshaller;&#10;&#9;  &#125; &#10;&#9;  &#10;&#9;  @Override&#10;&#9;  public StatusViewHolder onCreateViewHolder(ViewGroup parent,int viewType)&#123;&#10;&#9;  &#9;&#9;Context contenxt = parent.getContext;&#10;&#9;  &#9;&#9;LayoutInflater inflater = LayoutInflater.from(context);&#10;&#9;  &#9;&#9;View statusContainer = inflater.inflate(R.layout.status_item,parent,false);&#10;&#9;  &#9;&#9;return new StatusViewHolder(statusContainer);&#10;&#9;  &#125;  &#10;&#9;  &#10;&#9;  @Override&#10;&#9;  public void onBindViewHolder(StatusViewHolder holder,int position)&#123;&#10;&#9;  &#9;&#9;Status status = stautses.get(position);&#10;&#9;  &#9;&#9;holder.bind(status);&#10;&#9;  &#125;&#10;&#9;  &#10;&#9;  @Override&#10;&#9;  public int getItemCount()&#123;&#10;&#9;  &#9;&#9;return statuses.size();&#10;&#9;  &#125;&#10;&#9;  &#10;&#9;  public void setStatuses(List&#60;twitter4j.Status&#62; statuses)&#123;&#10;&#9;  &#9;&#9;this.statuses.clear();&#10;&#9;  &#9;&#9;this.statuses.addAll(marshaller.marshall(statuses));&#10;&#9;  &#9;&#9;notifyDataChanged();&#10;&#9;  &#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
-<p>现在我们进入安卓领域，但是也没有什么特别的，上面的代码只是一个标准的RecyclerView适配器的实现，并且不带数据绑定，这些将在StatusViewHolder中做，这做的唯一事情就是针对MVVM模式就是通过setStatuses()方法从twitter4j.Status整理出.data.Status。现在我们开始关注RecyclerView的item布局:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&#62;&#10;&#60;layout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;&#62;&#10;&#10;&#9;&#60;data&#62;&#10;&#9;&#9;&#60;variable&#10;&#9;&#9;&#9;name=&#34;Status&#34;&#10;&#9;&#9;&#9;type=&#34;com.stylingandroid.databinding.data.Status&#34;/&#62;&#10;&#9;&#60;/data&#62;&#10;&#9;&#60;RelativeLayout&#10;    android:id=&#34;@+id/status_container&#34;&#10;    android:layout_width=&#34;match_parent&#34;&#10;    android:layout_height=&#34;match_parent&#34;&#62;&#10; &#10;    &#60;ImageView&#10;      android:id=&#34;@+id/status_avatar&#34;&#10;      android:layout_width=&#34;64dp&#34;&#10;      android:layout_height=&#34;64dp&#34;&#10;      android:layout_alignParentLeft=&#34;true&#34;&#10;      android:layout_alignParentStart=&#34;true&#34;&#10;      android:layout_alignParentTop=&#34;true&#34;&#10;      android:layout_margin=&#34;8dip&#34;&#10;      android:contentDescription=&#34;@null&#34; /&#62;&#10; &#10;    &#60;TextView&#10;      android:id=&#34;@+id/status_name&#34;&#10;      style=&#34;@style/Status.Name&#34;&#10;      android:layout_width=&#34;wrap_content&#34;&#10;      android:layout_height=&#34;wrap_content&#34;&#10;      android:layout_alignParentTop=&#34;true&#34;&#10;      android:layout_marginTop=&#34;8dip&#34;&#10;      android:layout_toEndOf=&#34;@id/status_avatar&#34;&#10;      android:layout_toRightOf=&#34;@id/status_avatar&#34;&#10;      android:text=&#34;@&#123;status.name&#125;&#34; /&#62;&#10; &#10;    &#60;TextView&#10;      android:id=&#34;@+id/status_screen_name&#34;&#10;      style=&#34;@style/Status.ScreenName&#34;&#10;      android:layout_width=&#34;wrap_content&#34;&#10;      android:layout_height=&#34;wrap_content&#34;&#10;      android:layout_alignBaseline=&#34;@id/status_name&#34;&#10;      android:layout_marginLeft=&#34;4dip&#34;&#10;      android:layout_marginStart=&#34;4dip&#34;&#10;      android:layout_toEndOf=&#34;@id/status_name&#34;&#10;      android:layout_toRightOf=&#34;@id/status_name&#34;&#10;      android:text=&#34;@&#123;&#38;quot;@&#38;quot; + status.screenName&#125;&#34; /&#62;&#10; &#10;    &#60;TextView&#10;      android:id=&#34;@+id/status_text&#34;&#10;      style=&#34;@style/Status.Text&#34;&#10;      android:layout_width=&#34;match_parent&#34;&#10;      android:layout_height=&#34;wrap_content&#34;&#10;      android:layout_alignLeft=&#34;@id/status_name&#34;&#10;      android:layout_alignParentEnd=&#34;true&#34;&#10;      android:layout_alignParentRight=&#34;true&#34;&#10;      android:layout_alignStart=&#34;@id/status_name&#34;&#10;      android:layout_below=&#34;@id/status_name&#34;&#10;      android:maxLines=&#34;2&#34;&#10;      android:singleLine=&#34;false&#34;&#10;      android:text=&#34;@&#123;status.text&#125;&#34; /&#62;&#10; &#10;  &#60;/RelativeLayout&#62;&#10;&#60;/layout&#62;</span><br></pre></td></tr></table></figure>
-<p>以上就是数据绑定库是如何工作的，RelativeLayout只是一个普通的layout，但是其中参杂了一些奇怪的东西，现在我们就来解释这些东西，但是这个RelativeLayout被layout布局包裹着，这就是定义数据绑定的，和RelativeLayout一样，<layout>包含一个<strong><em>data</em></strong>部分，用来定义用于绑定到layout中的那些数据对象，在这个例子中，我们生命了一个data.Status,命名为status，现在就可以在layout中引用了。</layout></p>
-<p>上面的layout中还有奇怪的android:text属性，这些是从data.Status对象中getters中获取值，<strong><em>@{}</em></strong>是数据绑定的表达式，status.name和Status.getName()的性质是一样的， 这就是数据绑定的工作原理，但是接下来我们将会看到一个比较恐怖的事情.</p>
-<p>现在有一个稍微复杂点的<strong><em>@{&quot;@&quot; + status.screenName}</em></strong>，尽管看起来比较复杂，但是都是一些简单的字符串连接到Twitter name上而已，现在我们需要把@放在需要被转义成不是xml布局代码的地方，但是本质上都是<strong><em>“@”+status.getScreenName()</em></strong>,在java中，这并不能代表我们用这个表达式能够做的更多。</p>
-<p>现在我们需要定义StatusViewHolder:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public class StatusViewHolder extends RecyclerView.ViewHolder&#123;&#10;&#9;private StatusItemBinding binding;&#10;&#9;&#10;&#9;public StatusViewHolder(View itemView)&#123;&#10;&#9;&#9;super(itemView);&#10;&#9;&#9;binding = DataBindingUtil.bind(itemView);&#10;&#9;&#125;&#10;&#9;&#10;&#9;public void bind(Status status)&#123;&#10;&#9;&#9;binding.setStatus(status);&#10;&#9;&#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
-<p>比正常的ViewHolder要简单很多，我们需要在构造函数中找到父布局中的所有子视图，并且在bind()方法中给每个子视图设置属性，我们首先需要注意的就是我们需要从<strong><em>DataBindingUtil.bind()</em></strong>方法中获取我们要使用的<strong><em>StatusItemBinding</em></strong>，我们不需要创建这个类，因为数据绑定库会给我们自动创建出来。</p>
-<p>我们将在下一篇文章中更加深入的讨论数据绑定，这里只是一个简单的工作流程。</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Data-Binding/">Data Binding</a></li></ul>
-	</div>
-
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
   
     <article id="post-翻译-RecyclerView布局动画" class="article article-type-post" itemscope itemprop="blogPost">
   
