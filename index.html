@@ -113,7 +113,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						
+						<a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Data-Binding/" style="font-size: 10px;">Data Binding</a> <a href="/tags/M-权限/" style="font-size: 10px;">M 权限</a>
 					</div>
 				</section>
 				
@@ -185,11 +185,11 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="post-配置hexo网站" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Android-M-中的运行时权限" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2015/09/15/配置hexo网站/" class="article-date">
-  	<time datetime="2015-09-15T03:39:55.000Z" itemprop="datePublished">2015-09-15</time>
+      <a href="/2015/09/16/Android-M-中的运行时权限/" class="article-date">
+  	<time datetime="2015-09-16T01:33:09.000Z" itemprop="datePublished">2015-09-16</time>
 </a>
     </div>
   
@@ -202,7 +202,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2015/09/15/配置hexo网站/">配置hexo网站</a>
+      <a class="article-title" href="/2015/09/16/Android-M-中的运行时权限/">Android M 中的运行时权限</a>
     </h1>
   
 
@@ -211,12 +211,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>##Android M 运行时权限</p>
+<p>M 预览版中包含了一个运行时权限的方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Activity.shouldShowRequestPermissionRationale()&#10;&#10;app&#22312;&#23454;&#38469;&#26174;&#31034;&#26435;&#38480;&#23545;&#35805;&#26694;&#20043;&#21069;&#26159;&#21542;&#26174;&#31034;&#19968;&#20010;&#23545;&#27491;&#22312;&#35831;&#27714;&#30340;&#26435;&#38480;&#30340;&#35299;&#37322;</span><br></pre></td></tr></table></figure>
+<p>在第一次安装的时候，这个方法会反悔false，因此你可以直接请求权限，如果用户以前拒绝过一个权限的请求，那么再次请求该权限的时候可以显示一个解释该请求用途的的信息。</p>
+<p>当app完全没有机会被授权的时候，调用shouldShowRequestPermissionRationale()则返回false。</p>
+<p>M预览版中还提供了下面这个方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Fragment.shouldShowRequestPermissionRationale()&#10;&#10;&#36825;&#20010;&#26041;&#27861;&#24635;&#26159;&#36820;&#22238;false&#65292;&#25152;&#20197;&#25105;&#20204;&#21487;&#20197;&#35843;&#29992;&#10;&#10;getActivity().shouldShowRequestPermissionRationale();</span><br></pre></td></tr></table></figure>
+<p>###参考文章：<br><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0916/3464.html" target="_blank" rel="external">Android M中权限被拒绝时该如何处理</a></p>
+<p><a href="https://github.com/googlesamples/android-RuntimePermissions" target="_blank" rel="external">运行时权限Sample</a></p>
+
       
     </div>
     
     <div class="article-info article-info-index">
       
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/M-权限/">M 权限</a></li></ul>
+	</div>
+
       
 
       
@@ -233,11 +246,11 @@
 
 
   
-    <article id="post-翻译-RecyclerView布局动画" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-翻译-数据绑定part-1" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2015/09/15/翻译-RecyclerView布局动画/" class="article-date">
-  	<time datetime="2015-09-15T02:34:37.000Z" itemprop="datePublished">2015-09-15</time>
+      <a href="/2015/09/15/翻译-数据绑定part-1/" class="article-date">
+  	<time datetime="2015-09-15T05:14:20.000Z" itemprop="datePublished">2015-09-15</time>
 </a>
     </div>
   
@@ -250,7 +263,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2015/09/15/翻译-RecyclerView布局动画/">[翻译]RecyclerView布局动画</a>
+      <a class="article-title" href="/2015/09/15/翻译-数据绑定part-1/">[翻译]数据绑定part 1</a>
     </h1>
   
 
@@ -259,47 +272,40 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>##为RecyclerView设置布局动画<br><strong>翻译原文</strong>：<a href="http://antonioleiva.com/layout-animations-on-recyclerview/" target="_blank" rel="external">http://antonioleiva.com/layout-animations-on-recyclerview/</a><br><strong>相关源码</strong>：<a href="https://github.com/antoniolg/MaterializeYourApp" target="_blank" rel="external">https://github.com/antoniolg/MaterializeYourApp</a></p>
+        <h3 id="数据绑定_-_Part-1">数据绑定 - Part-1</h3><p><strong>翻译原文</strong>：<a href="https://blog.stylingandroid.com/data-binding-part-1/" target="_blank" rel="external">https://blog.stylingandroid.com/data-binding-part-1/</a><br><strong>相关源码</strong>：<a href="https://github.com/StylingAndroid/DataBinding/tree/Part1" target="_blank" rel="external">https://github.com/StylingAndroid/DataBinding/tree/Part1</a></p>
 <blockquote>
 <p>前言</p>
 </blockquote>
-<p>自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。</p>
-<p><img src="http://antonioleiva.com/wp-content/uploads/2015/09/layout_animation_recyclerview.gif" alt="展示图片"></p>
-<p>我尝试了很多方案去获得这个效果，在以后一个解决反感，被很多人提到，那就是使用<strong><em>RecyclerView::notifyItemInserted()</em></strong>方法，但是这个方法不能提供太多对于动画顺序的控制，所以看起来并不是个好的解决方案，另外一个，实际上是可行的，只有在必要的时候才在<strong><em>onBind()</em></strong>方法中包含元素动画，但是代码是相当微妙和侵入式的(因为我们是在Adapter中添加的动画)，所以要想使它正常运行比较困难。</p>
-<p>##开始拯救布局动画吧！</p>
-<p>终于，解决方案看起来比预期的更简单，必须承认我之前没怎么使用过布局动画，所以这个选项并不是立刻出现在我的脑海中的，但是当我寻找解决方案的时候，我发现了这个了不起的<a href="https://gist.github.com/Musenkishi/8df1ab549857756098ba" target="_blank" rel="external">Musenkishi发布的gist</a>给我提供了一个解决方案，但是问题是RecyclerView默认是不使用布局动画的，但是这段代码可以让它使用GridLayoutAnimations就像使用GridView那样，这是完整的gist:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/*&#10; * Copyright (C) 2014 Freddie (Musenkishi) Lust-Hed&#10; *&#10; * Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);&#10; * you may not use this file except in compliance with the License.&#10; * You may obtain a copy of the License at&#10; *&#10; *      http://www.apache.org/licenses/LICENSE-2.0&#10; *&#10; * Unless required by applicable law or agreed to in writing, software&#10; * distributed under the License is distributed on an &#34;AS IS&#34; BASIS,&#10; * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.&#10; * See the License for the specific language governing permissions and&#10; * limitations under the License.&#10; */&#10; &#10;package com.musenkishi.gists.view;&#10;&#10;import android.content.Context;&#10;import android.support.v7.widget.GridLayoutManager;&#10;import android.support.v7.widget.RecyclerView;&#10;import android.util.AttributeSet;&#10;import android.view.View;&#10;import android.view.ViewGroup;&#10;import android.view.animation.GridLayoutAnimationController;&#10;&#10;/**&#10; * An extension of RecyclerView, focused more on resembling a GridView.&#10; * Unlike &#123;@link android.support.v7.widget.RecyclerView&#125;, this view can handle&#10; * &#123;@code &#60;gridLayoutAnimation&#62;&#125; as long as you provide it a&#10; * &#123;@link android.support.v7.widget.GridLayoutManager&#125; in&#10; * &#123;@code setLayoutManager(LayoutManager layout)&#125;.&#10; *&#10; * Created by Freddie (Musenkishi) Lust-Hed.&#10; */&#10;public class GridRecyclerView extends RecyclerView &#123;&#10;&#10;    public GridRecyclerView(Context context) &#123;&#10;        super(context);&#10;    &#125;&#10;&#10;    public GridRecyclerView(Context context, AttributeSet attrs) &#123;&#10;        super(context, attrs);&#10;    &#125;&#10;&#10;    public GridRecyclerView(Context context, AttributeSet attrs, int defStyle) &#123;&#10;        super(context, attrs, defStyle);&#10;    &#125;&#10;&#10;    @Override&#10;    public void setLayoutManager(LayoutManager layout) &#123;&#10;        if (layout instanceof GridLayoutManager)&#123;&#10;            super.setLayoutManager(layout);&#10;        &#125; else &#123;&#10;            throw new ClassCastException(&#34;You should only use a GridLayoutManager with GridRecyclerView.&#34;);&#10;        &#125;&#10;    &#125;&#10;&#10;    @Override&#10;    protected void attachLayoutAnimationParameters(View child, ViewGroup.LayoutParams params, int index, int count) &#123;&#10;&#10;        if (getAdapter() != null &#38;&#38; getLayoutManager() instanceof GridLayoutManager)&#123;&#10;&#10;            GridLayoutAnimationController.AnimationParameters animationParams =&#10;                    (GridLayoutAnimationController.AnimationParameters) params.layoutAnimationParameters;&#10;&#10;            if (animationParams == null) &#123;&#10;                animationParams = new GridLayoutAnimationController.AnimationParameters();&#10;                params.layoutAnimationParameters = animationParams;&#10;            &#125;&#10;&#10;            int columns = ((GridLayoutManager) getLayoutManager()).getSpanCount();&#10;&#10;            animationParams.count = count;&#10;            animationParams.index = index;&#10;            animationParams.columnsCount = columns;&#10;            animationParams.rowsCount = count / columns;&#10;&#10;            final int invertedIndex = count - 1 - index;&#10;            animationParams.column = columns - 1 - (invertedIndex % columns);&#10;            animationParams.row = animationParams.rowsCount - 1 - invertedIndex / columns;&#10;&#10;        &#125; else &#123;&#10;            super.attachLayoutAnimationParameters(child, params, index, count);&#10;        &#125;&#10;    &#125;&#10;&#125;&#10;view raw</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>配置布局动画</p>
-</blockquote>
-<p>布局动画的优点是，我们可以使用xml来定义和使用他，我们只需要定义一个带有相应布局动画的xml.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;gridLayoutAnimation xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;&#10;&#9;android:columnDelay=&#34;15%&#34;&#10;&#9;android:rowDelay=&#34;15%&#34;&#10;&#9;android:animation=&#34;@anim/slide_in_bottom&#34;&#10;&#9;android:animationOrder=&#34;normal&#34;&#10;&#9;android:direction=&#34;top_to_bottom|left_to_right&#34;/&#62;</span><br></pre></td></tr></table></figure>
-<p>我们可以定制我们喜欢的动画：</p>
-<ul>
-<li><strong>columnDelay / rowDelay</strong>:行和列延迟执行动画的时间百分比，这种方法可以用来定义下一行和列中的view可以一个接一个的出现，而不是在同一时间全部出现。</li>
-<li><strong>animation</strong>:用来展示view的动画，我使用了一个从屏幕底部滑动的动画。</li>
-<li><strong>animationOrder</strong>:可以是<strong><em>normal</em></strong>，<strong><em>reverse</em></strong>或者<strong><em>random</em></strong></li>
-<li><strong>direction</strong>:定义items基于列是如何出现的：top_to_bottom,left_to_right,bottom_to_top,and right_to_left是可选的值。</li>
-</ul>
-<p><strong><em>下面是显示的动画</em></strong>:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;translate xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;&#10;&#9;android:interpolator=&#34;@android:anim/decelerate_interpolator&#34;&#10;&#9;android:fromYDelta=&#34;100%p&#34;&#10;&#9;android:toYDelta=&#34;0&#34;&#10;&#9;android:duration=&#34;android:integer/config_mediumAnimTime&#34;/&#62;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p><strong>调整动画时机</strong></p>
-</blockquote>
-<p>如果你只是这样执行，你将会看到当app打开的时候，布局动画已经执行过了，所以你并不能真正看到动画的执行效果，Lollipop版本之前不能改变什么，因为我们不能有效的知道什么时候进入过渡执行完，但是从Lollipop开始，我们可以使用<strong><em>onEnterAnimationComplete</em></strong>来检查，所以，在<strong><em>onCreate</em></strong>中，如果SDK版本高于Lollipop，作如下更改：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if(Build.VERSION.SDK_INT &#60; Build.VERSION_CODES.LOLLIPOP)&#123;&#10;&#9;setRecyclerAdapter(recyclerView);&#10;&#125;</span><br></pre></td></tr></table></figure>
-<p>在Lollipop或者更新的SDK版本上，<strong><em>onEnterAnimationComplete</em></strong>将会被执行，填充RecyclerView和请求一个新的布局动画的时间:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@Override&#10;public void onEnterAnimationComplete()&#123;&#10;&#9;super.onEnterAnimationComplete();&#10;&#9;setRecyclerAdapter(recyclerView);&#10;&#9;recyclerView.scheduleLayoutAnimation();&#10;&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>结论</p>
-</blockquote>
-<p>你可以轻松设置布局动画来创建其他的进入动画，琢磨动画设置看看你能获得什么。</p>
+<p>谷歌2015年I/O大会中揭晓了许多开源库和工具，其中一个全新的开源库就是<strong><em>数据绑定</em></strong>，在这个系列的文章中我们将一起探索一下这个开源库所提供的强大的功能。</p>
+<p>在开始之前值得一提的是，在写作这篇文章的时候，数据绑定开源库仍然处于测试阶段，所以在完整版发布之前，一些Api的调用还是有可能改变。</p>
+<p><strong><em>Data Binding</em></strong>提供了一种连接布局和数据源并将数据显示在布局上的机制，这个示例代码使用Twitter Api来获取数据，来实现一个简单的Twitter客户端，这里不打算提供Twitter API和app的基本设计的指导，使用Twitter4j库来检索你的twitter时间轴中的最后50条数据现在在RecyclerView中，所有的代码都是公开的，可以随时在浏览器中检索学习，这系列文章中比较有趣的地方是如何将数据绑定到视图。</p>
+<p>让我们先看一下数据模型:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public class Status&#123;&#10;&#9;private final String name;&#10;&#9;private final String screenName;&#10;&#9;private final String text;&#10;&#9;private final String imageUrl;&#10;&#9;&#10;&#9;public Status(@NonNull String name,@NonNull String screenName,@NonNull String text,@NonNull String imageUrl)&#123;&#10;&#9;&#9;this.name = name;&#10;&#9;&#9;this.screenName = screenName;&#10;&#9;&#9;this.text = text;&#10;&#9;&#9;this.imageUrl = imageUrl;&#10;&#9;&#125;&#10;&#9;&#10;&#9;public String getName()&#123;&#10;&#9;&#9;return name;&#10;&#9;&#125;&#10;&#9;&#10;&#9;public String getScreenName()&#123;&#10;&#9;&#9;return screenName;&#10;&#9;&#125;&#10;&#9;&#10;&#9;public String getText()&#123;&#10;&#9;&#9;return text;&#10;&#9;&#125;&#10;&#9;&#10;&#9;public String getImageUrl()&#123;&#10;&#9;&#9;return imageUrl;&#10;&#9;&#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>这仅仅是用来绑定到RecyclerView的每一个条目中用来显示给用户的值，这些数据从twitter4j.Status对象中创建，由Twitter4j检索，所以我们需要有一个类用来将twitter4j.status转换为我们创建的Status:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public class StatusMarshaller&#123;&#10;&#9;public List&#60;Status&#62; marshall(List&#60;twitter4j.Status&#62; statues)&#123;&#10;&#9;&#9;for(twitter4j.Status status:statuses)&#123;&#10;&#9;&#9;&#9;newStatues.add(marshall(status));&#10;&#9;&#9;&#125;&#10;&#9;&#9;return newStatuses;&#10;&#9;&#125;&#10;&#9;&#10;&#9;private Status marshall(twitter4j.Status status)&#123;&#10;&#9;&#9;User user = status.getUser();&#10;&#9;&#9;return new Status(user.getName(),user.getScreenName(),status.getText(),user.getBiggerProfileImageURL());&#10;&#9;&#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>这里没有什么难懂的代码，只是纯粹的java代码，没有关于数据绑定的东西。</p>
+<p>值得一提的是，我们可以直接使用twitter4j.Status对象来进行数据绑定，在最初的例子中会更有效率。数据绑定库是一个MVVM模型,Model是twitter4j.Status,View就是我们的布局，ModelView是我们创建的Status对象，ViewModel是为了更容易使用而设计的数据视图，Model和ViewModel几乎是一样的，而且也很难看出有什么有点，但是当我们深入研究的时候，就能发现其中蕴含的诸多优点。</p>
+<p>接下来就是创建RecyclerView的适配器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public class StatusAdapter extends RecyclerView.Adapter&#60;StatusViewHolder&#62;&#123;&#10;&#9;  private final List&#60;Status&#62; statuses;&#10;&#9;  private final StatusMarshaller marshaller;&#10;&#9;  &#10;&#9;  public static StatusAdapter newInstance()&#123;&#10;&#9;  &#9;&#9;List&#60;Status&#62; statuses = new ArrayList&#60;&#62;();&#10;&#9;  &#9;&#9;StatusMarshaller = new StatusMarshaller();&#10;&#9;  &#9;&#9;return new StatusAdapter(statuses,marshaller);&#10;&#9;  &#125;&#10;&#9;  &#10;&#9;  StatusAdapter(List&#60;Status&#62; statuses,StatusMarshaller marshaller)&#123;&#10;&#9;  &#9;&#9;this.statuses = statuses;&#10;&#9;  &#9;&#9;this.marshaller = marshaller;&#10;&#9;  &#125; &#10;&#9;  &#10;&#9;  @Override&#10;&#9;  public StatusViewHolder onCreateViewHolder(ViewGroup parent,int viewType)&#123;&#10;&#9;  &#9;&#9;Context contenxt = parent.getContext;&#10;&#9;  &#9;&#9;LayoutInflater inflater = LayoutInflater.from(context);&#10;&#9;  &#9;&#9;View statusContainer = inflater.inflate(R.layout.status_item,parent,false);&#10;&#9;  &#9;&#9;return new StatusViewHolder(statusContainer);&#10;&#9;  &#125;  &#10;&#9;  &#10;&#9;  @Override&#10;&#9;  public void onBindViewHolder(StatusViewHolder holder,int position)&#123;&#10;&#9;  &#9;&#9;Status status = stautses.get(position);&#10;&#9;  &#9;&#9;holder.bind(status);&#10;&#9;  &#125;&#10;&#9;  &#10;&#9;  @Override&#10;&#9;  public int getItemCount()&#123;&#10;&#9;  &#9;&#9;return statuses.size();&#10;&#9;  &#125;&#10;&#9;  &#10;&#9;  public void setStatuses(List&#60;twitter4j.Status&#62; statuses)&#123;&#10;&#9;  &#9;&#9;this.statuses.clear();&#10;&#9;  &#9;&#9;this.statuses.addAll(marshaller.marshall(statuses));&#10;&#9;  &#9;&#9;notifyDataChanged();&#10;&#9;  &#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>现在我们进入安卓领域，但是也没有什么特别的，上面的代码只是一个标准的RecyclerView适配器的实现，并且不带数据绑定，这些将在StatusViewHolder中做，这做的唯一事情就是针对MVVM模式就是通过setStatuses()方法从twitter4j.Status整理出.data.Status。现在我们开始关注RecyclerView的item布局:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&#62;&#10;&#60;layout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;&#62;&#10;&#10;&#9;&#60;data&#62;&#10;&#9;&#9;&#60;variable&#10;&#9;&#9;&#9;name=&#34;Status&#34;&#10;&#9;&#9;&#9;type=&#34;com.stylingandroid.databinding.data.Status&#34;/&#62;&#10;&#9;&#60;/data&#62;&#10;&#9;&#60;RelativeLayout&#10;    android:id=&#34;@+id/status_container&#34;&#10;    android:layout_width=&#34;match_parent&#34;&#10;    android:layout_height=&#34;match_parent&#34;&#62;&#10; &#10;    &#60;ImageView&#10;      android:id=&#34;@+id/status_avatar&#34;&#10;      android:layout_width=&#34;64dp&#34;&#10;      android:layout_height=&#34;64dp&#34;&#10;      android:layout_alignParentLeft=&#34;true&#34;&#10;      android:layout_alignParentStart=&#34;true&#34;&#10;      android:layout_alignParentTop=&#34;true&#34;&#10;      android:layout_margin=&#34;8dip&#34;&#10;      android:contentDescription=&#34;@null&#34; /&#62;&#10; &#10;    &#60;TextView&#10;      android:id=&#34;@+id/status_name&#34;&#10;      style=&#34;@style/Status.Name&#34;&#10;      android:layout_width=&#34;wrap_content&#34;&#10;      android:layout_height=&#34;wrap_content&#34;&#10;      android:layout_alignParentTop=&#34;true&#34;&#10;      android:layout_marginTop=&#34;8dip&#34;&#10;      android:layout_toEndOf=&#34;@id/status_avatar&#34;&#10;      android:layout_toRightOf=&#34;@id/status_avatar&#34;&#10;      android:text=&#34;@&#123;status.name&#125;&#34; /&#62;&#10; &#10;    &#60;TextView&#10;      android:id=&#34;@+id/status_screen_name&#34;&#10;      style=&#34;@style/Status.ScreenName&#34;&#10;      android:layout_width=&#34;wrap_content&#34;&#10;      android:layout_height=&#34;wrap_content&#34;&#10;      android:layout_alignBaseline=&#34;@id/status_name&#34;&#10;      android:layout_marginLeft=&#34;4dip&#34;&#10;      android:layout_marginStart=&#34;4dip&#34;&#10;      android:layout_toEndOf=&#34;@id/status_name&#34;&#10;      android:layout_toRightOf=&#34;@id/status_name&#34;&#10;      android:text=&#34;@&#123;&#38;quot;@&#38;quot; + status.screenName&#125;&#34; /&#62;&#10; &#10;    &#60;TextView&#10;      android:id=&#34;@+id/status_text&#34;&#10;      style=&#34;@style/Status.Text&#34;&#10;      android:layout_width=&#34;match_parent&#34;&#10;      android:layout_height=&#34;wrap_content&#34;&#10;      android:layout_alignLeft=&#34;@id/status_name&#34;&#10;      android:layout_alignParentEnd=&#34;true&#34;&#10;      android:layout_alignParentRight=&#34;true&#34;&#10;      android:layout_alignStart=&#34;@id/status_name&#34;&#10;      android:layout_below=&#34;@id/status_name&#34;&#10;      android:maxLines=&#34;2&#34;&#10;      android:singleLine=&#34;false&#34;&#10;      android:text=&#34;@&#123;status.text&#125;&#34; /&#62;&#10; &#10;  &#60;/RelativeLayout&#62;&#10;&#60;/layout&#62;</span><br></pre></td></tr></table></figure>
+<p>以上就是数据绑定库是如何工作的，RelativeLayout只是一个普通的layout，但是其中参杂了一些奇怪的东西，现在我们就来解释这些东西，但是这个RelativeLayout被layout布局包裹着，这就是定义数据绑定的，和RelativeLayout一样，<layout>包含一个<strong><em>data</em></strong>部分，用来定义用于绑定到layout中的那些数据对象，在这个例子中，我们生命了一个data.Status,命名为status，现在就可以在layout中引用了。</layout></p>
+<p>上面的layout中还有奇怪的android:text属性，这些是从data.Status对象中getters中获取值，<strong><em>@{}</em></strong>是数据绑定的表达式，status.name和Status.getName()的性质是一样的， 这就是数据绑定的工作原理，但是接下来我们将会看到一个比较恐怖的事情.</p>
+<p>现在有一个稍微复杂点的<strong><em>@{&quot;@&quot; + status.screenName}</em></strong>，尽管看起来比较复杂，但是都是一些简单的字符串连接到Twitter name上而已，现在我们需要把@放在需要被转义成不是xml布局代码的地方，但是本质上都是<strong><em>“@”+status.getScreenName()</em></strong>,在java中，这并不能代表我们用这个表达式能够做的更多。</p>
+<p>现在我们需要定义StatusViewHolder:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public class StatusViewHolder extends RecyclerView.ViewHolder&#123;&#10;&#9;private StatusItemBinding binding;&#10;&#9;&#10;&#9;public StatusViewHolder(View itemView)&#123;&#10;&#9;&#9;super(itemView);&#10;&#9;&#9;binding = DataBindingUtil.bind(itemView);&#10;&#9;&#125;&#10;&#9;&#10;&#9;public void bind(Status status)&#123;&#10;&#9;&#9;binding.setStatus(status);&#10;&#9;&#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>比正常的ViewHolder要简单很多，我们需要在构造函数中找到父布局中的所有子视图，并且在bind()方法中给每个子视图设置属性，我们首先需要注意的就是我们需要从<strong><em>DataBindingUtil.bind()</em></strong>方法中获取我们要使用的<strong><em>StatusItemBinding</em></strong>，我们不需要创建这个类，因为数据绑定库会给我们自动创建出来。</p>
+<p>我们将在下一篇文章中更加深入的讨论数据绑定，这里只是一个简单的工作流程。</p>
 
       
     </div>
     
     <div class="article-info article-info-index">
       
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Data-Binding/">Data Binding</a></li></ul>
+	</div>
+
       
 
       
