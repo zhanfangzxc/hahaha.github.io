@@ -5,22 +5,19 @@
   
   <title>Android M 中的运行时权限 | ZhaoShanShan’s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="##Android M 运行时权限
-M 预览版中包含了一个运行时权限的方法:
-1Activity.shouldShowRequestPermissionRationale()&amp;#10;&amp;#10;app&amp;#22312;&amp;#23454;&amp;#38469;&amp;#26174;&amp;#31034;&amp;#26435;&amp;#38480;&amp;#23545;&amp;#35805;&amp;#26694;&amp;#20043;&amp;#21069;&amp;#26">
+  <meta name="description" content="M 预览版中包含了一个运行时权限的方法:
+1Activity.shouldShowRequestPermissionRationale()&amp;#10;&amp;#10;app&amp;#22312;&amp;#23454;&amp;#38469;&amp;#26174;&amp;#31034;&amp;#26435;&amp;#38480;&amp;#23545;&amp;#35805;&amp;#26694;&amp;#20043;&amp;#21069;&amp;#26159;&amp;#21542;&amp;#2617">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android M 中的运行时权限">
 <meta property="og:url" content="http://zhaoshanshan.me/2015/09/16/Android-M-中的运行时权限/index.html">
 <meta property="og:site_name" content="ZhaoShanShan’s Blog">
-<meta property="og:description" content="##Android M 运行时权限
-M 预览版中包含了一个运行时权限的方法:
-1Activity.shouldShowRequestPermissionRationale()&amp;#10;&amp;#10;app&amp;#22312;&amp;#23454;&amp;#38469;&amp;#26174;&amp;#31034;&amp;#26435;&amp;#38480;&amp;#23545;&amp;#35805;&amp;#26694;&amp;#20043;&amp;#21069;&amp;#26">
-<meta property="og:updated_time" content="2015-09-16T01:46:04.000Z">
+<meta property="og:description" content="M 预览版中包含了一个运行时权限的方法:
+1Activity.shouldShowRequestPermissionRationale()&amp;#10;&amp;#10;app&amp;#22312;&amp;#23454;&amp;#38469;&amp;#26174;&amp;#31034;&amp;#26435;&amp;#38480;&amp;#23545;&amp;#35805;&amp;#26694;&amp;#20043;&amp;#21069;&amp;#26159;&amp;#21542;&amp;#2617">
+<meta property="og:updated_time" content="2015-09-18T02:57:26.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android M 中的运行时权限">
-<meta name="twitter:description" content="##Android M 运行时权限
-M 预览版中包含了一个运行时权限的方法:
-1Activity.shouldShowRequestPermissionRationale()&amp;#10;&amp;#10;app&amp;#22312;&amp;#23454;&amp;#38469;&amp;#26174;&amp;#31034;&amp;#26435;&amp;#38480;&amp;#23545;&amp;#35805;&amp;#26694;&amp;#20043;&amp;#21069;&amp;#26">
+<meta name="twitter:description" content="M 预览版中包含了一个运行时权限的方法:
+1Activity.shouldShowRequestPermissionRationale()&amp;#10;&amp;#10;app&amp;#22312;&amp;#23454;&amp;#38469;&amp;#26174;&amp;#31034;&amp;#26435;&amp;#38480;&amp;#23545;&amp;#35805;&amp;#26694;&amp;#20043;&amp;#21069;&amp;#26159;&amp;#21542;&amp;#2617">
   
     <link rel="alternative" href="/atom.xml" title="ZhaoShanShan’s Blog" type="application/atom+xml">
   
@@ -120,7 +117,7 @@ M 预览版中包含了一个运行时权限的方法:
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Data-Binding/" style="font-size: 10px;">Data Binding</a> <a href="/tags/M-权限/" style="font-size: 10px;">M 权限</a> <a href="/tags/RecyclerView/" style="font-size: 10px;">RecyclerView</a> <a href="/tags/layout-Animation/" style="font-size: 10px;">layout Animation</a>
+						<a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Data-Binding/" style="font-size: 10px;">Data Binding</a> <a href="/tags/Http/" style="font-size: 10px;">Http</a> <a href="/tags/M-权限/" style="font-size: 10px;">M 权限</a> <a href="/tags/RecyclerView/" style="font-size: 10px;">RecyclerView</a> <a href="/tags/Retrofit-2-0/" style="font-size: 10px;">Retrofit 2.0</a> <a href="/tags/layout-Animation/" style="font-size: 10px;">layout Animation</a> <a href="/tags/开源库/" style="font-size: 10px;">开源库</a>
 					</div>
 				</section>
 				
@@ -227,8 +224,7 @@ M 预览版中包含了一个运行时权限的方法:
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>##Android M 运行时权限</p>
-<p>M 预览版中包含了一个运行时权限的方法:</p>
+        <p>M 预览版中包含了一个运行时权限的方法:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Activity.shouldShowRequestPermissionRationale()&#10;&#10;app&#22312;&#23454;&#38469;&#26174;&#31034;&#26435;&#38480;&#23545;&#35805;&#26694;&#20043;&#21069;&#26159;&#21542;&#26174;&#31034;&#19968;&#20010;&#23545;&#27491;&#22312;&#35831;&#27714;&#30340;&#26435;&#38480;&#30340;&#35299;&#37322;</span><br></pre></td></tr></table></figure>
 <p>在第一次安装的时候，这个方法会反悔false，因此你可以直接请求权限，如果用户以前拒绝过一个权限的请求，那么再次请求该权限的时候可以显示一个解释该请求用途的的信息。</p>
 <p>当app完全没有机会被授权的时候，调用shouldShowRequestPermissionRationale()则返回false。</p>
@@ -244,6 +240,15 @@ M 预览版中包含了一个运行时权限的方法:
   
     
 <nav id="article-nav">
+  
+    <a href="/2015/09/16/开源库整理/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          开源库整理
+        
+      </div>
+    </a>
   
   
     <a href="/2015/09/15/翻译-数据绑定part-1/" id="article-nav-older" class="article-nav-link-wrap">

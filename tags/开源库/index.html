@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: M 权限 | ZhaoShanShan’s Blog</title>
+  <title>Tag: 开源库 | ZhaoShanShan’s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="既然选择远方，便只顾风雨兼程">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ZhaoShanShan’s Blog">
-<meta property="og:url" content="http://zhaoshanshan.me/tags/M-权限/index.html">
+<meta property="og:url" content="http://zhaoshanshan.me/tags/开源库/index.html">
 <meta property="og:site_name" content="ZhaoShanShan’s Blog">
 <meta property="og:description" content="既然选择远方，便只顾风雨兼程">
 <meta name="twitter:card" content="summary">
@@ -185,11 +185,11 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="post-Android-M-中的运行时权限" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-开源库整理" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2015/09/16/Android-M-中的运行时权限/" class="article-date">
-  	<time datetime="2015-09-16T01:33:09.000Z" itemprop="datePublished">2015-09-16</time>
+      <a href="/2015/09/16/开源库整理/" class="article-date">
+  	<time datetime="2015-09-16T03:56:15.000Z" itemprop="datePublished">2015-09-16</time>
 </a>
     </div>
   
@@ -202,7 +202,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2015/09/16/Android-M-中的运行时权限/">Android M 中的运行时权限</a>
+      <a class="article-title" href="/2015/09/16/开源库整理/">开源库整理</a>
     </h1>
   
 
@@ -211,14 +211,16 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>M 预览版中包含了一个运行时权限的方法:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Activity.shouldShowRequestPermissionRationale()&#10;&#10;app&#22312;&#23454;&#38469;&#26174;&#31034;&#26435;&#38480;&#23545;&#35805;&#26694;&#20043;&#21069;&#26159;&#21542;&#26174;&#31034;&#19968;&#20010;&#23545;&#27491;&#22312;&#35831;&#27714;&#30340;&#26435;&#38480;&#30340;&#35299;&#37322;</span><br></pre></td></tr></table></figure>
-<p>在第一次安装的时候，这个方法会反悔false，因此你可以直接请求权限，如果用户以前拒绝过一个权限的请求，那么再次请求该权限的时候可以显示一个解释该请求用途的的信息。</p>
-<p>当app完全没有机会被授权的时候，调用shouldShowRequestPermissionRationale()则返回false。</p>
-<p>M预览版中还提供了下面这个方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Fragment.shouldShowRequestPermissionRationale()&#10;&#10;&#36825;&#20010;&#26041;&#27861;&#24635;&#26159;&#36820;&#22238;false&#65292;&#25152;&#20197;&#25105;&#20204;&#21487;&#20197;&#35843;&#29992;&#10;&#10;getActivity().shouldShowRequestPermissionRationale();</span><br></pre></td></tr></table></figure>
-<p>###参考文章：<br><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0916/3464.html" target="_blank" rel="external">Android M中权限被拒绝时该如何处理</a></p>
-<p><a href="https://github.com/googlesamples/android-RuntimePermissions" target="_blank" rel="external">运行时权限Sample</a></p>
+        <blockquote>
+<p>Meterial Design</p>
+</blockquote>
+<p><strong>FloatingActionButton</strong>:<a href="https://github.com/Clans/FloatingActionButton" target="_blank" rel="external">https://github.com/Clans/FloatingActionButton</a></p>
+<p><strong>Meterial</strong>:<a href="https://github.com/rey5137/material" target="_blank" rel="external">https://github.com/rey5137/material</a></p>
+<p><strong>ScrollBar</strong>:<a href="https://github.com/krimin-killr21/MaterialScrollBar" target="_blank" rel="external">https://github.com/krimin-killr21/MaterialScrollBar</a></p>
+<blockquote>
+<p>Java高级</p>
+</blockquote>
+<p><strong>反射</strong>:<a href="https://github.com/jOOQ/jOOR" target="_blank" rel="external">https://github.com/jOOQ/jOOR</a></p>
 
       
     </div>
@@ -226,7 +228,7 @@
     <div class="article-info article-info-index">
       
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/M-权限/">M 权限</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/开源库/">开源库</a></li></ul>
 	</div>
 
       
