@@ -6,7 +6,6 @@ tags:
 
 ---
 
-### 数据绑定 - Part-1
 **翻译原文**：[https://blog.stylingandroid.com/data-binding-part-1/](https://blog.stylingandroid.com/data-binding-part-1/)
 **相关源码**：[https://github.com/StylingAndroid/DataBinding/tree/Part1](https://github.com/StylingAndroid/DataBinding/tree/Part1)
 > 前言

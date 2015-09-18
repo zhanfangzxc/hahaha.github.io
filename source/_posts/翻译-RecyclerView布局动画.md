@@ -1,11 +1,12 @@
 title: '[翻译]RecyclerView布局动画'
 date: 2015-09-15 10:34:37
-comments:true
 tags:
-- hexo
-categories: hexo
+- Android
+- RecyclerView
+- layout Animation
+
 ---
-##为RecyclerView设置布局动画
+
 **翻译原文**：[http://antonioleiva.com/layout-animations-on-recyclerview/](http://antonioleiva.com/layout-animations-on-recyclerview/)
 **相关源码**：[https://github.com/antoniolg/MaterializeYourApp](https://github.com/antoniolg/MaterializeYourApp)
 > 前言
