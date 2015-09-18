@@ -32,7 +32,7 @@
 
 
 
-  <meta name="keywords" content="Android,M 权限," />
+  <meta name="keywords" content="Android,Monkey," />
 
 
 
@@ -43,31 +43,22 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="M 预览版中包含了一个运行时权限的方法:
-Activity.shouldShowRequestPermissionRationale()
-
-app在实际显示权限对话框之前是否显示一个对正在请求的权限的解释
-在第一次安装的时候，这个方法会反悔false，因此你可以直接请求权限，如果用户以前拒绝过一个权限的请求，那么再次请求该权限的时候可以显示一个解释该请求用途的的信息。
-当app完全没有机会被授权的">
+<meta name="description" content="翻译原文:http://antoine-merle.com/introduction-to-the-monkey-runner-tool-2/
+欢迎大家来到我的博客来观看这篇旨在介绍Monkey Runner(谷歌官方介绍)的文章，这篇文章可能是一篇延伸阅读。
+这篇文章不是一个课程，只是一个介绍，因为目的是让你明白Monkey有多强大，Monkey Runner是一个可以让开发者创建一个程序来控制">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android M 中的运行时权限">
-<meta property="og:url" content="http://zhaoshanshan.me/2015/09/16/Android-M-中的运行时权限/index.html">
+<meta property="og:title" content="Monkey测试工具介绍">
+<meta property="og:url" content="http://zhaoshanshan.me/2015/09/18/Monkey测试工具介绍/index.html">
 <meta property="og:site_name" content="ZhaoShanShan’s Blog">
-<meta property="og:description" content="M 预览版中包含了一个运行时权限的方法:
-Activity.shouldShowRequestPermissionRationale()
-
-app在实际显示权限对话框之前是否显示一个对正在请求的权限的解释
-在第一次安装的时候，这个方法会反悔false，因此你可以直接请求权限，如果用户以前拒绝过一个权限的请求，那么再次请求该权限的时候可以显示一个解释该请求用途的的信息。
-当app完全没有机会被授权的">
-<meta property="og:updated_time" content="2015-09-18T05:40:07.000Z">
+<meta property="og:description" content="翻译原文:http://antoine-merle.com/introduction-to-the-monkey-runner-tool-2/
+欢迎大家来到我的博客来观看这篇旨在介绍Monkey Runner(谷歌官方介绍)的文章，这篇文章可能是一篇延伸阅读。
+这篇文章不是一个课程，只是一个介绍，因为目的是让你明白Monkey有多强大，Monkey Runner是一个可以让开发者创建一个程序来控制">
+<meta property="og:updated_time" content="2015-09-18T10:26:34.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android M 中的运行时权限">
-<meta name="twitter:description" content="M 预览版中包含了一个运行时权限的方法:
-Activity.shouldShowRequestPermissionRationale()
-
-app在实际显示权限对话框之前是否显示一个对正在请求的权限的解释
-在第一次安装的时候，这个方法会反悔false，因此你可以直接请求权限，如果用户以前拒绝过一个权限的请求，那么再次请求该权限的时候可以显示一个解释该请求用途的的信息。
-当app完全没有机会被授权的">
+<meta name="twitter:title" content="Monkey测试工具介绍">
+<meta name="twitter:description" content="翻译原文:http://antoine-merle.com/introduction-to-the-monkey-runner-tool-2/
+欢迎大家来到我的博客来观看这篇旨在介绍Monkey Runner(谷歌官方介绍)的文章，这篇文章可能是一篇延伸阅读。
+这篇文章不是一个课程，只是一个介绍，因为目的是让你明白Monkey有多强大，Monkey Runner是一个可以让开发者创建一个程序来控制">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -77,7 +68,7 @@ app在实际显示权限对话框之前是否显示一个对正在请求的权�
   };
 </script>
 
-  <title> Android M 中的运行时权限 | ZhaoShanShan’s Blog </title>
+  <title> Monkey测试工具介绍 | ZhaoShanShan’s Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
@@ -192,7 +183,7 @@ app在实际显示权限对话框之前是否显示一个对正在请求的权�
           
           
             
-              Android M 中的运行时权限
+              Monkey测试工具介绍
             
           
         </h1>
@@ -201,8 +192,8 @@ app在实际显示权限对话框之前是否显示一个对正在请求的权�
       <div class="post-meta">
         <span class="post-time">
           發表於
-          <time itemprop="dateCreated" datetime="2015-09-16T09:33:09+08:00" content="2015-09-16">
-            2015-09-16
+          <time itemprop="dateCreated" datetime="2015-09-18T14:10:43+08:00" content="2015-09-18">
+            2015-09-18
           </time>
         </span>
 
@@ -227,8 +218,8 @@ app在实际显示权限对话框之前是否显示一个对正在请求的权�
           
             <span class="post-comments-count">
             &nbsp; | &nbsp;
-            <a href="/2015/09/16/Android-M-中的运行时权限/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/16/Android-M-中的运行时权限/" itemprop="commentsCount"></span>
+            <a href="/2015/09/18/Monkey测试工具介绍/#comments" itemprop="discussionUrl">
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/18/Monkey测试工具介绍/" itemprop="commentsCount"></span>
             </a>
           </span>
           
@@ -242,20 +233,51 @@ app在实际显示权限对话框之前是否显示一个对正在请求的权�
       
 
       
-        <span itemprop="articleBody"><p>M 预览版中包含了一个运行时权限的方法:</p>
-<pre><code>Activity.<span class="function"><span class="title">shouldShowRequestPermissionRationale</span><span class="params">()</span></span>
+        <span itemprop="articleBody"><p><strong>翻译原文</strong>:<a href="http://antoine-merle.com/introduction-to-the-monkey-runner-tool-2/" target="_blank" rel="external">http://antoine-merle.com/introduction-to-the-monkey-runner-tool-2/</a></p>
+<p>欢迎大家来到我的博客来观看这篇旨在介绍Monkey Runner<a href="http://developer.android.com/tools/help/monkeyrunner_concepts.html" target="_blank" rel="external">(谷歌官方介绍)</a>的文章，这篇文章可能是一篇延伸阅读。</p>
+<p>这篇文章不是一个课程，只是一个介绍，因为目的是让你明白Monkey有多强大，Monkey Runner是一个可以让开发者创建一个程序来控制已经连接的设备，这些程序使用Python创建的，可以安装，运行，操作app，还可以截屏，以下是谷歌API提供的相关的三个模块:</p>
+<ul>
+<li>MonkeyRunner:提供连接设备/模拟器的方法</li>
+<li>MonkeyDevice:提供安装和卸载应用程序的方法</li>
+<li>MonkeyImage:提供截取图片的方法</li>
+</ul>
+<p>让我们开始创建一个Monkey测试文件，命名为mymonkey.py:</p>
+<pre><code><span class="keyword">from</span> com.android.monkeyrunner <span class="keyword">import</span> <span class="type">MonkeyRunner</span>, <span class="type">MonkeyDevice</span>
+<span class="keyword">import</span> commands
+<span class="keyword">import</span> sys
 
-app在实际显示权限对话框之前是否显示一个对正在请求的权限的解释
-</code></pre><p>在第一次安装的时候，这个方法会反悔false，因此你可以直接请求权限，如果用户以前拒绝过一个权限的请求，那么再次请求该权限的时候可以显示一个解释该请求用途的的信息。</p>
-<p>当app完全没有机会被授权的时候，调用shouldShowRequestPermissionRationale()则返回false。</p>
-<p>M预览版中还提供了下面这个方法：</p>
-<pre><code><span class="type">Fragment</span>.shouldShowRequestPermissionRationale<span class="literal">()</span>
+<span class="comment"># starting script</span>
+print <span class="string">"start"</span>
 
-这个方法总是返回<span class="literal">false</span>，所以我们可以调用
+<span class="comment"># connection to the current device, and return a MonkeyDevice object</span>
+device = <span class="type">MonkeyRunner</span>.waitForConnection()
 
-getActivity<span class="literal">()</span>.shouldShowRequestPermissionRationale<span class="literal">()</span>;
-</code></pre><p>###参考文章：<br><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0916/3464.html" target="_blank" rel="external">Android M中权限被拒绝时该如何处理</a></p>
-<p><a href="https://github.com/googlesamples/android-RuntimePermissions" target="_blank" rel="external">运行时权限Sample</a></p>
+apk_path = device.shell('pm path com.myapp')
+<span class="keyword">if</span> apk_path.startswith('package:'):
+    print <span class="string">"myapp already installed."</span>
+<span class="keyword">else</span>:
+    print <span class="string">"myapp not installed, installing APKs..."</span>
+    device.installPackage('myapp.apk')
+
+print <span class="string">"launching myapp..."</span>
+device.startActivity(component='com.myapp/com.myapp.<span class="type">MainActivity</span>')
+
+<span class="comment">#screenshot</span>
+<span class="type">MonkeyRunner</span>.sleep(<span class="number">1</span>)
+<span class="literal">result</span> = device.takeSnapshot()
+<span class="literal">result</span>.writeToFile('./screenshots/splash.png','png')
+print <span class="string">"screen 1 taken"</span>
+
+<span class="comment">#sending an event which simulate a click on the menu button</span>
+device.press('<span class="type">KEYCODE_MENU</span>', <span class="type">MonkeyDevice</span>.<span class="type">DOWN_AND_UP</span>)
+
+print <span class="string">"end of script"</span>
+</code></pre><p>然后在命令行中执行如下命令:</p>
+<pre><code><span class="tag">monkeyrunner</span> <span class="tag">mymonkey</span><span class="class">.py</span>
+</code></pre><ul>
+<li>monkeyRunner命令直接包含在[android-sdk-path]/tools/</li>
+<li>如果在windows上创建python项目，执行的时候必须写绝对路径(c:/etc)</li>
+</ul>
 </span>
       
     </div>
@@ -266,7 +288,7 @@ getActivity<span class="literal">()</span>.shouldShowRequestPermissionRationale<
           
             <a href="/tags/Android/" rel="tag">#Android</a>
           
-            <a href="/tags/M-权限/" rel="tag">#M 权限</a>
+            <a href="/tags/Monkey/" rel="tag">#Monkey</a>
           
         </div>
       
@@ -275,13 +297,11 @@ getActivity<span class="literal">()</span>.shouldShowRequestPermissionRationale<
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/09/16/开源库整理/" rel="prev">开源库整理</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/09/15/翻译-数据绑定part-1/" rel="next">[翻译]数据绑定part 1</a>
+              <a href="/2015/09/16/Retrofit2-0-Android最好用的http库有史以来最大的更新/" rel="next">Retrofit2.0:Android最好用的http库有史以来最大的更新</a>
             
           </div>
         </div>
@@ -460,9 +480,9 @@ getActivity<span class="literal">()</span>.shouldShowRequestPermissionRationale<
 
     <script type="text/javascript">
       var disqus_shortname = 'zhanfangzxc';
-      var disqus_identifier = '2015/09/16/Android-M-中的运行时权限/';
-      var disqus_title = 'Android M 中的运行时权限';
-      var disqus_url = 'http://zhaoshanshan.me/2015/09/16/Android-M-中的运行时权限/';
+      var disqus_identifier = '2015/09/18/Monkey测试工具介绍/';
+      var disqus_title = 'Monkey测试工具介绍';
+      var disqus_url = 'http://zhaoshanshan.me/2015/09/18/Monkey测试工具介绍/';
 
       function run_disqus_script(disqus_script){
         var dsq = document.createElement('script');
