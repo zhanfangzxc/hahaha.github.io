@@ -1,11 +1,49 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html class="theme-next use-motion ">
 <head>
-  <meta charset="utf-8">
   
-  <title>[翻译]RecyclerView布局动画 | ZhaoShanShan’s Blog</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="翻译原文：http://antonioleiva.com/layout-animations-on-recyclerview/相关源码：https://github.com/antoniolg/MaterializeYourApp
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="既然选择远方，便只顾风雨兼程" />
+
+
+
+  <meta name="keywords" content="Android,RecyclerView,layout Animation," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ZhaoShanShan’s Blog" type="application/atom+xml" />
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="翻译原文：http://antonioleiva.com/layout-animations-on-recyclerview/相关源码：https://github.com/antoniolg/MaterializeYourApp
 
 前言
 
@@ -24,7 +62,7 @@
 
 我尝试">
 <meta property="og:image" content="http://antonioleiva.com/wp-content/uploads/2015/09/layout_animation_recyclerview.gif">
-<meta property="og:updated_time" content="2015-09-18T02:57:00.000Z">
+<meta property="og:updated_time" content="2015-09-18T05:38:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[翻译]RecyclerView布局动画">
 <meta name="twitter:description" content="翻译原文：http://antonioleiva.com/layout-animations-on-recyclerview/相关源码：https://github.com/antoniolg/MaterializeYourApp
@@ -34,213 +72,181 @@
 自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。
 
 我尝试">
-  
-    <link rel="alternative" href="/atom.xml" title="ZhaoShanShan’s Blog" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
-  <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post'
+  };
+</script>
+
+  <title> [翻译]RecyclerView布局动画 | ZhaoShanShan’s Blog </title>
 </head>
-<body>
-  <div id="container">
-    <div class="left-col">
-    <div class="overlay"></div>
-<div class="intrude-less">
-	<header id="header" class="inner">
-		<a href="/" class="profilepic">
-			<img lazy-src="http://img4.duitang.com/uploads/item/201405/07/20140507210553_NQGUP.thumb.600_0.jpeg" class="js-avatar">
-		</a>
 
-		<hgroup>
-		  <h1 class="header-author"><a href="/">赵珊珊</a></h1>
-		</hgroup>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
 
-		
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
 
-		
-			<div class="switch-btn">
-				<div class="icon">
-					<div class="icon-ctn">
-						<div class="icon-wrap icon-house" data-idx="0">
-							<div class="birdhouse"></div>
-							<div class="birdhouse_holes"></div>
-						</div>
-						<div class="icon-wrap icon-ribbon hide" data-idx="1">
-							<div class="ribbon"></div>
-						</div>
-						
-						<div class="icon-wrap icon-link hide" data-idx="2">
-							<div class="loopback_l"></div>
-							<div class="loopback_r"></div>
-						</div>
-						
-						
-						<div class="icon-wrap icon-me hide" data-idx="3">
-							<div class="user"></div>
-							<div class="shoulder"></div>
-						</div>
-						
-					</div>
-					
-				</div>
-				<div class="tips-box hide">
-					<div class="tips-arrow"></div>
-					<ul class="tips-inner">
-						<li>菜单</li>
-						<li>标签</li>
-						
-						<li>友情链接</li>
-						
-						
-						<li>关于我</li>
-						
-					</ul>
-				</div>
-			</div>
-		
 
-		<div class="switch-area">
-			<div class="switch-wrap">
-				<section class="switch-part switch-part1">
-					<nav class="header-menu">
-						<ul>
-						
-							<li><a href="/">主页</a></li>
-				        
-							<li><a href="/archives">所有文章</a></li>
-				        
-							<li><a href="/tags/随笔">随笔</a></li>
-				        
-						</ul>
-					</nav>
-					<nav class="header-nav">
-						<div class="social">
-							
-								<a class="github" target="_blank" href="//github.com/zhanfangzxc" title="github">github</a>
-					        
-								<a class="weibo" target="_blank" href="//http://weibo.com/zhaoshanfly" title="weibo">weibo</a>
-					        
-								<a class="rss" target="_blank" href="/#" title="rss">rss</a>
-					        
-								<a class="zhihu" target="_blank" href="/#" title="zhihu">zhihu</a>
-					        
-						</div>
-					</nav>
-				</section>
-				
-				
-				<section class="switch-part switch-part2">
-					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Data-Binding/" style="font-size: 10px;">Data Binding</a> <a href="/tags/Http/" style="font-size: 10px;">Http</a> <a href="/tags/M-权限/" style="font-size: 10px;">M 权限</a> <a href="/tags/RecyclerView/" style="font-size: 10px;">RecyclerView</a> <a href="/tags/Retrofit-2-0/" style="font-size: 10px;">Retrofit 2.0</a> <a href="/tags/layout-Animation/" style="font-size: 10px;">layout Animation</a> <a href="/tags/开源库/" style="font-size: 10px;">开源库</a>
-					</div>
-				</section>
-				
-				
-				
-				<section class="switch-part switch-part3">
-					<div id="js-friends">
-					
-			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://malinkang.com/">马林康的博客</a>
-			        
-			        </div>
-				</section>
-				
 
-				
-				
-				<section class="switch-part switch-part4">
-				
-					<div id="js-aboutme">我是谁，我从哪里来，我到哪里去？我就是我，是颜色不一样的吃货…</div>
-				</section>
-				
-			</div>
-		</div>
-	</header>				
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">ZhaoShanShan’s Blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
 </div>
-    </div>
-    <div class="mid-col">
-      <nav id="mobile-nav">
-  	<div class="overlay">
-  		<div class="slider-trigger"></div>
-  		<h1 class="header-author js-mobile-header hide">赵珊珊</h1>
-  	</div>
-	<div class="intrude-less">
-		<header id="header" class="inner">
-			<div class="profilepic">
-				<img lazy-src="http://img4.duitang.com/uploads/item/201405/07/20140507210553_NQGUP.thumb.600_0.jpeg" class="js-avatar">
-			</div>
-			<hgroup>
-			  <h1 class="header-author">赵珊珊</h1>
-			</hgroup>
-			
-			<nav class="header-menu">
-				<ul>
-				
-					<li><a href="/">主页</a></li>
-		        
-					<li><a href="/archives">所有文章</a></li>
-		        
-					<li><a href="/tags/随笔">随笔</a></li>
-		        
-		        <div class="clearfix"></div>
-				</ul>
-			</nav>
-			<nav class="header-nav">
-				<div class="social">
-					
-						<a class="github" target="_blank" href="//github.com/zhanfangzxc" title="github">github</a>
-			        
-						<a class="weibo" target="_blank" href="//http://weibo.com/zhaoshanfly" title="weibo">weibo</a>
-			        
-						<a class="rss" target="_blank" href="/#" title="rss">rss</a>
-			        
-						<a class="zhihu" target="_blank" href="/#" title="zhihu">zhihu</a>
-			        
-				</div>
-			</nav>
-		</header>				
-	</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
 </nav>
-      <div class="body-wrap"><article id="post-翻译-RecyclerView布局动画" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/09/15/翻译-RecyclerView布局动画/" class="article-date">
-  	<time datetime="2015-09-15T02:34:37.000Z" itemprop="datePublished">2015-09-15</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      [翻译]RecyclerView布局动画
-    </h1>
-  
 
-      </header>
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
       
-      <div class="article-info article-info-post">
-        
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RecyclerView/">RecyclerView</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/layout-Animation/">layout Animation</a></li></ul>
-	</div>
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              [翻译]RecyclerView布局动画
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2015-09-15T10:34:37+08:00" content="2015-09-15">
+            2015-09-15
+          </time>
+        </span>
 
         
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Android/" itemprop="url" rel="index">
+                  <span itemprop="name">Android</span>
+                </a>
+              </span>
 
-        <div class="clearfix"></div>
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/09/15/翻译-RecyclerView布局动画/#comments" itemprop="discussionUrl">
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/15/翻译-RecyclerView布局动画/" itemprop="commentsCount"></span>
+            </a>
+          </span>
+          
+        
       </div>
+    </header>
+
+    <div class="post-body">
+
       
-    
-    <div class="article-entry" itemprop="articleBody">
       
-        <p><strong>翻译原文</strong>：<a href="http://antonioleiva.com/layout-animations-on-recyclerview/" target="_blank" rel="external">http://antonioleiva.com/layout-animations-on-recyclerview/</a><br><strong>相关源码</strong>：<a href="https://github.com/antoniolg/MaterializeYourApp" target="_blank" rel="external">https://github.com/antoniolg/MaterializeYourApp</a></p>
+
+      
+        <span itemprop="articleBody"><p><strong>翻译原文</strong>：<a href="http://antonioleiva.com/layout-animations-on-recyclerview/" target="_blank" rel="external">http://antonioleiva.com/layout-animations-on-recyclerview/</a><br><strong>相关源码</strong>：<a href="https://github.com/antoniolg/MaterializeYourApp" target="_blank" rel="external">https://github.com/antoniolg/MaterializeYourApp</a></p>
 <blockquote>
 <p>前言</p>
 </blockquote>
@@ -249,13 +255,104 @@
 <p>我尝试了很多方案去获得这个效果，在以后一个解决反感，被很多人提到，那就是使用<strong><em>RecyclerView::notifyItemInserted()</em></strong>方法，但是这个方法不能提供太多对于动画顺序的控制，所以看起来并不是个好的解决方案，另外一个，实际上是可行的，只有在必要的时候才在<strong><em>onBind()</em></strong>方法中包含元素动画，但是代码是相当微妙和侵入式的(因为我们是在Adapter中添加的动画)，所以要想使它正常运行比较困难。</p>
 <p>##开始拯救布局动画吧！</p>
 <p>终于，解决方案看起来比预期的更简单，必须承认我之前没怎么使用过布局动画，所以这个选项并不是立刻出现在我的脑海中的，但是当我寻找解决方案的时候，我发现了这个了不起的<a href="https://gist.github.com/Musenkishi/8df1ab549857756098ba" target="_blank" rel="external">Musenkishi发布的gist</a>给我提供了一个解决方案，但是问题是RecyclerView默认是不使用布局动画的，但是这段代码可以让它使用GridLayoutAnimations就像使用GridView那样，这是完整的gist:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/*&#10; * Copyright (C) 2014 Freddie (Musenkishi) Lust-Hed&#10; *&#10; * Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);&#10; * you may not use this file except in compliance with the License.&#10; * You may obtain a copy of the License at&#10; *&#10; *      http://www.apache.org/licenses/LICENSE-2.0&#10; *&#10; * Unless required by applicable law or agreed to in writing, software&#10; * distributed under the License is distributed on an &#34;AS IS&#34; BASIS,&#10; * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.&#10; * See the License for the specific language governing permissions and&#10; * limitations under the License.&#10; */&#10; &#10;package com.musenkishi.gists.view;&#10;&#10;import android.content.Context;&#10;import android.support.v7.widget.GridLayoutManager;&#10;import android.support.v7.widget.RecyclerView;&#10;import android.util.AttributeSet;&#10;import android.view.View;&#10;import android.view.ViewGroup;&#10;import android.view.animation.GridLayoutAnimationController;&#10;&#10;/**&#10; * An extension of RecyclerView, focused more on resembling a GridView.&#10; * Unlike &#123;@link android.support.v7.widget.RecyclerView&#125;, this view can handle&#10; * &#123;@code &#60;gridLayoutAnimation&#62;&#125; as long as you provide it a&#10; * &#123;@link android.support.v7.widget.GridLayoutManager&#125; in&#10; * &#123;@code setLayoutManager(LayoutManager layout)&#125;.&#10; *&#10; * Created by Freddie (Musenkishi) Lust-Hed.&#10; */&#10;public class GridRecyclerView extends RecyclerView &#123;&#10;&#10;    public GridRecyclerView(Context context) &#123;&#10;        super(context);&#10;    &#125;&#10;&#10;    public GridRecyclerView(Context context, AttributeSet attrs) &#123;&#10;        super(context, attrs);&#10;    &#125;&#10;&#10;    public GridRecyclerView(Context context, AttributeSet attrs, int defStyle) &#123;&#10;        super(context, attrs, defStyle);&#10;    &#125;&#10;&#10;    @Override&#10;    public void setLayoutManager(LayoutManager layout) &#123;&#10;        if (layout instanceof GridLayoutManager)&#123;&#10;            super.setLayoutManager(layout);&#10;        &#125; else &#123;&#10;            throw new ClassCastException(&#34;You should only use a GridLayoutManager with GridRecyclerView.&#34;);&#10;        &#125;&#10;    &#125;&#10;&#10;    @Override&#10;    protected void attachLayoutAnimationParameters(View child, ViewGroup.LayoutParams params, int index, int count) &#123;&#10;&#10;        if (getAdapter() != null &#38;&#38; getLayoutManager() instanceof GridLayoutManager)&#123;&#10;&#10;            GridLayoutAnimationController.AnimationParameters animationParams =&#10;                    (GridLayoutAnimationController.AnimationParameters) params.layoutAnimationParameters;&#10;&#10;            if (animationParams == null) &#123;&#10;                animationParams = new GridLayoutAnimationController.AnimationParameters();&#10;                params.layoutAnimationParameters = animationParams;&#10;            &#125;&#10;&#10;            int columns = ((GridLayoutManager) getLayoutManager()).getSpanCount();&#10;&#10;            animationParams.count = count;&#10;            animationParams.index = index;&#10;            animationParams.columnsCount = columns;&#10;            animationParams.rowsCount = count / columns;&#10;&#10;            final int invertedIndex = count - 1 - index;&#10;            animationParams.column = columns - 1 - (invertedIndex % columns);&#10;            animationParams.row = animationParams.rowsCount - 1 - invertedIndex / columns;&#10;&#10;        &#125; else &#123;&#10;            super.attachLayoutAnimationParameters(child, params, index, count);&#10;        &#125;&#10;    &#125;&#10;&#125;&#10;view raw</span><br></pre></td></tr></table></figure>
-<blockquote>
+<pre><code><span class="comment">/*
+ * Copyright (C) 2014 Freddie (Musenkishi) Lust-Hed
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span class="keyword">package</span> com.musenkishi.gists.view;
+
+<span class="keyword">import</span> android.content.Context;
+<span class="keyword">import</span> android.support.v7.widget.GridLayoutManager;
+<span class="keyword">import</span> android.support.v7.widget.RecyclerView;
+<span class="keyword">import</span> android.util.AttributeSet;
+<span class="keyword">import</span> android.view.View;
+<span class="keyword">import</span> android.view.ViewGroup;
+<span class="keyword">import</span> android.view.animation.GridLayoutAnimationController;
+
+<span class="comment">/**
+ * An extension of RecyclerView, focused more on resembling a GridView.
+ * Unlike {<span class="doctag">@link</span> android.support.v7.widget.RecyclerView}, this view can handle
+ * {<span class="doctag">@code</span> &lt;gridLayoutAnimation&gt;} as long as you provide it a
+ * {<span class="doctag">@link</span> android.support.v7.widget.GridLayoutManager} in
+ * {<span class="doctag">@code</span> setLayoutManager(LayoutManager layout)}.
+ *
+ * Created by Freddie (Musenkishi) Lust-Hed.
+ */</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GridRecyclerView</span> <span class="keyword">extends</span> <span class="title">RecyclerView</span> </span>{
+
+    <span class="function"><span class="keyword">public</span> <span class="title">GridRecyclerView</span><span class="params">(Context context)</span> </span>{
+        <span class="keyword">super</span>(context);
+    }
+
+    <span class="function"><span class="keyword">public</span> <span class="title">GridRecyclerView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>{
+        <span class="keyword">super</span>(context, attrs);
+    }
+
+    <span class="function"><span class="keyword">public</span> <span class="title">GridRecyclerView</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyle)</span> </span>{
+        <span class="keyword">super</span>(context, attrs, defStyle);
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLayoutManager</span><span class="params">(LayoutManager layout)</span> </span>{
+        <span class="keyword">if</span> (layout <span class="keyword">instanceof</span> GridLayoutManager){
+            <span class="keyword">super</span>.setLayoutManager(layout);
+        } <span class="keyword">else</span> {
+            <span class="keyword">throw</span> <span class="keyword">new</span> ClassCastException(<span class="string">"You should only use a GridLayoutManager with GridRecyclerView."</span>);
+        }
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">attachLayoutAnimationParameters</span><span class="params">(View child, ViewGroup.LayoutParams params, <span class="keyword">int</span> index, <span class="keyword">int</span> count)</span> </span>{
+
+        <span class="keyword">if</span> (getAdapter() != <span class="keyword">null</span> &amp;&amp; getLayoutManager() <span class="keyword">instanceof</span> GridLayoutManager){
+
+            GridLayoutAnimationController.AnimationParameters animationParams =
+                    (GridLayoutAnimationController.AnimationParameters) params.layoutAnimationParameters;
+
+            <span class="keyword">if</span> (animationParams == <span class="keyword">null</span>) {
+                animationParams = <span class="keyword">new</span> GridLayoutAnimationController.AnimationParameters();
+                params.layoutAnimationParameters = animationParams;
+            }
+
+            <span class="keyword">int</span> columns = ((GridLayoutManager) getLayoutManager()).getSpanCount();
+
+            animationParams.count = count;
+            animationParams.index = index;
+            animationParams.columnsCount = columns;
+            animationParams.rowsCount = count / columns;
+
+            <span class="keyword">final</span> <span class="keyword">int</span> invertedIndex = count - <span class="number">1</span> - index;
+            animationParams.column = columns - <span class="number">1</span> - (invertedIndex % columns);
+            animationParams.row = animationParams.rowsCount - <span class="number">1</span> - invertedIndex / columns;
+
+        } <span class="keyword">else</span> {
+            <span class="keyword">super</span>.attachLayoutAnimationParameters(child, params, index, count);
+        }
+    }
+}
+</code></pre><blockquote>
 <p>配置布局动画</p>
 </blockquote>
 <p>布局动画的优点是，我们可以使用xml来定义和使用他，我们只需要定义一个带有相应布局动画的xml.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;gridLayoutAnimation xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;&#10;&#9;android:columnDelay=&#34;15%&#34;&#10;&#9;android:rowDelay=&#34;15%&#34;&#10;&#9;android:animation=&#34;@anim/slide_in_bottom&#34;&#10;&#9;android:animationOrder=&#34;normal&#34;&#10;&#9;android:direction=&#34;top_to_bottom|left_to_right&#34;/&#62;</span><br></pre></td></tr></table></figure>
-<p>我们可以定制我们喜欢的动画：</p>
+<pre><code>&lt;gridLayoutAnimation xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span>
+    android:columnDelay=<span class="string">"15%"</span>
+    android:rowDelay=<span class="string">"15%"</span>
+    android:<span class="attribute">animation</span>=<span class="string">"@anim/slide_in_bottom"</span>
+    android:animationOrder=<span class="string">"normal"</span>
+    android:<span class="attribute">direction</span>=<span class="string">"top_to_bottom|left_to_right"</span>/&gt;
+</code></pre><p>我们可以定制我们喜欢的动画：</p>
 <ul>
 <li><strong>columnDelay / rowDelay</strong>:行和列延迟执行动画的时间百分比，这种方法可以用来定义下一行和列中的view可以一个接一个的出现，而不是在同一时间全部出现。</li>
 <li><strong>animation</strong>:用来展示view的动画，我使用了一个从屏幕底部滑动的动画。</li>
@@ -263,147 +360,459 @@
 <li><strong>direction</strong>:定义items基于列是如何出现的：top_to_bottom,left_to_right,bottom_to_top,and right_to_left是可选的值。</li>
 </ul>
 <p><strong><em>下面是显示的动画</em></strong>:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;translate xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;&#10;&#9;android:interpolator=&#34;@android:anim/decelerate_interpolator&#34;&#10;&#9;android:fromYDelta=&#34;100%p&#34;&#10;&#9;android:toYDelta=&#34;0&#34;&#10;&#9;android:duration=&#34;android:integer/config_mediumAnimTime&#34;/&#62;</span><br></pre></td></tr></table></figure>
-<blockquote>
+<pre><code>&lt;translate xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span>
+    android:interpolator=<span class="string">"<span class="variable">@android</span>:anim/decelerate_interpolator"</span>
+    android:fromYDelta=<span class="string">"100<span class="variable">%p</span>"</span>
+    android:toYDelta=<span class="string">"0"</span>
+    android:duration=<span class="string">"android:integer/config_mediumAnimTime"</span>/&gt;
+</code></pre><blockquote>
 <p><strong>调整动画时机</strong></p>
 </blockquote>
 <p>如果你只是这样执行，你将会看到当app打开的时候，布局动画已经执行过了，所以你并不能真正看到动画的执行效果，Lollipop版本之前不能改变什么，因为我们不能有效的知道什么时候进入过渡执行完，但是从Lollipop开始，我们可以使用<strong><em>onEnterAnimationComplete</em></strong>来检查，所以，在<strong><em>onCreate</em></strong>中，如果SDK版本高于Lollipop，作如下更改：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if(Build.VERSION.SDK_INT &#60; Build.VERSION_CODES.LOLLIPOP)&#123;&#10;&#9;setRecyclerAdapter(recyclerView);&#10;&#125;</span><br></pre></td></tr></table></figure>
-<p>在Lollipop或者更新的SDK版本上，<strong><em>onEnterAnimationComplete</em></strong>将会被执行，填充RecyclerView和请求一个新的布局动画的时间:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@Override&#10;public void onEnterAnimationComplete()&#123;&#10;&#9;super.onEnterAnimationComplete();&#10;&#9;setRecyclerAdapter(recyclerView);&#10;&#9;recyclerView.scheduleLayoutAnimation();&#10;&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
+<pre><code><span class="keyword">if</span><span class="comment">(Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.LOLLIPOP)</span>{
+    setRecyclerAdapter<span class="comment">(recyclerView)</span>;
+}
+</code></pre><p>在Lollipop或者更新的SDK版本上，<strong><em>onEnterAnimationComplete</em></strong>将会被执行，填充RecyclerView和请求一个新的布局动画的时间:</p>
+<pre><code><span class="annotation">@Override</span>
+<span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onEnterAnimationComplete</span><span class="params">()</span></span>{
+    <span class="keyword">super</span>.onEnterAnimationComplete();
+    setRecyclerAdapter(recyclerView);
+    recyclerView.scheduleLayoutAnimation();
+}
+</code></pre><blockquote>
 <p>结论</p>
 </blockquote>
 <p>你可以轻松设置布局动画来创建其他的进入动画，琢磨动画设置看看你能获得什么。</p>
-
+</span>
       
     </div>
-    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/RecyclerView/" rel="tag">#RecyclerView</a>
+          
+            <a href="/tags/layout-Animation/" rel="tag">#layout Animation</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/09/15/配置hexo网站/" rel="prev">配置hexo网站</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2015/09/15/翻译-数据绑定part-1/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
+
+ </div>
+
         
-          [翻译]数据绑定part 1
+
+        
+          <div class="comments" id="comments">
+            
+              <div id="disqus_thread">
+                <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+              </div>
+            
+          </div>
         
       </div>
-    </a>
+
+      
   
-  
-</nav>
-
-  
-</article>
-
-
-<div class="share">
-	<!-- JiaThis Button BEGIN -->
-	<div class="jiathis_style">
-		<span class="jiathis_txt">分享到：</span>
-		<a class="jiathis_button_tsina"></a>
-		<a class="jiathis_button_cqq"></a>
-		<a class="jiathis_button_douban"></a>
-		<a class="jiathis_button_weixin"></a>
-		<a class="jiathis_button_tumblr"></a>
-		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
-	</div>
-	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
-	<!-- JiaThis Button END -->
-</div>
-
-
-
-<div class="duoshuo">
-	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="翻译-RecyclerView布局动画" data-title="[翻译]RecyclerView布局动画" data-url="http://zhaoshanshan.me/2015/09/15/翻译-RecyclerView布局动画/"></div>
-	<!-- 多说评论框 end -->
-	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-	<script type="text/javascript">
-	var duoshuoQuery = {short_name:"true"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0] 
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-	<!-- 多说公共JS代码 end -->
-</div>
-
-
-
-
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'zhanfangzxc'; // required: replace example with your forum shortname
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
-</div>
-      <footer id="footer">
-  <div class="outer">
-    <div id="footer-info">
-    	<div class="footer-left">
-    		&copy; 2015 赵珊珊
-    	</div>
-      	<div class="footer-right">
-      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
-      	</div>
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
     </div>
   </div>
-</footer>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://img4.duitang.com/uploads/item/201405/07/20140507210553_NQGUP.thumb.600_0.jpeg" alt="坚持远方" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">坚持远方</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">既然选择远方，便只顾风雨兼程</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhanfangzxc" target="_blank">GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5497967279" target="_blank">Weibo</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
     </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">赵珊珊</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
     
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+    
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'zhanfangzxc';
+      var disqus_identifier = '2015/09/15/翻译-RecyclerView布局动画/';
+      var disqus_title = '[翻译]RecyclerView布局动画';
+      var disqus_url = 'http://zhaoshanshan.me/2015/09/15/翻译-RecyclerView布局动画/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
 
 
-<script src="/js/mobile.js" type="text/javascript"></script>
-<script src="/js/main.js" type="text/javascript"></script>
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
 
 
 
 
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
 
-<! -- mathjax config similar to math.stackexchange -->
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
 
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
-        processEscapes: true,
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
     }
-});
 
-MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-        all[i].SourceElement().parentNode.className += ' has-jax';                 
-    }       
-});
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
 </script>
 
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
 </script>
 
 
 
-  </div>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
 </body>
 </html>
