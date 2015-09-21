@@ -32,7 +32,7 @@
 
 
 
-  <meta name="keywords" content="Android,RecyclerView,layout Animation," />
+  <meta name="keywords" content="Android,数据绑定," />
 
 
 
@@ -43,35 +43,35 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="翻译原文：http://antonioleiva.com/layout-animations-on-recyclerview/相关源码：https://github.com/antoniolg/MaterializeYourApp
-
-前言
-
-自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。
-
-我尝试">
+<meta name="description" content="上一篇文章，我们使一个基础的twitter客户端运行起来了，但是让我们有点不太理解为什么，所以现在我们就来了解一下数据绑定库都做了什么和如何工作的。
+首先要做的就是在我们项目的顶级build.gradle文件中的buildscript模块中添加一个依赖项:
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependenci">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[翻译]RecyclerView布局动画">
-<meta property="og:url" content="http://zhaoshanshan.me/2015/09/15/翻译-RecyclerView布局动画/index.html">
+<meta property="og:title" content="[翻译]数据绑定part 2">
+<meta property="og:url" content="http://zhaoshanshan.me/2015/09/21/翻译-数据绑定part-2/index.html">
 <meta property="og:site_name" content="ZhaoShanShan’s Blog">
-<meta property="og:description" content="翻译原文：http://antonioleiva.com/layout-animations-on-recyclerview/相关源码：https://github.com/antoniolg/MaterializeYourApp
-
-前言
-
-自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。
-
-我尝试">
-<meta property="og:image" content="http://antonioleiva.com/wp-content/uploads/2015/09/layout_animation_recyclerview.gif">
-<meta property="og:updated_time" content="2015-09-18T05:38:00.000Z">
+<meta property="og:description" content="上一篇文章，我们使一个基础的twitter客户端运行起来了，但是让我们有点不太理解为什么，所以现在我们就来了解一下数据绑定库都做了什么和如何工作的。
+首先要做的就是在我们项目的顶级build.gradle文件中的buildscript模块中添加一个依赖项:
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependenci">
+<meta property="og:image" content="https://blog.stylingandroid.com/wp-content/uploads/2015/08/Part11-1024x768.png">
+<meta property="og:updated_time" content="2015-09-21T07:12:17.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="[翻译]RecyclerView布局动画">
-<meta name="twitter:description" content="翻译原文：http://antonioleiva.com/layout-animations-on-recyclerview/相关源码：https://github.com/antoniolg/MaterializeYourApp
-
-前言
-
-自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。
-
-我尝试">
+<meta name="twitter:title" content="[翻译]数据绑定part 2">
+<meta name="twitter:description" content="上一篇文章，我们使一个基础的twitter客户端运行起来了，但是让我们有点不太理解为什么，所以现在我们就来了解一下数据绑定库都做了什么和如何工作的。
+首先要做的就是在我们项目的顶级build.gradle文件中的buildscript模块中添加一个依赖项:
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependenci">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -81,7 +81,7 @@
   };
 </script>
 
-  <title> [翻译]RecyclerView布局动画 | ZhaoShanShan’s Blog </title>
+  <title> [翻译]数据绑定part 2 | ZhaoShanShan’s Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
@@ -196,7 +196,7 @@
           
           
             
-              [翻译]RecyclerView布局动画
+              [翻译]数据绑定part 2
             
           
         </h1>
@@ -205,8 +205,8 @@
       <div class="post-meta">
         <span class="post-time">
           發表於
-          <time itemprop="dateCreated" datetime="2015-09-15T10:34:37+08:00" content="2015-09-15">
-            2015-09-15
+          <time itemprop="dateCreated" datetime="2015-09-21T10:30:23+08:00" content="2015-09-21">
+            2015-09-21
           </time>
         </span>
 
@@ -231,8 +231,8 @@
           
             <span class="post-comments-count">
             &nbsp; | &nbsp;
-            <a href="/2015/09/15/翻译-RecyclerView布局动画/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/15/翻译-RecyclerView布局动画/" itemprop="commentsCount"></span>
+            <a href="/2015/09/21/翻译-数据绑定part-2/#comments" itemprop="discussionUrl">
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/21/翻译-数据绑定part-2/" itemprop="commentsCount"></span>
             </a>
           </span>
           
@@ -246,143 +246,87 @@
       
 
       
-        <span itemprop="articleBody"><p><strong>翻译原文</strong>：<a href="http://antonioleiva.com/layout-animations-on-recyclerview/" target="_blank" rel="external">http://antonioleiva.com/layout-animations-on-recyclerview/</a><br><strong>相关源码</strong>：<a href="https://github.com/antoniolg/MaterializeYourApp" target="_blank" rel="external">https://github.com/antoniolg/MaterializeYourApp</a></p>
-<blockquote>
-<p>前言</p>
-</blockquote>
-<p>自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。</p>
-<p><img src="http://antonioleiva.com/wp-content/uploads/2015/09/layout_animation_recyclerview.gif" alt="展示图片"></p>
-<p>我尝试了很多方案去获得这个效果，在以后一个解决反感，被很多人提到，那就是使用<strong><em>RecyclerView::notifyItemInserted()</em></strong>方法，但是这个方法不能提供太多对于动画顺序的控制，所以看起来并不是个好的解决方案，另外一个，实际上是可行的，只有在必要的时候才在<strong><em>onBind()</em></strong>方法中包含元素动画，但是代码是相当微妙和侵入式的(因为我们是在Adapter中添加的动画)，所以要想使它正常运行比较困难。</p>
-<p>##开始拯救布局动画吧！</p>
-<p>终于，解决方案看起来比预期的更简单，必须承认我之前没怎么使用过布局动画，所以这个选项并不是立刻出现在我的脑海中的，但是当我寻找解决方案的时候，我发现了这个了不起的<a href="https://gist.github.com/Musenkishi/8df1ab549857756098ba" target="_blank" rel="external">Musenkishi发布的gist</a>给我提供了一个解决方案，但是问题是RecyclerView默认是不使用布局动画的，但是这段代码可以让它使用GridLayoutAnimations就像使用GridView那样，这是完整的gist:</p>
-<pre><code><span class="comment">/*
- * Copyright (C) 2014 Freddie (Musenkishi) Lust-Hed
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */</span>
-
-<span class="keyword">package</span> com.musenkishi.gists.view;
-
-<span class="keyword">import</span> android.content.Context;
-<span class="keyword">import</span> android.support.v7.widget.GridLayoutManager;
-<span class="keyword">import</span> android.support.v7.widget.RecyclerView;
-<span class="keyword">import</span> android.util.AttributeSet;
-<span class="keyword">import</span> android.view.View;
-<span class="keyword">import</span> android.view.ViewGroup;
-<span class="keyword">import</span> android.view.animation.GridLayoutAnimationController;
-
-<span class="comment">/**
- * An extension of RecyclerView, focused more on resembling a GridView.
- * Unlike {<span class="doctag">@link</span> android.support.v7.widget.RecyclerView}, this view can handle
- * {<span class="doctag">@code</span> &lt;gridLayoutAnimation&gt;} as long as you provide it a
- * {<span class="doctag">@link</span> android.support.v7.widget.GridLayoutManager} in
- * {<span class="doctag">@code</span> setLayoutManager(LayoutManager layout)}.
- *
- * Created by Freddie (Musenkishi) Lust-Hed.
- */</span>
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GridRecyclerView</span> <span class="keyword">extends</span> <span class="title">RecyclerView</span> </span>{
-
-    <span class="function"><span class="keyword">public</span> <span class="title">GridRecyclerView</span><span class="params">(Context context)</span> </span>{
-        <span class="keyword">super</span>(context);
+        <span itemprop="articleBody"><p>上一篇文章，我们使一个基础的twitter客户端运行起来了，但是让我们有点不太理解为什么，所以现在我们就来了解一下数据绑定库都做了什么和如何工作的。</p>
+<p>首先要做的就是在我们项目的顶级<strong>build.gradle</strong>文件中的<strong>buildscript</strong>模块中添加一个依赖项:</p>
+<pre><code><span class="keyword">buildscript</span> {
+    <span class="keyword">repositories</span> {
+        jcenter()
     }
-
-    <span class="function"><span class="keyword">public</span> <span class="title">GridRecyclerView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>{
-        <span class="keyword">super</span>(context, attrs);
+    <span class="keyword">dependencies</span> {
+        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.3.0'</span>
+        <span class="keyword">classpath</span> <span class="string">"com.android.databinding:dataBinder:1.0-rc1"</span>
     }
+}
 
-    <span class="function"><span class="keyword">public</span> <span class="title">GridRecyclerView</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyle)</span> </span>{
-        <span class="keyword">super</span>(context, attrs, defStyle);
+<span class="keyword">allprojects</span> {
+    <span class="keyword">repositories</span> {
+        jcenter()
     }
+}
+</code></pre><p>在子项目中的<strong>build.gradle</strong>文件中，我们需要添加一个构建插件:</p>
+<pre><code>apply plugin: <span class="string">'com.android.application'</span>
+apply plugin: <span class="string">'com.android.databinding'</span> //就是这一行
 
-    <span class="annotation">@Override</span>
-    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLayoutManager</span><span class="params">(LayoutManager layout)</span> </span>{
-        <span class="keyword">if</span> (layout <span class="keyword">instanceof</span> GridLayoutManager){
-            <span class="keyword">super</span>.setLayoutManager(layout);
-        } <span class="keyword">else</span> {
-            <span class="keyword">throw</span> <span class="keyword">new</span> ClassCastException(<span class="string">"You should only use a GridLayoutManager with GridRecyclerView."</span>);
+android {
+    compileSdkVersion <span class="number">23</span>
+    buildToolsVersion <span class="string">"23.0.0"</span>
+
+    defaultConfig {
+        applicationId <span class="string">"com.stylingandroid.databinding"</span>
+        minSdkVersion <span class="number">7</span>
+        targetSdkVersion <span class="number">23</span>
+        versionCode <span class="number">1</span>
+        versionName <span class="string">"1.0"</span>
+
+        buildConfigField <span class="string">'String'</span>, <span class="string">'TWITTER_CONSUMER_KEY'</span>, <span class="string">"\"</span>${twitterConsumerKey}\<span class="string">""</span>
+        buildConfigField <span class="string">'String'</span>, <span class="string">'TWITTER_CONSUMER_SECRET'</span>, <span class="string">"\"</span>${twitterConsumerSecret}\<span class="string">""</span>
+        buildConfigField <span class="string">'String'</span>, <span class="string">'TWITTER_ACCESS_KEY'</span>, <span class="string">"\"</span>${twitterAccessKey}\<span class="string">""</span>
+        buildConfigField <span class="string">'String'</span>, <span class="string">'TWITTER_ACCESS_SECRET'</span>, <span class="string">"\"</span>${twitterAccessSecret}\<span class="string">""</span>
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span>
         }
     }
-
-    <span class="annotation">@Override</span>
-    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">attachLayoutAnimationParameters</span><span class="params">(View child, ViewGroup.LayoutParams params, <span class="keyword">int</span> index, <span class="keyword">int</span> count)</span> </span>{
-
-        <span class="keyword">if</span> (getAdapter() != <span class="keyword">null</span> &amp;&amp; getLayoutManager() <span class="keyword">instanceof</span> GridLayoutManager){
-
-            GridLayoutAnimationController.AnimationParameters animationParams =
-                    (GridLayoutAnimationController.AnimationParameters) params.layoutAnimationParameters;
-
-            <span class="keyword">if</span> (animationParams == <span class="keyword">null</span>) {
-                animationParams = <span class="keyword">new</span> GridLayoutAnimationController.AnimationParameters();
-                params.layoutAnimationParameters = animationParams;
-            }
-
-            <span class="keyword">int</span> columns = ((GridLayoutManager) getLayoutManager()).getSpanCount();
-
-            animationParams.count = count;
-            animationParams.index = index;
-            animationParams.columnsCount = columns;
-            animationParams.rowsCount = count / columns;
-
-            <span class="keyword">final</span> <span class="keyword">int</span> invertedIndex = count - <span class="number">1</span> - index;
-            animationParams.column = columns - <span class="number">1</span> - (invertedIndex % columns);
-            animationParams.row = animationParams.rowsCount - <span class="number">1</span> - invertedIndex / columns;
-
-        } <span class="keyword">else</span> {
-            <span class="keyword">super</span>.attachLayoutAnimationParameters(child, params, index, count);
-        }
+    packagingOptions {
+        exclude <span class="string">'META-INF/LICENSE.txt'</span>
+    }
+    lintOptions {
+        disable <span class="string">'InvalidPackage'</span>
     }
 }
-</code></pre><blockquote>
-<p>配置布局动画</p>
-</blockquote>
-<p>布局动画的优点是，我们可以使用xml来定义和使用他，我们只需要定义一个带有相应布局动画的xml.</p>
-<pre><code>&lt;gridLayoutAnimation xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span>
-    android:columnDelay=<span class="string">"15%"</span>
-    android:rowDelay=<span class="string">"15%"</span>
-    android:<span class="attribute">animation</span>=<span class="string">"@anim/slide_in_bottom"</span>
-    android:animationOrder=<span class="string">"normal"</span>
-    android:<span class="attribute">direction</span>=<span class="string">"top_to_bottom|left_to_right"</span>/&gt;
-</code></pre><p>我们可以定制我们喜欢的动画：</p>
-<ul>
-<li><strong>columnDelay / rowDelay</strong>:行和列延迟执行动画的时间百分比，这种方法可以用来定义下一行和列中的view可以一个接一个的出现，而不是在同一时间全部出现。</li>
-<li><strong>animation</strong>:用来展示view的动画，我使用了一个从屏幕底部滑动的动画。</li>
-<li><strong>animationOrder</strong>:可以是<strong><em>normal</em></strong>，<strong><em>reverse</em></strong>或者<strong><em>random</em></strong></li>
-<li><strong>direction</strong>:定义items基于列是如何出现的：top_to_bottom,left_to_right,bottom_to_top,and right_to_left是可选的值。</li>
-</ul>
-<p><strong><em>下面是显示的动画</em></strong>:</p>
-<pre><code>&lt;translate xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span>
-    android:interpolator=<span class="string">"<span class="variable">@android</span>:anim/decelerate_interpolator"</span>
-    android:fromYDelta=<span class="string">"100<span class="variable">%p</span>"</span>
-    android:toYDelta=<span class="string">"0"</span>
-    android:duration=<span class="string">"android:integer/config_mediumAnimTime"</span>/&gt;
-</code></pre><blockquote>
-<p><strong>调整动画时机</strong></p>
-</blockquote>
-<p>如果你只是这样执行，你将会看到当app打开的时候，布局动画已经执行过了，所以你并不能真正看到动画的执行效果，Lollipop版本之前不能改变什么，因为我们不能有效的知道什么时候进入过渡执行完，但是从Lollipop开始，我们可以使用<strong><em>onEnterAnimationComplete</em></strong>来检查，所以，在<strong><em>onCreate</em></strong>中，如果SDK版本高于Lollipop，作如下更改：</p>
-<pre><code><span class="keyword">if</span><span class="comment">(Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.LOLLIPOP)</span>{
-    setRecyclerAdapter<span class="comment">(recyclerView)</span>;
+
+dependencies {
+    compile <span class="string">'com.android.support:support-annotations:23.0.0'</span>
+    compile <span class="string">'com.android.support:design:23.0.0'</span>
+    compile <span class="string">'com.android.support:appcompat-v7:23.0.0'</span>
+    compile <span class="string">'com.android.support:recyclerview-v7:23.0.0'</span>
+    compile <span class="string">'org.twitter4j:twitter4j-core:4.0.4'</span>
+    compile <span class="string">'org.twitter4j:twitter4j-async:4.0.4'</span>
+    compile <span class="string">'com.github.bumptech.glide:glide:3.6.1'</span>
 }
-</code></pre><p>在Lollipop或者更新的SDK版本上，<strong><em>onEnterAnimationComplete</em></strong>将会被执行，填充RecyclerView和请求一个新的布局动画的时间:</p>
-<pre><code><span class="annotation">@Override</span>
-<span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onEnterAnimationComplete</span><span class="params">()</span></span>{
-    <span class="keyword">super</span>.onEnterAnimationComplete();
-    setRecyclerAdapter(recyclerView);
-    recyclerView.scheduleLayoutAnimation();
+</code></pre><p>值得一提的是这里没有关于数据绑定的编译库添加进去，只是一个简单的构建项的添加。</p>
+<p>这可以对于即将发生的事情，给我们一个线索，数据绑定是通过在执行的过程中构建和生成的样板式的代码，通常与绑定数据到视图有关。</p>
+<p>在我们的例子中，他解析布局文件和检测被<strong>layout</strong>包装器在<strong>layout/status_item.xml</strong>,基于上面的文件名称，会自动生成一个数据绑定类，命名为<strong>StatusItemBinding</strong>，而且这是一个会在ViewHolder实现类中引用的神秘的类。</p>
+<p>然后数据绑定会剔除被<layout>包装的代码，然后移除数据绑定表达式，最后将这些合并成<strong>StatusItemBinding</strong>类，换句话说就是将他转变成一个标准的Android xml文件，并且添加一个java类在运行时实现了绑定。</layout></p>
+<p>所以我们现在再看<strong>StatusViewHolder</strong>的时候就会感觉很清晰，而且也明白了是怎么回事:</p>
+<pre><code>public <span class="class"><span class="keyword">class</span> <span class="title">StatusViewHolder</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">RecyclerView</span>.<span class="title">ViewHolder</span>{</span>
+    <span class="keyword">private</span> <span class="type">StatusItemBinding</span> binding;
+
+    public <span class="type">StatusViewHolder</span>(<span class="type">View</span> itemView){
+        <span class="keyword">super</span>(itemView);
+        binding = <span class="type">DataBinding</span>.bind(itemView);    } 
+
+    public void bind(<span class="type">Status</span> status){
+        binding.setStatus(status);
+    }
 }
-</code></pre><blockquote>
-<p>结论</p>
-</blockquote>
-<p>你可以轻松设置布局动画来创建其他的进入动画，琢磨动画设置看看你能获得什么。</p>
+</code></pre><p>在构造函数中我们调用<strong>DataBindingUtil.bind(itemView)</strong>将会在构建过程中生成一个StatusItemBinding，然后在<strong>bind(Status status)</strong>方法中我们将会调用一个setter在StatusItemBinding实例中，这个setter是在我们原始布局中声明的类型为<strong>.data.Status</strong>,命名为status的<strong><data></data></strong>节点生成的，当我们调用settter的时候，它将会从原始布局中提取数据绑定表达式执行必要的绑定。</p>
+<p>现在我们更好的理解了他是怎么工作的而且为什么当app运行的时候我们能看到tweets的列表</p>
+<p><img src="https://blog.stylingandroid.com/wp-content/uploads/2015/08/Part11-1024x768.png" alt="https://blog.stylingandroid.com/wp-content/uploads/2015/08/Part11-1024x768.png"></p>
+<p>非常好，一个简单的布局，有三个items被绑定，并没有节省我们多少时间，只是对于TextView来说省去了找views和设置内容的时间。然而并没有结束，这里还可以为我们做好多关于数据绑定的事情，当我们从Twitter中提取出了image URL之后，然后将他绑定到ImageView中之后，图片却并没有显示出来，我们需要包含一个图像加载库，在下一篇文章中，我们将看到怎样通过数据绑定自动加载图片。</p>
+<p>在这篇文章中主要是一些说明，并没有增加额外的代码，所以我们可以使用上一篇文章中的代码。</p>
 </span>
       
     </div>
@@ -393,9 +337,7 @@
           
             <a href="/tags/Android/" rel="tag">#Android</a>
           
-            <a href="/tags/RecyclerView/" rel="tag">#RecyclerView</a>
-          
-            <a href="/tags/layout-Animation/" rel="tag">#layout Animation</a>
+            <a href="/tags/数据绑定/" rel="tag">#数据绑定</a>
           
         </div>
       
@@ -404,11 +346,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/09/15/配置hexo网站/" rel="prev">配置hexo网站</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/09/19/Espresso测试/" rel="next">Espresso测试</a>
             
           </div>
         </div>
@@ -587,9 +529,9 @@
 
     <script type="text/javascript">
       var disqus_shortname = 'zhanfangzxc';
-      var disqus_identifier = '2015/09/15/翻译-RecyclerView布局动画/';
-      var disqus_title = '[翻译]RecyclerView布局动画';
-      var disqus_url = 'http://zhaoshanshan.me/2015/09/15/翻译-RecyclerView布局动画/';
+      var disqus_identifier = '2015/09/21/翻译-数据绑定part-2/';
+      var disqus_title = '[翻译]数据绑定part 2';
+      var disqus_url = 'http://zhaoshanshan.me/2015/09/21/翻译-数据绑定part-2/';
 
       function run_disqus_script(disqus_script){
         var dsq = document.createElement('script');
