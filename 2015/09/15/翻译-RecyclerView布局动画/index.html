@@ -44,34 +44,25 @@
 
 
 <meta name="description" content="翻译原文：http://antonioleiva.com/layout-animations-on-recyclerview/相关源码：https://github.com/antoniolg/MaterializeYourApp
+前言自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。
 
-前言
-
-自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。
-
-我尝试">
+我尝试了很多">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[翻译]RecyclerView布局动画">
 <meta property="og:url" content="http://zhaoshanshan.me/2015/09/15/翻译-RecyclerView布局动画/index.html">
 <meta property="og:site_name" content="ZhaoShanShan’s Blog">
 <meta property="og:description" content="翻译原文：http://antonioleiva.com/layout-animations-on-recyclerview/相关源码：https://github.com/antoniolg/MaterializeYourApp
+前言自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。
 
-前言
-
-自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。
-
-我尝试">
+我尝试了很多">
 <meta property="og:image" content="http://antonioleiva.com/wp-content/uploads/2015/09/layout_animation_recyclerview.gif">
-<meta property="og:updated_time" content="2015-09-18T05:38:00.000Z">
+<meta property="og:updated_time" content="2015-09-22T09:26:26.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[翻译]RecyclerView布局动画">
 <meta name="twitter:description" content="翻译原文：http://antonioleiva.com/layout-animations-on-recyclerview/相关源码：https://github.com/antoniolg/MaterializeYourApp
+前言自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。
 
-前言
-
-自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。
-
-我尝试">
+我尝试了很多">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -247,13 +238,10 @@
 
       
         <span itemprop="articleBody"><p><strong>翻译原文</strong>：<a href="http://antonioleiva.com/layout-animations-on-recyclerview/" target="_blank" rel="external">http://antonioleiva.com/layout-animations-on-recyclerview/</a><br><strong>相关源码</strong>：<a href="https://github.com/antoniolg/MaterializeYourApp" target="_blank" rel="external">https://github.com/antoniolg/MaterializeYourApp</a></p>
-<blockquote>
-<p>前言</p>
-</blockquote>
-<p>自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。</p>
+<h3 id="前言">前言</h3><p>自从材料设计被提出之后，我惊讶于一些视频中展示的网格填充动画，如果你们还没看到，它由一个对角线动画从上至下，从左至右填充activity，非常漂亮。</p>
 <p><img src="http://antonioleiva.com/wp-content/uploads/2015/09/layout_animation_recyclerview.gif" alt="展示图片"></p>
 <p>我尝试了很多方案去获得这个效果，在以后一个解决反感，被很多人提到，那就是使用<strong><em>RecyclerView::notifyItemInserted()</em></strong>方法，但是这个方法不能提供太多对于动画顺序的控制，所以看起来并不是个好的解决方案，另外一个，实际上是可行的，只有在必要的时候才在<strong><em>onBind()</em></strong>方法中包含元素动画，但是代码是相当微妙和侵入式的(因为我们是在Adapter中添加的动画)，所以要想使它正常运行比较困难。</p>
-<p>##开始拯救布局动画吧！</p>
+<p>### 开始拯救布局动画吧！</p>
 <p>终于，解决方案看起来比预期的更简单，必须承认我之前没怎么使用过布局动画，所以这个选项并不是立刻出现在我的脑海中的，但是当我寻找解决方案的时候，我发现了这个了不起的<a href="https://gist.github.com/Musenkishi/8df1ab549857756098ba" target="_blank" rel="external">Musenkishi发布的gist</a>给我提供了一个解决方案，但是问题是RecyclerView默认是不使用布局动画的，但是这段代码可以让它使用GridLayoutAnimations就像使用GridView那样，这是完整的gist:</p>
 <pre><code><span class="comment">/*
  * Copyright (C) 2014 Freddie (Musenkishi) Lust-Hed
@@ -342,10 +330,7 @@
         }
     }
 }
-</code></pre><blockquote>
-<p>配置布局动画</p>
-</blockquote>
-<p>布局动画的优点是，我们可以使用xml来定义和使用他，我们只需要定义一个带有相应布局动画的xml.</p>
+</code></pre><h3 id="配置布局动画">配置布局动画</h3><p>布局动画的优点是，我们可以使用xml来定义和使用他，我们只需要定义一个带有相应布局动画的xml.</p>
 <pre><code>&lt;gridLayoutAnimation xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span>
     android:columnDelay=<span class="string">"15%"</span>
     android:rowDelay=<span class="string">"15%"</span>
@@ -365,10 +350,7 @@
     android:fromYDelta=<span class="string">"100<span class="variable">%p</span>"</span>
     android:toYDelta=<span class="string">"0"</span>
     android:duration=<span class="string">"android:integer/config_mediumAnimTime"</span>/&gt;
-</code></pre><blockquote>
-<p><strong>调整动画时机</strong></p>
-</blockquote>
-<p>如果你只是这样执行，你将会看到当app打开的时候，布局动画已经执行过了，所以你并不能真正看到动画的执行效果，Lollipop版本之前不能改变什么，因为我们不能有效的知道什么时候进入过渡执行完，但是从Lollipop开始，我们可以使用<strong><em>onEnterAnimationComplete</em></strong>来检查，所以，在<strong><em>onCreate</em></strong>中，如果SDK版本高于Lollipop，作如下更改：</p>
+</code></pre><h3 id="调整动画时机"><strong>调整动画时机</strong></h3><p>如果你只是这样执行，你将会看到当app打开的时候，布局动画已经执行过了，所以你并不能真正看到动画的执行效果，Lollipop版本之前不能改变什么，因为我们不能有效的知道什么时候进入过渡执行完，但是从Lollipop开始，我们可以使用<strong><em>onEnterAnimationComplete</em></strong>来检查，所以，在<strong><em>onCreate</em></strong>中，如果SDK版本高于Lollipop，作如下更改：</p>
 <pre><code><span class="keyword">if</span><span class="comment">(Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.LOLLIPOP)</span>{
     setRecyclerAdapter<span class="comment">(recyclerView)</span>;
 }
@@ -379,10 +361,7 @@
     setRecyclerAdapter(recyclerView);
     recyclerView.scheduleLayoutAnimation();
 }
-</code></pre><blockquote>
-<p>结论</p>
-</blockquote>
-<p>你可以轻松设置布局动画来创建其他的进入动画，琢磨动画设置看看你能获得什么。</p>
+</code></pre><h3 id="结论">结论</h3><p>你可以轻松设置布局动画来创建其他的进入动画，琢磨动画设置看看你能获得什么。</p>
 </span>
       
     </div>
@@ -533,7 +512,7 @@
           <div class="post-toc">
             
             
-              <p class="post-toc-empty">此文章未包含目錄</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置布局动画"><span class="nav-number">2.</span> <span class="nav-text">配置布局动画</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调整动画时机"><span class="nav-number">3.</span> <span class="nav-text">调整动画时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结论"><span class="nav-number">4.</span> <span class="nav-text">结论</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>

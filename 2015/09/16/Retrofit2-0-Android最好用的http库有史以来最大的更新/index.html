@@ -44,38 +44,29 @@
 
 
 <meta name="description" content="翻译原文:http://inthecheesefactory.com/blog/retrofit-2.0/en
-
-介绍
-
-Retrofit由于其相比于其他http开源库具有更加简单和出色的性能，从而成为Android端最流行的Http客户端库之一。
+介绍Retrofit由于其相比于其他http开源库具有更加简单和出色的性能，从而成为Android端最流行的Http客户端库之一。
 存在的缺点是在1.X版本上没有取消正在进行中的事务的方法，如果你想做这个操作必须手动在其他线程中杀死他，所以很难实现。
-Square公司多年之前就承诺">
+Square公司多年之前就承诺Ret">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Retrofit2.0:Android最好用的http库有史以来最大的更新">
 <meta property="og:url" content="http://zhaoshanshan.me/2015/09/16/Retrofit2-0-Android最好用的http库有史以来最大的更新/index.html">
 <meta property="og:site_name" content="ZhaoShanShan’s Blog">
 <meta property="og:description" content="翻译原文:http://inthecheesefactory.com/blog/retrofit-2.0/en
-
-介绍
-
-Retrofit由于其相比于其他http开源库具有更加简单和出色的性能，从而成为Android端最流行的Http客户端库之一。
+介绍Retrofit由于其相比于其他http开源库具有更加简单和出色的性能，从而成为Android端最流行的Http客户端库之一。
 存在的缺点是在1.X版本上没有取消正在进行中的事务的方法，如果你想做这个操作必须手动在其他线程中杀死他，所以很难实现。
-Square公司多年之前就承诺">
+Square公司多年之前就承诺Ret">
 <meta property="og:image" content="http://inthecheesefactory.com/uploads/source/blog/retrofit2/apiservice1.png">
 <meta property="og:image" content="http://inthecheesefactory.com/uploads/source/blog/retrofit2/apiservice2.png">
 <meta property="og:image" content="http://inthecheesefactory.com/uploads/source/blog/retrofit2/apiservice3.png">
 <meta property="og:image" content="http://inthecheesefactory.com/uploads/source/blog/retrofit2/response.jpg">
 <meta property="og:image" content="http://inthecheesefactory.com/uploads/source/blog/retrofit2/sec.png">
-<meta property="og:updated_time" content="2015-09-18T05:40:26.000Z">
+<meta property="og:updated_time" content="2015-09-22T09:29:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Retrofit2.0:Android最好用的http库有史以来最大的更新">
 <meta name="twitter:description" content="翻译原文:http://inthecheesefactory.com/blog/retrofit-2.0/en
-
-介绍
-
-Retrofit由于其相比于其他http开源库具有更加简单和出色的性能，从而成为Android端最流行的Http客户端库之一。
+介绍Retrofit由于其相比于其他http开源库具有更加简单和出色的性能，从而成为Android端最流行的Http客户端库之一。
 存在的缺点是在1.X版本上没有取消正在进行中的事务的方法，如果你想做这个操作必须手动在其他线程中杀死他，所以很难实现。
-Square公司多年之前就承诺">
+Square公司多年之前就承诺Ret">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -251,23 +242,14 @@ Square公司多年之前就承诺">
 
       
         <span itemprop="articleBody"><p><strong>翻译原文</strong>:<a href="http://inthecheesefactory.com/blog/retrofit-2.0/en" target="_blank" rel="external">http://inthecheesefactory.com/blog/retrofit-2.0/en</a></p>
-<blockquote>
-<p>介绍</p>
-</blockquote>
-<p>Retrofit由于其相比于其他http开源库具有更加简单和出色的性能，从而成为Android端最流行的Http客户端库之一。</p>
+<h3 id="介绍">介绍</h3><p>Retrofit由于其相比于其他http开源库具有更加简单和出色的性能，从而成为Android端最流行的Http客户端库之一。</p>
 <p>存在的缺点是在1.X版本上没有取消正在进行中的事务的方法，如果你想做这个操作必须手动在其他线程中杀死他，所以很难实现。</p>
 <p>Square公司多年之前就承诺Retrofit 2.0很快就可以使用了，但是多年过去了，仍然没有任何更新的消息。</p>
 <p>直到上周，Retrofit 2.0从候补阶段变成了Beta 1，而且向每个人公布了，自从尝试了之后，我不得不说Retrofit 2.0有很多令我印象深刻的地方，有很多方法的变化，我将在这篇文章中描述那些改变的东西，让我们开始吧。</p>
-<blockquote>
-<p>还是之前的包名，只是换了新的版本号</p>
-</blockquote>
-<p>如果你想在你的项目中引入Retrofit 2.0，添加下面这行代码在你的<strong>build.gradle</strong>文件中的<strong>dependencies</strong>节点</p>
+<h3 id="还是之前的包名，只是换了新的版本号">还是之前的包名，只是换了新的版本号</h3><p>如果你想在你的项目中引入Retrofit 2.0，添加下面这行代码在你的<strong>build.gradle</strong>文件中的<strong>dependencies</strong>节点</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile &#39;com.squareup.retrofit:retrofit:2.0.0-beta1&#39;</span><br></pre></td></tr></table></figure>
 <p>同步你的gradle文件然后你就可以使用Retrofit 2.0</p>
-<blockquote>
-<p>新的服务声明方式，没有同步和异步之分</p>
-</blockquote>
-<p>关于在Retrofit 1.9中生命服务借口，如果你想声明一个同步的方法，你要像下面这样声明：</p>
+<h3 id="新的服务声明方式，没有同步和异步之分">新的服务声明方式，没有同步和异步之分</h3><p>关于在Retrofit 1.9中生命服务借口，如果你想声明一个同步的方法，你要像下面这样声明：</p>
 <pre><code><span class="comment">/* Synchronous in Retrofit 1.9 */</span>
 
 <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">APIService</span> </span>{
@@ -312,16 +294,10 @@ Repo repo = <span class="operator"><span class="keyword">call</span>.excute();</
 });</span>
 </code></pre><p>上面的代码将会在后台线程创建ygie请求用来从响应的<strong>response.body()</strong>方法中获取请求结果。但是请注意<strong>onResponse</strong>和<strong>onFailure</strong>方法将在主线程中调用。</p>
 <p>所以我建议你使用<strong>enqueue</strong>，他很好的适用Android的行为。</p>
-<blockquote>
-<p>取消正在进行中的请求</p>
-</blockquote>
-<p>服务模式变成Call的原因是正在进行中的请求事务可以被取消，只用简单的使用<strong>call.cancel()</strong>就可以了。</p>
+<h3 id="取消正在进行中的请求">取消正在进行中的请求</h3><p>服务模式变成Call的原因是正在进行中的请求事务可以被取消，只用简单的使用<strong>call.cancel()</strong>就可以了。</p>
 <pre><code><span class="operator"><span class="keyword">call</span>.<span class="keyword">cancel</span>();</span>
 </code></pre><p>调用这个方法之后，事务立马就可以被取消了，是不是很简单。</p>
-<blockquote>
-<p>新的服务的创建，转换器已经被Retrofit排除在外了</p>
-</blockquote>
-<p>在Retrofit 1.9中，GsonConverter被包含在了Retrofit包中，当RestAdapter一创建的时候就可以自动初始化，所以，如果是json的结果可以自动被转换成我们定义的数据访问对象。</p>
+<h3 id="新的服务的创建，转换器已经被Retrofit排除在外了">新的服务的创建，转换器已经被Retrofit排除在外了</h3><p>在Retrofit 1.9中，GsonConverter被包含在了Retrofit包中，当RestAdapter一创建的时候就可以自动初始化，所以，如果是json的结果可以自动被转换成我们定义的数据访问对象。</p>
 <p>但是在Retrofit 2.0中，转换器将不在包含在Retrofit包中，所以需要手动的插入一个转换器在Retrofit中，否则只能接受String结果，所以， Retrofit 2.0不再依赖Gson。</p>
 <p>如果你想将接收到的结果转换成数据访问对象，你必须添加Gson引用和创建一个Gson转换器</p>
 <pre><code><span class="keyword">compile</span> <span class="string">'com.squareup.retrofit:converter-gson:2.0.0-beta1'</span>
@@ -340,10 +316,7 @@ Wire: com<span class="class">.squareup</span><span class="class">.retrofit</span
 Simple XML: com<span class="class">.squareup</span><span class="class">.retrofit</span>:converter-simplexml
 </code></pre><p>你也可以通过实现<strong>Converter.Factory</strong>接口来创建自己的转换器。</p>
 <p>我比较赞成这种新的模式，因为让Retrofit对于要做的事情看起来更加清晰。</p>
-<blockquote>
-<p>自定义Gson对象</p>
-</blockquote>
-<p>如果你需要在json中进行一些格式化，比如，日期格式化，你可以通过<strong>GsonconverterFactory.create()</strong>创建一个Gson对象：</p>
+<h3 id="自定义Gson对象">自定义Gson对象</h3><p>如果你需要在json中进行一些格式化，比如，日期格式化，你可以通过<strong>GsonconverterFactory.create()</strong>创建一个Gson对象：</p>
 <pre><code><span class="type">Gson</span> gson = new <span class="type">GsonBuiler</span><span class="literal">()</span>
         .setDateFormat(<span class="string">"yyyy-MM-dd'T'HH:mm:ssZ"</span>)
         .create<span class="literal">()</span>;
@@ -352,10 +325,7 @@ Simple XML: com<span class="class">.squareup</span><span class="class">.retrofit
                 .addConverterFactory(<span class="type">GsonConverterFactory</span>.create(gson))
                 .build<span class="literal">()</span>;
 service = retrofit.create(<span class="type">APIService</span>.class);
-</code></pre><blockquote>
-<p>新的Url解决方式，就像<a href=""></a>那样</p>
-</blockquote>
-<p>Retrofit 2.0提出了一个心的URL解决概念，不再是之前简单的将BaseUrl和@Url合并在一起，而是像<a href="..."></a>那样，请先看一下下面的示例:</p>
+</code></pre><h3 id="新的Url解决方式，就像那样">新的Url解决方式，就像<a href=""></a>那样</h3><p>Retrofit 2.0提出了一个心的URL解决概念，不再是之前简单的将BaseUrl和@Url合并在一起，而是像<a href="..."></a>那样，请先看一下下面的示例:</p>
 <p><img src="http://inthecheesefactory.com/uploads/source/blog/retrofit2/apiservice1.png" alt="示例图片"><br><img src="http://inthecheesefactory.com/uploads/source/blog/retrofit2/apiservice2.png" alt="示例图片"><br><img src="http://inthecheesefactory.com/uploads/source/blog/retrofit2/apiservice3.png" alt="示例图片"></p>
 <p>下面是我的一些对于Retrofit 2.0 URL声明模式的建议：</p>
 <pre><code>Base URL：永远用<span class="keyword">*</span><span class="keyword">*</span>/<span class="keyword">*</span><span class="keyword">*</span>结尾
@@ -383,29 +353,17 @@ service = retrofit.create(<span class="type">APIService</span>.class);
 }
 </code></pre><p>在这个示例中BaseUrl将会被忽略。</p>
 <p>和之前的版本相比，你将会看到一个主要的改变，如果你想将自己的项目中的改成Retrofit 2.0，不要忘记修改这些URL部分的代码。</p>
-<blockquote>
-<p>OkHttp现在是必须的</p>
-</blockquote>
-<p>在Retrofit 1.9上，OkHttp是可选的，如果你想使用OKHttp作为网络连接接口的话，你必须手动的把OKHttp的引用添加进你的项目。</p>
+<h3 id="OkHttp现在是必须的">OkHttp现在是必须的</h3><p>在Retrofit 1.9上，OkHttp是可选的，如果你想使用OKHttp作为网络连接接口的话，你必须手动的把OKHttp的引用添加进你的项目。</p>
 <p>但是在Retrofit 2.0上，OKHttp是必须的，而且会自动引入你的项目中。在Retrofit 2.0上，OkHttp是会自动作为Http连接接口使用的。</p>
-<blockquote>
-<p>onResponse方法仍然会被调用尽管Response存在一些问题</p>
-</blockquote>
-<p>在Retrofit 1.9上，如果你获取到的响应不能被转换成所定义的对象的话。将会调用failure方法，但是在Retrofit 2.0，不管获取到的响应信息能否转换成定义的类型，都会调用onResponse方法，但是当响应信息不能转换的时候，<strong>response.body()</strong>将会返回null，所以不要忘记处理。</p>
+<h3 id="onResponse方法仍然会被调用尽管Response存在一些问题">onResponse方法仍然会被调用尽管Response存在一些问题</h3><p>在Retrofit 1.9上，如果你获取到的响应不能被转换成所定义的对象的话。将会调用failure方法，但是在Retrofit 2.0，不管获取到的响应信息能否转换成定义的类型，都会调用onResponse方法，但是当响应信息不能转换的时候，<strong>response.body()</strong>将会返回null，所以不要忘记处理。</p>
 <p>如果响应中存在任何的问题，比如：404，<strong>onResponse</strong>都会被调用，所以你可以通过<strong>response.errorBody().string()</strong>中获取错误信息。</p>
 <p><img src="http://inthecheesefactory.com/uploads/source/blog/retrofit2/response.jpg" alt="错误信息示例"></p>
 <p>Response/Failure的逻辑跟Retrofit 1.9有很大的不同，所以如果你决定切换到Retrofit 2.0的时候一定要小心处理这些逻辑。</p>
-<blockquote>
-<p>没有网络连接权限引起的SecurityException</p>
-</blockquote>
-<p>在Retrofit 1.9上，如果你忘记在<strong>AndroidManifest.xml</strong>中添加网络权限的话，异步的请求将会直接调用<strong>failure</strong>方法，并且会提示没有权限的错误信息，不会有其他的异常抛出。</p>
+<h3 id="没有网络连接权限引起的SecurityException">没有网络连接权限引起的SecurityException</h3><p>在Retrofit 1.9上，如果你忘记在<strong>AndroidManifest.xml</strong>中添加网络权限的话，异步的请求将会直接调用<strong>failure</strong>方法，并且会提示没有权限的错误信息，不会有其他的异常抛出。</p>
 <p>但是在Retrofit 2.0上，当你调用<strong>call.enqueue</strong>或者<strong>call.execute</strong>,然后就会直接抛出<strong>SecurityException</strong>异常，如果你不用try-catch解决的话，程序会直接终止。</p>
 <p><img src="http://inthecheesefactory.com/uploads/source/blog/retrofit2/sec.png" alt="错误信息提示"></p>
 <p>这个行为就如同你手动的调用<strong>HttpURLConnection</strong>,这只是个小问题，只要你将权限添加进<strong>AndroidMKanifest.xml</strong>文件中就行了。</p>
-<blockquote>
-<p>使用OKHttp的拦截器</p>
-</blockquote>
-<p>在Retrofit 1.9上你可以使用请求拦截器去拦截一个请求，但是自从Http连接层移到OKHttp上之后，在2.0中拦截器已经被移除掉了。</p>
+<h3 id="使用OKHttp的拦截器">使用OKHttp的拦截器</h3><p>在Retrofit 1.9上你可以使用请求拦截器去拦截一个请求，但是自从Http连接层移到OKHttp上之后，在2.0中拦截器已经被移除掉了。</p>
 <p>所以我们现在必须使用OKHttp的拦截器，首先你需要创建一个带有拦截器的OKHttpClient对象，如下：</p>
 <pre><code>OkHttpClient client = <span class="keyword">new</span> OkHttpClient();
 client.interceptors.add(<span class="keyword">new</span> Interceptor(){
@@ -421,10 +379,7 @@ client.interceptors.add(<span class="keyword">new</span> Interceptor(){
             .<span class="keyword">client</span>(<span class="keyword">client</span>)
             .build();
 </code></pre><p>如果想了解更多关于OKHttp拦截器的话，请看<a href="https://github.com/square/okhttp/wiki/Interceptors" target="_blank" rel="external">OKHttp interceptors</a></p>
-<blockquote>
-<p>在CallAdapter中集成RxJava</p>
-</blockquote>
-<p>相比声明一个<strong>Call<t></t></strong>接口，。我们更愿意以我们自己的方式声明，比如：<strong>MyCall<t></t></strong>,这就是Retrofit 2.0的<strong>CallAdapter</strong>机制。</p>
+<h3 id="在CallAdapter中集成RxJava">在CallAdapter中集成RxJava</h3><p>相比声明一个<strong>Call<t></t></strong>接口，。我们更愿意以我们自己的方式声明，比如：<strong>MyCall<t></t></strong>,这就是Retrofit 2.0的<strong>CallAdapter</strong>机制。</p>
 <p>Retrofit团队提供了一些可用的CallAdapter模块，最流行的一个莫过于集成RxJava的CallAdapter，返回类型是<strong>Observable<t></t></strong>,如果想使用这个，下面的两个模块必须引入项目中：</p>
 <pre><code><span class="keyword">compile</span> <span class="string">'com.squareup.retrofit:adapter-rxjava:2.0.0-beta1'</span>
 <span class="keyword">compile</span> <span class="string">'io.reactivex:rxandroid:1.0.1'</span>
@@ -465,10 +420,7 @@ observable.observeOn(AndroidSchedulers.mainThread())
                 .show();
         }
     });
-</code></pre><blockquote>
-<p>结论</p>
-</blockquote>
-<p>还有一些其他的改变，你可以去看官方的<a href="https://github.com/square/retrofit/blob/master/CHANGELOG.md" target="_blank" rel="external">更新文档</a>，我相信我已经把主要的更改在这篇文章中描述清楚了。</p>
+</code></pre><h3 id="结论">结论</h3><p>还有一些其他的改变，你可以去看官方的<a href="https://github.com/square/retrofit/blob/master/CHANGELOG.md" target="_blank" rel="external">更新文档</a>，我相信我已经把主要的更改在这篇文章中描述清楚了。</p>
 <p>你也许会好奇什么时候可以把项目替换成Retrofit 2.0，因为他还处于测试阶段，而且你也可能像我一样是一个试用者，Retrofit 2.0没有过bug的工作良好也只是基于我的试验。</p>
 <p>请注意Retrofit 1.9的官方文档已经从Square的github网站上移除了，我建议就从现在开始学习Retrofit 2.0，并且考虑在不就的将来替换成这个新的版本。</p>
 </span>
@@ -623,7 +575,7 @@ observable.observeOn(AndroidSchedulers.mainThread())
           <div class="post-toc">
             
             
-              <p class="post-toc-empty">此文章未包含目錄</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#还是之前的包名，只是换了新的版本号"><span class="nav-number">2.</span> <span class="nav-text">还是之前的包名，只是换了新的版本号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新的服务声明方式，没有同步和异步之分"><span class="nav-number">3.</span> <span class="nav-text">新的服务声明方式，没有同步和异步之分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#取消正在进行中的请求"><span class="nav-number">4.</span> <span class="nav-text">取消正在进行中的请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新的服务的创建，转换器已经被Retrofit排除在外了"><span class="nav-number">5.</span> <span class="nav-text">新的服务的创建，转换器已经被Retrofit排除在外了</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义Gson对象"><span class="nav-number">6.</span> <span class="nav-text">自定义Gson对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新的Url解决方式，就像那样"><span class="nav-number">7.</span> <span class="nav-text">新的Url解决方式，就像那样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OkHttp现在是必须的"><span class="nav-number">8.</span> <span class="nav-text">OkHttp现在是必须的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#onResponse方法仍然会被调用尽管Response存在一些问题"><span class="nav-number">9.</span> <span class="nav-text">onResponse方法仍然会被调用尽管Response存在一些问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#没有网络连接权限引起的SecurityException"><span class="nav-number">10.</span> <span class="nav-text">没有网络连接权限引起的SecurityException</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用OKHttp的拦截器"><span class="nav-number">11.</span> <span class="nav-text">使用OKHttp的拦截器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在CallAdapter中集成RxJava"><span class="nav-number">12.</span> <span class="nav-text">在CallAdapter中集成RxJava</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结论"><span class="nav-number">13.</span> <span class="nav-text">结论</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
