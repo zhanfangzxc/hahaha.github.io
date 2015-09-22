@@ -9,7 +9,7 @@ tags:
 
 **翻译原文**：[https://blog.stylingandroid.com/data-binding-part-1/](https://blog.stylingandroid.com/data-binding-part-1/)
 **相关源码**：[https://github.com/StylingAndroid/DataBinding/tree/Part1](https://github.com/StylingAndroid/DataBinding/tree/Part1)
-> 前言
+### 前言
 
 谷歌2015年I/O大会中揭晓了许多开源库和工具，其中一个全新的开源库就是***数据绑定***，在这个系列的文章中我们将一起探索一下这个开源库所提供的强大的功能。
 

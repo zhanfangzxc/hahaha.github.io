@@ -9,7 +9,7 @@ tags:
 ---
 
 **翻译原文**:[http://inthecheesefactory.com/blog/retrofit-2.0/en](http://inthecheesefactory.com/blog/retrofit-2.0/en)
-> 介绍
+### 介绍
 
 Retrofit由于其相比于其他http开源库具有更加简单和出色的性能，从而成为Android端最流行的Http客户端库之一。
 
@@ -19,7 +19,7 @@ Square公司多年之前就承诺Retrofit 2.0很快就可以使用了，但是�
 
 直到上周，Retrofit 2.0从候补阶段变成了Beta 1，而且向每个人公布了，自从尝试了之后，我不得不说Retrofit 2.0有很多令我印象深刻的地方，有很多方法的变化，我将在这篇文章中描述那些改变的东西，让我们开始吧。
 
-> 还是之前的包名，只是换了新的版本号
+### 还是之前的包名，只是换了新的版本号
 
 如果你想在你的项目中引入Retrofit 2.0，添加下面这行代码在你的**build.gradle**文件中的**dependencies**节点
 
@@ -28,7 +28,7 @@ compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
 ```
 同步你的gradle文件然后你就可以使用Retrofit 2.0
 
-> 新的服务声明方式，没有同步和异步之分
+### 新的服务声明方式，没有同步和异步之分
 
 关于在Retrofit 1.9中生命服务借口，如果你想声明一个同步的方法，你要像下面这样声明：
 
@@ -94,7 +94,7 @@ compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
 
 所以我建议你使用**enqueue**，他很好的适用Android的行为。
 
-> 取消正在进行中的请求
+### 取消正在进行中的请求
 
 服务模式变成Call的原因是正在进行中的请求事务可以被取消，只用简单的使用**call.cancel()**就可以了。
 
@@ -103,7 +103,7 @@ compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
 
 调用这个方法之后，事务立马就可以被取消了，是不是很简单。
 
-> 新的服务的创建，转换器已经被Retrofit排除在外了
+### 新的服务的创建，转换器已经被Retrofit排除在外了
 
 在Retrofit 1.9中，GsonConverter被包含在了Retrofit包中，当RestAdapter一创建的时候就可以自动初始化，所以，如果是json的结果可以自动被转换成我们定义的数据访问对象。
 
@@ -138,7 +138,7 @@ compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
 
 我比较赞成这种新的模式，因为让Retrofit对于要做的事情看起来更加清晰。
 
-> 自定义Gson对象
+### 自定义Gson对象
 
 如果你需要在json中进行一些格式化，比如，日期格式化，你可以通过**GsonconverterFactory.create()**创建一个Gson对象：
 
@@ -152,7 +152,7 @@ compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
 					.build();
 	service = retrofit.create(APIService.class);
 
-> 新的Url解决方式，就像<a href></a>那样
+### 新的Url解决方式，就像<a href></a>那样
 
 Retrofit 2.0提出了一个心的URL解决概念，不再是之前简单的将BaseUrl和@Url合并在一起，而是像<a href="..."></a>那样，请先看一下下面的示例:
 
@@ -197,13 +197,13 @@ Retrofit 2.0提出了一个心的URL解决概念，不再是之前简单的将Ba
 
 和之前的版本相比，你将会看到一个主要的改变，如果你想将自己的项目中的改成Retrofit 2.0，不要忘记修改这些URL部分的代码。
 
-> OkHttp现在是必须的
+### OkHttp现在是必须的
 
 在Retrofit 1.9上，OkHttp是可选的，如果你想使用OKHttp作为网络连接接口的话，你必须手动的把OKHttp的引用添加进你的项目。
 
 但是在Retrofit 2.0上，OKHttp是必须的，而且会自动引入你的项目中。在Retrofit 2.0上，OkHttp是会自动作为Http连接接口使用的。
 
-> onResponse方法仍然会被调用尽管Response存在一些问题
+### onResponse方法仍然会被调用尽管Response存在一些问题
 
 在Retrofit 1.9上，如果你获取到的响应不能被转换成所定义的对象的话。将会调用failure方法，但是在Retrofit 2.0，不管获取到的响应信息能否转换成定义的类型，都会调用onResponse方法，但是当响应信息不能转换的时候，**response.body()**将会返回null，所以不要忘记处理。
 
@@ -213,7 +213,7 @@ Retrofit 2.0提出了一个心的URL解决概念，不再是之前简单的将Ba
 
 Response/Failure的逻辑跟Retrofit 1.9有很大的不同，所以如果你决定切换到Retrofit 2.0的时候一定要小心处理这些逻辑。
 
-> 没有网络连接权限引起的SecurityException
+### 没有网络连接权限引起的SecurityException
 
 在Retrofit 1.9上，如果你忘记在**AndroidManifest.xml**中添加网络权限的话，异步的请求将会直接调用**failure**方法，并且会提示没有权限的错误信息，不会有其他的异常抛出。
 
@@ -223,7 +223,7 @@ Response/Failure的逻辑跟Retrofit 1.9有很大的不同，所以如果你决�
 
 这个行为就如同你手动的调用**HttpURLConnection**,这只是个小问题，只要你将权限添加进**AndroidMKanifest.xml**文件中就行了。
 
-> 使用OKHttp的拦截器
+### 使用OKHttp的拦截器
 
 在Retrofit 1.9上你可以使用请求拦截器去拦截一个请求，但是自从Http连接层移到OKHttp上之后，在2.0中拦截器已经被移除掉了。
 
@@ -249,7 +249,7 @@ Response/Failure的逻辑跟Retrofit 1.9有很大的不同，所以如果你决�
 
 如果想了解更多关于OKHttp拦截器的话，请看[OKHttp interceptors](https://github.com/square/okhttp/wiki/Interceptors)
 
-> 在CallAdapter中集成RxJava
+### 在CallAdapter中集成RxJava
 
 相比声明一个**Call<T>**接口，。我们更愿意以我们自己的方式声明，比如：**MyCall<T>**,这就是Retrofit 2.0的**CallAdapter**机制。
 
@@ -314,7 +314,7 @@ public interface APIService{
 	    });
 
 
-> 结论
+### 结论
 
 还有一些其他的改变，你可以去看官方的[更新文档](https://github.com/square/retrofit/blob/master/CHANGELOG.md)，我相信我已经把主要的更改在这篇文章中描述清楚了。
 
