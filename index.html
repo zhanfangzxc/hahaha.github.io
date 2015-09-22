@@ -178,6 +178,258 @@
           
           
             
+              <a class="post-title-link" href="/2015/09/22/Fragment介绍/" itemprop="url">
+                Fragment介绍
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2015-09-22T10:28:32+08:00" content="2015-09-22">
+            2015-09-22
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分類於
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Fragment/" itemprop="url" rel="index">
+                  <span itemprop="name">Fragment</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/09/22/Fragment介绍/#comments" itemprop="discussionUrl">
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/22/Fragment介绍/" itemprop="commentsCount"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p><strong>原文</strong>:<a href="http://developer.android.com/intl/zh-cn/guide/components/fragments.html#CommunicatingWithActivity" target="_blank" rel="external">http://developer.android.com/intl/zh-cn/guide/components/fragments.html#CommunicatingWithActivity</a></p>
+<blockquote>
+<p>Fragment介绍</p>
+</blockquote>
+<p><strong>Fragment</strong>是可以在Activity中替换的用户行为和用户接口，多个Fragment之间的相互作用是通过<strong>FragmentManager</strong>，而FragmentManager是可以通过<strong>Activity.getFragmentManager()</strong>和<strong>Fragment.getFragmentManager()</strong>.</p>
+<p><strong>Fragment</strong>拥有自己的生命周期，但是他的生命周期同时又依赖Activity的生命周期，Fragment和Activity是密切相关的，不能单独使用，如果Activity的状态是stopped，那么这个Activity中的Fragment也将处于stopped的状态，当所有的Activity被回收的时候，所有的fragments也将会被回收。</p>
+<blockquote>
+<p>Fragment的生命周期</p>
+</blockquote>
+<p><img src="http://developer.android.com/images/fragment_lifecycle.png" alt="Fragment生命周期"></p>
+<ul>
+<li>onAttach():当Fragment和Activity建立联系的时候调用</li>
+<li>onCreate(Bundle):初始化创建Fragment的时候调用</li>
+<li>onCreateView(LayoutInflater,ViewGroup,Bundle):创建并返回与之关联的view视图</li>
+<li>onActivityCreated(Bundle):告诉Fragment，Activity已经完成自己的<strong>Activity.onCreate()</strong>方法</li>
+<li>onViewStateRestored(Bundle):告诉Fragment，保存的所有view视图中的状态都已经恢复了</li>
+<li>onStart():使Fragment对用户可见</li>
+<li>onResume():使Fragment开始与用户交互</li>
+</ul>
+<p>当这个Fragment不再使用的时候，将会回掉如下方法:</p>
+<ul>
+<li>onPause():Fragment不再与用户交互，因为activity的状态为paused或者Fragment操作被修改了</li>
+<li>onStop():fragment对用户不可见，因为activity的状态为stopped或者activity中的Fragment被修改了</li>
+<li>onDestoryView():允许Fragment清理与视图相关联的资源</li>
+<li>onDestory():最后清理Fragment的状态</li>
+<li>onDetach():当Fragment与activity失去关联的时候调用</li>
+</ul>
+<blockquote>
+<p>添加一个用户界面</p>
+</blockquote>
+<p>Fragment经常被用作Activity的一部分，为Fragment提供一个布局，需要实现<strong>onCreate()</strong>方法，当Fragment绘制布局的时候由Android系统调用,你实现这个方法的时候必须返回一个<strong>View</strong>。</p>
+<p>注意:如果你的Fragment是<strong>ListFragment</strong>的子类，<strong>onCreateView</strong>方法的默认实现方式会返回一个<strong>ListView</strong>，所以你不需要再去实现这个方法。</p>
+<pre><code>public static <span class="class"><span class="keyword">class</span> <span class="title">ExampleFragment</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Fragment</span>{</span>
+    <span class="annotation">@Override</span>
+    public <span class="type">View</span> onCreateView(<span class="type">LayoutInflater</span> inflater,<span class="type">ViewGroup</span> container,<span class="type">Bundle</span> savedInstanceState){
+        <span class="keyword">return</span> inflater.inflate(<span class="type">R</span>.layout.example_fragment,container,<span class="literal">false</span>);
+    }
+}
+
+<span class="comment">//这里缺少对改方法的解释</span>
+</code></pre><h3 id="向Activity添加一个Fragment">向Activity添加一个Fragment</h3><p>Fragment经常被作为activity的一部分添加进去，这里提供两种添加Fragment的方法：</p>
+<ul>
+<li><p>在Activity布局文件中声明Fragment</p>
+<pre><code>&lt;?xml <span class="property">version</span>=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>&gt;
+&lt;LinearLayout xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span>
+    android:orientation=<span class="string">"horizontal"</span>
+    android:layout_width=<span class="string">"match_parent"</span>
+    android:layout_height=<span class="string">"match_parent"</span>&gt;
+
+    &lt;fragment android:<span class="property">name</span>=<span class="string">"com.example.news.ArticleListFragment"</span>
+            android:<span class="property">id</span>=<span class="string">"@+id/list"</span>
+            android:layout_weight=<span class="string">"1"</span>
+            android:layout_width=<span class="string">"0dp"</span>
+            android:layout_height=<span class="string">"match_parent"</span> /&gt;
+    &lt;fragment android:<span class="property">name</span>=<span class="string">"com.example.news.ArticleReaderFragment"</span>
+            android:<span class="property">id</span>=<span class="string">"@+id/viewer"</span>
+            android:layout_weight=<span class="string">"2"</span>
+            android:layout_width=<span class="string">"0dp"</span>
+            android:layout_height=<span class="string">"match_parent"</span> /&gt;
+&lt;/LinearLayout&gt;
+</code></pre></li>
+</ul>
+<p>每个Fragment需要一个唯一的标识符用来当activity重启的时候恢复Fragment，你可以使用他来执行捕获Fragment来执行事务，比如说移除它，这里有三种给Fragment提供id的方法：</p>
+<ul>
+<li>提供一个<strong>android:id</strong>作为Fragment的唯一标识符</li>
+<li>提供一个<strong>android:tag</strong>作为一个唯一标识符</li>
+<li>如果同时提供两者的话，系统会优先使用id</li>
+</ul>
+<h3 id="或者，向一个已经存在的ViewGroup中自动添加一个Fragment">或者，向一个已经存在的ViewGroup中自动添加一个Fragment</h3><p>在acticity运行的任何时候，都可以向activity布局中添加Fragment，具体代码：</p>
+<pre><code>FragmentManager <span class="keyword">fragment</span>Manager = getFragmentManager();
+FragmentTransaction <span class="keyword">fragment</span>Transaction = <span class="keyword">fragment</span>Manager.beginTransaction();
+ExampleFragment <span class="keyword">fragment</span> = new ExampleFragment();
+<span class="keyword">fragment</span>Transaction.add(R.id.fragment_container,<span class="keyword">fragment</span>);
+<span class="keyword">fragment</span>Transaction.commit();
+</code></pre><p><strong>add()</strong>方法的第一个参数是一个将会被Fragment替换的ViewGroup，是一个资源id，第二个参数是将要添加的Fragment。</p>
+<p>如果你想要通过<strong>FragmentTransaction</strong>改变状态，你需要调用<strong>commit</strong>方法来使改变起作用。</p>
+<blockquote>
+<p>管理Fragments</p>
+</blockquote>
+<p>在你的activity中管理Fragment需要使用<strong>FragmentManager</strong>，在activity中调用<strong>getFragmentManager()</strong>来获得<strong>FragmentManager</strong>。</p>
+<p>你可以使用<strong>FragmentManager</strong>做以下事情:</p>
+<ul>
+<li>获取在activity中存在的Fragment，使用<strong>findFragmentById()</strong>或者<strong>findFragmentByTag()</strong></li>
+<li>从回退栈中弹出Fragment。使用<strong>popBackStack()</strong></li>
+<li>当回退栈改变的时候，注册一个监听器，使用<strong>addOnBackStackChangedListener</strong></li>
+</ul>
+<p>如果想了解更多关于这些方法和其他方法的信息，请参考<strong>FragmentManager</strong>类的文档。</p>
+<p>还可以使用<strong>FragmentManager</strong>开启一个事务，然后执行事务，比如添加和移除Fragment。</p>
+<blockquote>
+<p>执行Fragment事务</p>
+</blockquote>
+<p>使用Fragment最大的特色就是可以在activity中对他们执行添加、移除、替换以及其他的行为，你还可以保存事务到一个由acticvity管理的后退栈中。</p>
+<p>你可以从<strong>FragmentManager</strong>中获取一个<strong>FragmentTransaction</strong>事务</p>
+<pre><code>FragmentManager <span class="keyword">fragment</span>Manager = getFragmentManager();
+FragmentTransaction <span class="keyword">fragment</span>Transaction = <span class="keyword">fragment</span>Manager.beginTransaction();
+</code></pre><p>每个事务是你想同时执行的一组改变，你可以使用<strong>add()</strong>，<strong>remove()</strong>，<strong>replace()</strong>方法，然后把这些事务应用到activity上，需要使用<strong>commit</strong>方法。</p>
+<p>在你执行<strong>commit</strong>方法之前，你想要调用<strong>addToBackStack()</strong>把Fragment事务添加到一个后退栈中，这个后退栈是由activity管理的，允许用户按返回键的时候返回前一个Fragment的状态。</p>
+<pre><code>Fragment newFragment = new ExampleFragment();
+FragmentTransaction <span class="keyword">transaction</span> = getFragmentManager().beginTransaction();
+
+<span class="keyword">transaction</span>.replace(R.<span class="property">id</span>.fragment_container,newFragment);
+<span class="keyword">transaction</span>.addToBackStack(null);
+<span class="keyword">transaction</span>.commit();
+</code></pre><p>如果你向事务中添加了多个改变，然后调用<strong>addToBackStack()</strong>中的时候，在你调用commit方法之前，所有的改变都会被当成一个单独的事务添加到回退栈中，如果你点击了后退按钮，会把那些所有的改变全都回转过来。</p>
+<p>你向<strong>FragmentTransaction</strong>中添加变化的时候，需要注意的是：</p>
+<ul>
+<li>你必须在最后调用<strong>commit()</strong></li>
+<li>当你添加了多个fragments向同一个container中时，你添加的顺序也就是你出现的顺序。</li>
+</ul>
+<p>当执行一个移除fragment的事务的时候，如果没有调用<strong>addToBackStack()</strong>方法，那么Fragment将会被回收，当用户操作返回按钮的时候，将不会出现被移除的Fragment；当调用<strong>addToBackStack()</strong>方法的时候，Fragment并没有被移除，而是stopped</p>
+<blockquote>
+<p>如果在Fragment事务中想执行一个过度动画雨啊的话，需要在调用<strong>commit()</strong>方法之前调用<strong>setTransition()</strong>。</p>
+</blockquote>
+<p>调用<strong>Commit()</strong>方法并不能理解执行事务，相反的，这个事务实在activity的ui线程(也称主线程)执行的，然而你可以从ui线程调用<strong>executePendingTransaction()</strong>来利己执行提交事务，当然没必要这样做，除非别的线程的工作依赖这个事务的提交。</p>
+<blockquote>
+<p>和Activity交互</p>
+</blockquote>
+<p>Fragment可以通过<strong>getActivity()</strong>来获取Activity的实例，而且可以轻松执行任务，比如说查找activity布局中的view。</p>
+<pre><code>View listView = getActivity().findViewById(R.<span class="property">id</span>.<span class="type">list</span>);
+</code></pre><p>在activity中也可以通过<strong>FragmentManager</strong>中的一些方法来获取Fragment的实例，比如<strong>findFragmentById()</strong>或者<strong>findFragmentByTag()</strong></p>
+<pre><code>ExampleFragment fragment = (ExampleFragment)getFragmentManager().findFragmentById(R.<span class="property">id</span>.example_fragment);
+</code></pre><blockquote>
+<p>向Activity创建一个事件回调</p>
+</blockquote>
+<p>有时候，Fragment需要向Activity分享一个事件，一个很好的做法就是在Fragment中定义一个回调接口然后需要在activity中实现它，当一个activity通过这个接口接收到一个回掉的时候，可以向其它Fragment分享信息。</p>
+<p>当一个新闻app在一个activity中存在两个Fragment，一个用来显示新闻列表，一个用来显示文章，所以FragmentA必须告诉FragmentB哪一篇文章被选择了，所以在这个列表中，新闻列表Fragment必须声明一个<strong>OnArticleSelectedListener</strong>接口:</p>
+<pre><code>public static <span class="class"><span class="keyword">class</span> <span class="title">FragmentA</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">ListFragment</span>{</span>
+    public interface <span class="type">OnArticleSelectedListener</span>{
+        public void onArticleSelected(<span class="type">Uri</span> articleUri);
+    }
+}
+</code></pre><p>然后在activity中需要实现<strong>OnArticleSelectedListener</strong>接口，并且重写<strong>onArticleSelected()</strong>，将从FragmentA中得到的事件通知FragmentB。为了确保activity实现了这个接口，FragmentA的<strong>onAttach()</strong>方法中必须初始化一个<strong>OnArticleSelectedListener</strong>由activity转换而来的实例。</p>
+<pre><code>public static <span class="class"><span class="keyword">class</span> <span class="title">FragmentA</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">ListFragment</span>{</span>
+    <span class="type">OnArticleSelectedListener</span> mListener;
+
+    <span class="annotation">@Override</span>
+    puiblic void onAttach(<span class="type">Activity</span> activity){
+        <span class="keyword">super</span>.onAttach(activity);
+        <span class="keyword">try</span>{
+            mListener = (<span class="type">OnArticleSelectedListener</span>)activity;
+        }<span class="keyword">catch</span> (<span class="type">ClassCastException</span> e) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">ClassCastException</span>(activity.toString() + <span class="string">" must implement OnArticleSelectedListener"</span>);
+        }
+    }
+}
+</code></pre><p>接下来就是传递事件的逻辑</p>
+<pre><code>public static <span class="class"><span class="keyword">class</span> <span class="title">FragmentA</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">ListFragment</span> {</span>
+    <span class="type">OnArticleSelectedListener</span> mListener;
+    ...
+    <span class="annotation">@Override</span>
+    public void onListItemClick(<span class="type">ListView</span> l, <span class="type">View</span> v, int position, long id) {
+        <span class="comment">// Append the clicked item's row ID with the content provider Uri</span>
+        <span class="type">Uri</span> noteUri = <span class="type">ContentUris</span>.withAppendedId(<span class="type">ArticleColumns</span>.<span class="type">CONTENT_URI</span>, id);
+        <span class="comment">// Send the event and Uri to the host activity</span>
+        mListener.onArticleSelected(noteUri);
+    }
+    ...
+}
+</code></pre><blockquote>
+<p>向Action Bar中添加条目</p>
+</blockquote>
+<p>Fragment可以通过实现<strong>onCreateOptionMenu()</strong>方法来向activity的选项菜单中添加菜单项。为了使这个方法接收到调用，所以你必须在<strong>onCreate</strong>方法中调用<strong>setHasOptionsMenu</strong>,表明Fragment将要添加选项到选项菜单中。</p>
+<blockquote>
+<p>管理Fragment的生命周期</p>
+</blockquote>
+<p>管理Fragment和管理activity的生命周期很像</p>
+<p><img src="http://developer.android.com/images/activity_fragment_lifecycle.png" alt="Fragment和Activity的生命周期对比"></p>
+<p>像activity一样，你可以用<strong>Bundle</strong>来保存一个Fragment的状态，当activity被杀死的时候，你需要保存Fragment的状态，当activity被恢复的时候，可以恢复那些状态，你可以在<strong>onSaveInstanceState()</strong>回调方法中保存Fragment的状态，并且通过<strong>onCreate，onCreateView，onActivityCreated()</strong>方法来恢复之前所保存的状态，更多关于保存状态的信息，请看activities文档。</p>
+<p>有一些不同的是，Fragment和Activity是如何存储进各自的后退栈的，对于Activity来说，当一个Activity状态变为stopped的时候，由系统管理的activities后退栈会将当前回收的activity替换进后退栈，但是对于Fragment来说，只有在提交事务之前调用了<strong>addToBackStack()</strong>方法才能进入由activity管理的后退栈。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2015/09/21/翻译-数据绑定part-2/" itemprop="url">
                 [翻译]数据绑定part 2
               </a>
@@ -1661,21 +1913,21 @@ getActivity<span class="literal">()</span>.shouldShowRequestPermissionRationale<
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-count">10</span>
               <span class="site-state-item-name">文章</span>
             </a>
           </div>
 
           <div class="site-state-item site-state-categories">
             <a href="/categories">
-              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">分類</span>
               </a>
           </div>
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-count">13</span>
               <span class="site-state-item-name">標籤</span>
               </a>
           </div>
