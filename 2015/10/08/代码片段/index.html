@@ -1,0 +1,797 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="既然选择远方，便只顾风雨兼程" />
+
+
+
+  <meta name="keywords" content="Android,code," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ZhaoShanShan’s Blog" type="application/atom+xml" />
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="手机号中自动添加”-“为Edittext添加监听方法
+edittext.addTextChangedListener(new TextWatcher());
+TextWatcher接口如下:
+public interface TextWatcher extends NoCopySpan{
+
+    //在字符串s被，从索引start(包含)的字符开始的count个字符，将被长度为after的新文本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码片段">
+<meta property="og:url" content="http://zhaoshanshan.me/2015/10/08/代码片段/index.html">
+<meta property="og:site_name" content="ZhaoShanShan’s Blog">
+<meta property="og:description" content="手机号中自动添加”-“为Edittext添加监听方法
+edittext.addTextChangedListener(new TextWatcher());
+TextWatcher接口如下:
+public interface TextWatcher extends NoCopySpan{
+
+    //在字符串s被，从索引start(包含)的字符开始的count个字符，将被长度为after的新文本">
+<meta property="og:updated_time" content="2015-10-14T07:55:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="代码片段">
+<meta name="twitter:description" content="手机号中自动添加”-“为Edittext添加监听方法
+edittext.addTextChangedListener(new TextWatcher());
+TextWatcher接口如下:
+public interface TextWatcher extends NoCopySpan{
+
+    //在字符串s被，从索引start(包含)的字符开始的count个字符，将被长度为after的新文本">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'always'
+  };
+</script>
+
+  <title> 代码片段 | ZhaoShanShan’s Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">ZhaoShanShan’s Blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首頁
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分類
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            關於
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            歸檔
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            標籤
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              代码片段
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2015-10-08T13:47:59+08:00" content="2015-10-08">
+            2015-10-08
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分類於
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Android/" itemprop="url" rel="index">
+                  <span itemprop="name">Android</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/10/08/代码片段/#comments" itemprop="discussionUrl">
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/10/08/代码片段/" itemprop="commentsCount"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h3 id="手机号中自动添加”-“">手机号中自动添加”-“</h3><p>为Edittext添加监听方法</p>
+<pre><code>edittext.addTextChangedListener(<span class="keyword">new</span> TextWatcher());
+</code></pre><p>TextWatcher接口如下:</p>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TextWatcher</span> <span class="keyword">extends</span> <span class="title">NoCopySpan</span></span>{
+
+    <span class="comment">//在字符串s被，从索引start(包含)的字符开始的count个字符，将被长度为after的新文本代替。</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">beforeTextChanged</span><span class="params">(CharSequence s,<span class="keyword">int</span> start,<span class="keyword">int</span> count, <span class="keyword">int</span> after)</span></span>;
+
+    <span class="comment">//在字符串s内，从索引start(包含)的字符开始count个字符刚刚替换了长度为before的旧字符。</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTextChanged</span><span class="params">(CharSequence s, <span class="keyword">int</span> start, <span class="keyword">int</span> before, <span class="keyword">int</span> count)</span></span>;
+
+    <span class="comment">//字符串s内容已经发生了变化</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterTextChanged</span><span class="params">(Editable s)</span></span>;
+}
+</code></pre><p>具体操作:</p>
+<pre><code><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTextChanged</span><span class="params">(CharSequence s,<span class="keyword">int</span> start,<span class="keyword">int</span> before, <span class="keyword">int</span> count)</span></span>{
+    <span class="keyword">if</span>(count == <span class="number">1</span>){
+        <span class="keyword">int</span> length = s.toString().length();
+        <span class="keyword">if</span>(length == <span class="number">3</span> || length == <span class="number">8</span>){
+            editText.setText(s + <span class="string">"-"</span>);
+            editText.setSelection(editText.getText().toString().length());
+        }
+    }
+}
+</code></pre><h3 id="Handler的优化">Handler的优化</h3><p>在Android应用启动时，framework会为该应用程序的主线程创建一个Lopper对象，这个Lopper对象包含一个简单的消息队列，并且能够循环处理队列中的消息。主线程的Lopper对象会被碎该应用程序的整个生命周期。</p>
+<p>造成内存泄漏的原因：只要有未处理的消息，那么该消息就会引用Handler，非静态的Handler又会引用外部类，即Activity，导致Activity无法被回收，造成泄漏。</p>
+<p><strong>静态内部类不会持有对外部类的引用</strong></p>
+<p>解决方案：</p>
+<pre><code>public <span class="class"><span class="keyword">class</span> <span class="title">SampleActivity</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Activity</span>{</span>
+
+    <span class="keyword">private</span> static <span class="class"><span class="keyword">class</span> <span class="title">MyHandler</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Handler</span>{</span>
+        <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">WeakReference</span>&lt;<span class="type">SampleActivity</span>&gt; mActivity;
+
+        public <span class="type">MyHandler</span>(<span class="type">SampleActivity</span> activity){
+            mActivity = <span class="keyword">new</span> <span class="type">WeakReference</span>&lt;<span class="type">SampleActivity</span>&gt;(activity);
+        }
+
+        <span class="annotation">@Override</span>
+        public void handleMessage(<span class="type">Message</span> msg){
+            <span class="type">SampleActivity</span> activity = mActivity.get();
+            <span class="keyword">if</span>(activity != <span class="literal">null</span>){
+                <span class="comment">//...</span>
+            }
+        }
+    }
+
+    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">MyHandler</span> mHandler = <span class="keyword">new</span> <span class="type">MyHandler</span>(<span class="keyword">this</span>);
+
+    <span class="keyword">private</span> static <span class="keyword">final</span> <span class="type">Runnable</span> sRunnable = <span class="keyword">new</span> <span class="type">Runnable</span>(){
+        <span class="annotation">@Override</span>
+        public void run(){
+
+        }
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected</span> void onCreate(<span class="type">Bundle</span> savedInstanceState){
+        <span class="keyword">super</span>.onCreate(savedInstanceState);
+
+        mHandler.postDelayed(sRunnable,<span class="number">1000</span>*<span class="number">60</span>*<span class="number">10</span>);
+
+        finish();
+    }
+}
+</code></pre><h3 id="实现对隐式Intent的运行时检查">实现对隐式Intent的运行时检查</h3><p>如果想打开相机或者发送图片等隐式Intent，比如说打开相机， 如果手机中不存在相机的话，那么系统就会抛出<strong>ActivityNotFoundException</strong>,如果不做处理的话，程序就会崩溃。所以具体的解决方案是，在使用隐式Intent的时候，首先进行检查，代码如下：</p>
+<pre><code><span class="type">Intent</span> <span class="type">intent</span> = new <span class="type">Intent</span>(<span class="type">Intent</span>.Action_XXX);
+ComponentName componentName = <span class="type">intent</span>.resolveActivity(getPacakgeManager());
+<span class="keyword">if</span>(componentName <span class="comment">!= null){</span>
+    String className = component.getClassName();
+}
+</code></pre><h3 id="使用NotificationCompat兼容包来处理消息通知">使用NotificationCompat兼容包来处理消息通知</h3><pre><code>NotificationCompat.Builder builder = <span class="keyword">new</span> NotificationCompat.Builder(<span class="keyword">this</span>);
+builder.setSmallIcon(R.drawable.notification_icon);
+<span class="keyword">String</span> <span class="built_in">text</span> = <span class="string">"aaaaa"</span>;
+builder.setContentText(<span class="built_in">text</span>);
+
+<span class="comment">//添加点击效果</span>
+PendingIntent intent = XXX;
+builder.setContentIntent(intent);
+
+<span class="built_in">int</span> <span class="built_in">color</span> = getResources().getColor(R.<span class="built_in">color</span>.black);
+builder.setColor(<span class="built_in">color</span>);
+
+<span class="comment">//设置图片</span>
+Bitmap bitmap = ...;
+builder.setLargeIcon(bitmap);
+
+<span class="comment">//设置样式</span>
+builder.setStyle(<span class="keyword">new</span> NotificationCompat.bigTextStyle(<span class="built_in">text</span>));
+
+PendingIntent intent =...;
+builder.addAction(mew NotificationCompat.Action(R.drawable.icon,<span class="string">"Mute"</span>,intent));
+
+<span class="comment">//设置穿戴设备的样式</span>
+NotificationCompat.WearableExtender wearableExtender = <span class="keyword">new</span> NotificationCompat.WearableExtender();
+RemoteInput remoteInput = <span class="keyword">new</span> RemoteInput.Builder(<span class="string">"voice_result_key"</span>).setLabel(<span class="string">"Reply"</span>).build();
+
+wearableExtender.addAction(<span class="keyword">new</span> NotificationCompat.Action.Builder(R.drawable.mute_icon,<span class="string">"Reply"</span>,replyIntent).addRemoteInout(remoteInput).build);
+builder.extend(wearableExtender);
+
+Notification notification = builder.build();
+NotificationManagerCompat.from(<span class="keyword">this</span>).notify(<span class="number">0</span>,notification);
+</code></pre><h3 id="使用Toobar代替ActionBar">使用Toobar代替ActionBar</h3><p>第一步：改变主题为<strong>Theme.AppCompat.NoActionBar</strong></p>
+<p>第二步：修改布局文件</p>
+<pre><code>&lt;android<span class="class">.support</span><span class="class">.v7</span><span class="class">.widget</span><span class="class">.Toolbar</span>
+    android:id=<span class="string">"@+id/id_toolbar"</span>
+    android:layout_width=<span class="string">"match_parent"</span>
+    android:layout_height＝<span class="string">"wrap_content"</span>
+    android:layout_alignParentTop=<span class="string">"true"</span>
+    android:minHeight=<span class="string">"?attr.actionBarSize"</span>&gt;
+&lt;/android<span class="class">.support</span><span class="class">.v7</span><span class="class">.widget</span><span class="class">.Toolbar</span>&gt;
+</code></pre><p>第三步：修改代码</p>
+<pre><code><span class="annotation">@Override</span>
+<span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span></span>{
+    setContentView(R.layout.activity_main);
+    Toolbar toolbar = findviewById(R.id.toolbar_layout);
+    setSupportActionBar(toolbar);
+}
+</code></pre><h3 id="参考文章">参考文章</h3><ol>
+<li><a href="http://hukai.me/android-dev-patterns/" target="_blank" rel="external">Android开发最佳实践</a></li>
+</ol>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/code/" rel="tag">#code</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/10/09/Android基础整理/" rel="prev">Android基础整理</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/09/24/Touch事件的传递机制/" rel="next">Touch事件的传递机制</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div id="disqus_thread">
+                <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://img4.duitang.com/uploads/item/201405/07/20140507210553_NQGUP.thumb.600_0.jpeg" alt="坚持远方" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">坚持远方</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">既然选择远方，便只顾风雨兼程</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-name">文章</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">分類</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">標籤</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhanfangzxc" target="_blank">GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5497967279" target="_blank">Weibo</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#手机号中自动添加”-“"><span class="nav-number">1.</span> <span class="nav-text">手机号中自动添加”-“</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handler的优化"><span class="nav-number">2.</span> <span class="nav-text">Handler的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现对隐式Intent的运行时检查"><span class="nav-number">3.</span> <span class="nav-text">实现对隐式Intent的运行时检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用NotificationCompat兼容包来处理消息通知"><span class="nav-number">4.</span> <span class="nav-text">使用NotificationCompat兼容包来处理消息通知</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用Toobar代替ActionBar"><span class="nav-number">5.</span> <span class="nav-text">使用Toobar代替ActionBar</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文章"><span class="nav-number">6.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">赵珊珊</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 強力驅動
+</div>
+
+<div class="theme-info">
+  主題 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+    
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'zhanfangzxc';
+      var disqus_identifier = '2015/10/08/代码片段/';
+      var disqus_title = '代码片段';
+      var disqus_url = 'http://zhaoshanshan.me/2015/10/08/代码片段/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>
