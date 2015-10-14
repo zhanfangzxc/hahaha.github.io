@@ -59,7 +59,7 @@ Getting Started and Create an Android Client
 Basic Authentication with Retrofit
 OAuth with Retrofit
 Token Authentication w">
-<meta property="og:updated_time" content="2015-10-12T05:43:36.000Z">
+<meta property="og:updated_time" content="2015-10-14T08:01:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Retrofit2 更新指南">
 <meta name="twitter:description" content="原文链接:https://futurestud.io/blog/retrofit-2-upgrade-guide-from-1-9/
@@ -372,8 +372,11 @@ client.interceptors().add(new <span class="type">Interceptor</span>() {
     void <span class="function">getUser</span>(<span class="variable">@Query</span> String id, Callback&lt;User&gt; cb);
 }
 </code></pre><p><strong>Retrofit 2.x</strong></p>
-<p>public interface UserService {<br>    @POST(“/login”)<br>    Call<user> login();<br>}</user></p>
-<h3 id="请求执行">请求执行</h3><p><strong>Retrofit 1.9</strong></p>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserService</span> </span>{  
+    <span class="annotation">@POST</span>(<span class="string">"/login"</span>)
+    <span class="function">Call&lt;User&gt; <span class="title">login</span><span class="params">()</span></span>;
+}
+</code></pre><h3 id="请求执行">请求执行</h3><p><strong>Retrofit 1.9</strong></p>
 <pre><code><span class="comment">// synchronous</span>
 User user = userService.login();
 
