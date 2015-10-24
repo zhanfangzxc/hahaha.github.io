@@ -178,6 +178,198 @@
           
           
             
+              <a class="post-title-link" href="/2015/10/23/优秀文章整理/" itemprop="url">
+                优秀文章整理
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2015-10-23T16:54:03+08:00" content="2015-10-23">
+            2015-10-23
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/10/23/优秀文章整理/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/10/23/优秀文章整理/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h3 id="Handler相关">Handler相关</h3><p><strong>Handler消息机制</strong>:<a href="http://codecloud.net/android-handler-6351.html" target="_blank" rel="external">http://codecloud.net/android-handler-6351.html</a></p>
+<h3 id="Handler消息机制简介">Handler消息机制简介</h3><ul>
+<li>Handler 处理消息；发送消息，并将消息压入栈中</li>
+<li>Lopper  通过loop()函数中的死循环，不断的从MessageQueue中取出Message，然后传给Handler进行处理。</li>
+<li>MessageQueue 消息队列，用来存储Runnable、Message</li>
+</ul>
+<h3 id="为什么在主线程中能够直接创建Handler">为什么在主线程中能够直接创建Handler</h3><p>在ActivityThread.class的<strong>main()</strong>函数中，能够看到如下两句代码：</p>
+<pre><code><span class="tag">Lopper</span><span class="class">.prepareMainLopper</span>();
+
+<span class="tag">Lopper</span><span class="class">.loop</span>();
+</code></pre><h3 id="在子线程创建Handler的步骤">在子线程创建Handler的步骤</h3><ol>
+<li>Lopper.prepare();</li>
+<li>实例化Handler，在构造方法中实现handleMessage(Message msg)处理消息;</li>
+<li>Lopper.loop();</li>
+</ol>
+<p>第一步源码：</p>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Lopper</span></span>{
+    ...
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal sThreadLocal = <span class="keyword">new</span> ThreadLocal();
+
+    <span class="keyword">final</span> MessageQueue mQueue;
+
+    ......
+
+    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">prepare</span><span class="params">()</span></span>{
+        <span class="keyword">if</span>(sThreadLocal.get() != <span class="keyword">null</span>){
+            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Only one Lopper may be created per thread"</span>);
+        }
+        <span class="comment">//创建一个Looper对象，并绑定到ThreadLocal中</span>
+        <span class="comment">//为了保证每一个调用prepare()函数的线程里面都有一个唯一的Looper对象</span>
+        <span class="comment">//在创建Looper的同时也创建了一个MessageQueue对象</span>
+        sThreadLocal.set(<span class="keyword">new</span> Lopper());
+    }
+
+    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">prepareMainLopper</span><span class="params">()</span></span>{
+        prepare();
+        setMainLooper(myLooper());
+        <span class="keyword">if</span>(Process.supportProcesses()){
+            myLooper().mQueue.mQuitAllowed = <span class="keyword">false</span>;
+        }
+    }
+
+    <span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setMainLooper</span><span class="params">(Looper looper)</span></span>{
+        sMainLooper = Looper;
+    }
+
+    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Looper <span class="title">myLooper</span><span class="params">()</span></span>{
+        <span class="keyword">return</span> (Looper)sThreadLocal.get();
+    }
+
+    <span class="function"><span class="keyword">private</span> <span class="title">Looper</span><span class="params">()</span></span>{
+        mQueue = <span class="keyword">new</span> MessageQueue();
+        mRun = <span class="keyword">true</span>;
+        mThread = Thread.currentThread();
+    }
+}
+</code></pre><p>第二步：创建Handler实例</p>
+<pre><code>Handler <span class="keyword">handler</span> = <span class="keyword">new</span> Handler(){
+    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span></span>{
+        <span class="comment">//处理消息逻辑</span>
+    }
+};
+
+<span class="comment">//Handler的构造函数</span>
+<span class="function"><span class="keyword">public</span> <span class="title">Handler</span><span class="params">()</span></span>;
+<span class="function"><span class="keyword">public</span> <span class="title">Handler</span><span class="params">(Callback callback)</span></span>;
+<span class="function"><span class="keyword">public</span> <span class="title">Handler</span><span class="params">(Looper looper)</span></span>;
+<span class="function"><span class="keyword">public</span> <span class="title">Handler</span><span class="params">(Looper looper,Callback callback)</span></span>;
+
+<span class="comment">//源码</span>
+
+<span class="function"><span class="keyword">public</span> <span class="title">Handler</span><span class="params">(Callback callback,<span class="keyword">boolean</span> async)</span></span>{
+    mLooper = Looper.myLooper();
+    <span class="keyword">if</span>(myLooper == <span class="keyword">null</span>){
+        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"XXX"</span>);
+    }
+    mQueue = mLooper.mQueue;
+    mCallback = callback;
+    mAsynchronous = async;
+}
+</code></pre><blockquote>
+<p>在创建Handler之前必须先有一个Looper，在创建Looper的同时会创建一个MessageQueue对象，所以在Handler的构造函数中能够同时获取Looper和MessageQueue这两个对象。</p>
+</blockquote>
+<p>第三步Lopper.loop()的源码：</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span></span>{
+    <span class="keyword">final</span> Looper me = myLooper();
+    <span class="keyword">final</span> MessageQueue queue = me.mQueue;
+
+    <span class="keyword">for</span>(;;){
+        Message msg = queue.next();
+        <span class="keyword">if</span>(msg == <span class="keyword">null</span>){
+            <span class="keyword">return</span>;
+        }
+        ...
+        <span class="comment">//关键代码</span>
+        msg.<span class="keyword">target</span>.dispatchMessage(msg);
+    }
+}
+</code></pre><p>接下来看<strong>dispatch(msg)</strong>方法的源码</p>
+<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">dispatchMessage</span><span class="params">(Message msg)</span></span>{
+    <span class="keyword">if</span>(msg.callback != <span class="keyword">null</span>){
+        handleCallback(msg);
+    }<span class="keyword">else</span>{
+        <span class="keyword">if</span>(mCallback != <span class="keyword">null</span>){
+            <span class="keyword">if</span>(mCallback.handleMessage(msg)){
+                <span class="keyword">return</span>;
+            }
+        }
+        <span class="comment">//这个即是我们每次创建Handler的时候需要实现的方法</span>
+        handleMessage(msg);
+    }
+}
+</code></pre><h3 id="发送消息">发送消息</h3><blockquote>
+<p>我们一般发送消息通过sendMessage(msg),下面是发送消息的源码：</p>
+</blockquote>
+<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">sendMessageAtTime</span><span class="params">(Message msg,<span class="keyword">long</span> uptimeMillis)</span></span>{
+    MessageQueue queue = mQueue;
+    <span class="keyword">if</span>(queue == <span class="keyword">null</span>){
+        RuntimeException e = <span class="keyword">new</span> RuntimeException(<span class="string">"XXX"</span>);
+        <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+    <span class="comment">//将Message压入MessageQueue中</span>
+    <span class="function"><span class="keyword">return</span> <span class="title">enqueueMessage</span><span class="params">(queue,mag,uptimeMillis)</span></span>;
+}
+</code></pre></span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2015/10/12/Retrofit2-更新指南/" itemprop="url">
                 Retrofit2 更新指南
               </a>
@@ -214,11 +406,11 @@
         
           
             <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/10/12/Retrofit2-更新指南/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/10/12/Retrofit2-更新指南/" itemprop="commentsCount"></span>
-            </a>
-          </span>
+              &nbsp; | &nbsp;
+              <a href="/2015/10/12/Retrofit2-更新指南/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/10/12/Retrofit2-更新指南/" itemprop="commentsCount"></span>
+              </a>
+            </span>
           
         
       </div>
@@ -540,11 +732,11 @@ observable.observeOn(AndroidSchedulers.mainThread()).subscribe(<span class="keyw
         
           
             <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/10/09/Android基础整理/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/10/09/Android基础整理/" itemprop="commentsCount"></span>
-            </a>
-          </span>
+              &nbsp; | &nbsp;
+              <a href="/2015/10/09/Android基础整理/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/10/09/Android基础整理/" itemprop="commentsCount"></span>
+              </a>
+            </span>
           
         
       </div>
@@ -643,11 +835,11 @@ sendStickyBroadcast()<span class="comment">;</span>
         
           
             <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/10/08/代码片段/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/10/08/代码片段/" itemprop="commentsCount"></span>
-            </a>
-          </span>
+              &nbsp; | &nbsp;
+              <a href="/2015/10/08/代码片段/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/10/08/代码片段/" itemprop="commentsCount"></span>
+              </a>
+            </span>
           
         
       </div>
@@ -846,11 +1038,11 @@ NotificationManagerCompat.from(<span class="keyword">this</span>).notify(<span c
         
           
             <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/09/24/Touch事件的传递机制/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/24/Touch事件的传递机制/" itemprop="commentsCount"></span>
-            </a>
-          </span>
+              &nbsp; | &nbsp;
+              <a href="/2015/09/24/Touch事件的传递机制/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/24/Touch事件的传递机制/" itemprop="commentsCount"></span>
+              </a>
+            </span>
           
         
       </div>
@@ -925,11 +1117,11 @@ NotificationManagerCompat.from(<span class="keyword">this</span>).notify(<span c
         
           
             <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/09/23/学习计划/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/23/学习计划/" itemprop="commentsCount"></span>
-            </a>
-          </span>
+              &nbsp; | &nbsp;
+              <a href="/2015/09/23/学习计划/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/23/学习计划/" itemprop="commentsCount"></span>
+              </a>
+            </span>
           
         
       </div>
@@ -1013,11 +1205,11 @@ NotificationManagerCompat.from(<span class="keyword">this</span>).notify(<span c
         
           
             <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/09/22/Fragment介绍/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/22/Fragment介绍/" itemprop="commentsCount"></span>
-            </a>
-          </span>
+              &nbsp; | &nbsp;
+              <a href="/2015/09/22/Fragment介绍/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/22/Fragment介绍/" itemprop="commentsCount"></span>
+              </a>
+            </span>
           
         
       </div>
@@ -1238,11 +1430,11 @@ FragmentTransaction <span class="keyword">transaction</span> = getFragmentManage
         
           
             <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/09/21/翻译-数据绑定part-2/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/21/翻译-数据绑定part-2/" itemprop="commentsCount"></span>
-            </a>
-          </span>
+              &nbsp; | &nbsp;
+              <a href="/2015/09/21/翻译-数据绑定part-2/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/21/翻译-数据绑定part-2/" itemprop="commentsCount"></span>
+              </a>
+            </span>
           
         
       </div>
@@ -1402,11 +1594,11 @@ dependencies {
         
           
             <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/09/19/Espresso测试/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/19/Espresso测试/" itemprop="commentsCount"></span>
-            </a>
-          </span>
+              &nbsp; | &nbsp;
+              <a href="/2015/09/19/Espresso测试/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/19/Espresso测试/" itemprop="commentsCount"></span>
+              </a>
+            </span>
           
         
       </div>
@@ -1487,11 +1679,11 @@ dependencies {
         
           
             <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/09/18/Monkey测试工具介绍/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/18/Monkey测试工具介绍/" itemprop="commentsCount"></span>
-            </a>
-          </span>
+              &nbsp; | &nbsp;
+              <a href="/2015/09/18/Monkey测试工具介绍/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/18/Monkey测试工具介绍/" itemprop="commentsCount"></span>
+              </a>
+            </span>
           
         
       </div>
@@ -1568,271 +1760,6 @@ print <span class="string">"end of script"</span>
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/09/16/Retrofit2-0-Android最好用的http库有史以来最大的更新/" itemprop="url">
-                Retrofit2.0:Android最好用的http库有史以来最大的更新
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2015-09-16T13:42:02+08:00" content="2015-09-16">
-            2015-09-16
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分類於
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/Android/" itemprop="url" rel="index">
-                  <span itemprop="name">Android</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/09/16/Retrofit2-0-Android最好用的http库有史以来最大的更新/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/09/16/Retrofit2-0-Android最好用的http库有史以来最大的更新/" itemprop="commentsCount"></span>
-            </a>
-          </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p><strong>翻译原文</strong>:<a href="http://inthecheesefactory.com/blog/retrofit-2.0/en" target="_blank" rel="external">http://inthecheesefactory.com/blog/retrofit-2.0/en</a></p>
-<h3 id="介绍">介绍</h3><p>Retrofit由于其相比于其他http开源库具有更加简单和出色的性能，从而成为Android端最流行的Http客户端库之一。</p>
-<p>存在的缺点是在1.X版本上没有取消正在进行中的事务的方法，如果你想做这个操作必须手动在其他线程中杀死他，所以很难实现。</p>
-<p>Square公司多年之前就承诺Retrofit 2.0很快就可以使用了，但是多年过去了，仍然没有任何更新的消息。</p>
-<p>直到上周，Retrofit 2.0从候补阶段变成了Beta 1，而且向每个人公布了，自从尝试了之后，我不得不说Retrofit 2.0有很多令我印象深刻的地方，有很多方法的变化，我将在这篇文章中描述那些改变的东西，让我们开始吧。</p>
-<h3 id="还是之前的包名，只是换了新的版本号">还是之前的包名，只是换了新的版本号</h3><p>如果你想在你的项目中引入Retrofit 2.0，添加下面这行代码在你的<strong>build.gradle</strong>文件中的<strong>dependencies</strong>节点</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile &#39;com.squareup.retrofit:retrofit:2.0.0-beta1&#39;</span><br></pre></td></tr></table></figure>
-<p>同步你的gradle文件然后你就可以使用Retrofit 2.0</p>
-<h3 id="新的服务声明方式，没有同步和异步之分">新的服务声明方式，没有同步和异步之分</h3><p>关于在Retrofit 1.9中生命服务借口，如果你想声明一个同步的方法，你要像下面这样声明：</p>
-<pre><code><span class="comment">/* Synchronous in Retrofit 1.9 */</span>
-
-<span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">APIService</span> </span>{
-
-    <span class="annotation">@POST</span>(<span class="string">"/list"</span>)
-    <span class="function">Repo <span class="title">loadRepo</span><span class="params">()</span></span>;
-
-}
-</code></pre><p>如果你想声明一个异步的就需要像下面这样</p>
-<pre><code><span class="comment">/* Asynchronous in Retrofit 1.9 */</span>
-
-<span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">APIService</span> </span>{
-
-    <span class="annotation">@POST</span>(<span class="string">"/list"</span>)
-    <span class="function"><span class="keyword">void</span> <span class="title">loadRepo</span><span class="params">(Callback&lt;Repo&gt; cb)</span></span>;
-
-}
-</code></pre><p>但是如果在Retrofit 2.0上，声明方式只有一种，所以更加简单了</p>
-<pre><code><span class="keyword">import</span> retrofit.<span class="keyword">Call</span>
-<span class="comment">/*Retrofit 2.0*/</span>
-
-<span class="keyword">public</span> interfase APIService{
-    @POST(<span class="string">"/list"</span>)
-    <span class="keyword">Call</span>&lt;Repo&gt; loadRepo();
-}
-</code></pre><p>调用创建的方法和OKHttp的调用模式是一样的，如果异步的请求，只要调用<strong>excute</strong>或者<strong>enqueue</strong>来创建一个异步的请求。</p>
-<p>异步请求的调用</p>
-<pre><code><span class="operator"><span class="keyword">Call</span>&lt;Repo&gt; <span class="keyword">call</span> = service.loadRepo();</span>
-Repo repo = <span class="operator"><span class="keyword">call</span>.excute();</span>
-</code></pre><p>上面的代码会锁定当前县城，所以在Android中不能在主线程中调用，否则你会面临<strong>NetworkOnMainThreadException</strong>，如果你想执行<strong>excute</strong>方法，你必须在其他的线程中执行。</p>
-<p><strong>异步请求</strong></p>
-<pre><code><span class="operator"><span class="keyword">Call</span>&lt;Repo&gt; <span class="keyword">call</span> = service.loadRepo();</span>
-<span class="operator"><span class="keyword">call</span>.<span class="keyword">enqueue</span>(<span class="keyword">new</span> Callback&lt;Repo&gt;(){
-    @Override
-    <span class="keyword">public</span> <span class="built_in">void</span> onResponse(Response&lt;Repo&gt; response){
-        //从response.<span class="keyword">body</span>()中获取结果
-    }
-    @Override
-    <span class="keyword">public</span> <span class="built_in">void</span> onFailure(Throwable <span class="keyword">t</span>){
-
-    }
-});</span>
-</code></pre><p>上面的代码将会在后台线程创建ygie请求用来从响应的<strong>response.body()</strong>方法中获取请求结果。但是请注意<strong>onResponse</strong>和<strong>onFailure</strong>方法将在主线程中调用。</p>
-<p>所以我建议你使用<strong>enqueue</strong>，他很好的适用Android的行为。</p>
-<h3 id="取消正在进行中的请求">取消正在进行中的请求</h3><p>服务模式变成Call的原因是正在进行中的请求事务可以被取消，只用简单的使用<strong>call.cancel()</strong>就可以了。</p>
-<pre><code><span class="operator"><span class="keyword">call</span>.<span class="keyword">cancel</span>();</span>
-</code></pre><p>调用这个方法之后，事务立马就可以被取消了，是不是很简单。</p>
-<h3 id="新的服务的创建，转换器已经被Retrofit排除在外了">新的服务的创建，转换器已经被Retrofit排除在外了</h3><p>在Retrofit 1.9中，GsonConverter被包含在了Retrofit包中，当RestAdapter一创建的时候就可以自动初始化，所以，如果是json的结果可以自动被转换成我们定义的数据访问对象。</p>
-<p>但是在Retrofit 2.0中，转换器将不在包含在Retrofit包中，所以需要手动的插入一个转换器在Retrofit中，否则只能接受String结果，所以， Retrofit 2.0不再依赖Gson。</p>
-<p>如果你想将接收到的结果转换成数据访问对象，你必须添加Gson引用和创建一个Gson转换器</p>
-<pre><code><span class="keyword">compile</span> <span class="string">'com.squareup.retrofit:converter-gson:2.0.0-beta1'</span>
-</code></pre><p>然后通过<strong>addConverterFactory</strong>添加Gson转换器，值得注意的是之前的<strong>RestAdapter</strong>已经改名为<strong>Retrofit</strong>。</p>
-<pre><code><span class="label">Retrofit</span> retrofit = new Retrofit.<span class="keyword">Builder()
-</span>            .<span class="keyword">baseUrl("http://api.nuuneoi.com/base/")
-</span>            .<span class="keyword">addConverterFactory(GsonConverterFactory.create())
-</span>            .<span class="keyword">build();
-</span><span class="label">service</span> = retrofit.create(APIService.class)<span class="comment">;</span>
-</code></pre><p>以下是由Square公司提供的转换器，选择一个适合你的：</p>
-<pre><code>Gson: com<span class="class">.squareup</span><span class="class">.retrofit</span>:converter-gson
-Jackson: com<span class="class">.squareup</span><span class="class">.retrofit</span>:converter-jackson
-Moshi: com<span class="class">.squareup</span><span class="class">.retrofit</span>:converter-moshi
-Protobuf: com<span class="class">.squareup</span><span class="class">.retrofit</span>:converter-protobuf
-Wire: com<span class="class">.squareup</span><span class="class">.retrofit</span>:converter-wire
-Simple XML: com<span class="class">.squareup</span><span class="class">.retrofit</span>:converter-simplexml
-</code></pre><p>你也可以通过实现<strong>Converter.Factory</strong>接口来创建自己的转换器。</p>
-<p>我比较赞成这种新的模式，因为让Retrofit对于要做的事情看起来更加清晰。</p>
-<h3 id="自定义Gson对象">自定义Gson对象</h3><p>如果你需要在json中进行一些格式化，比如，日期格式化，你可以通过<strong>GsonconverterFactory.create()</strong>创建一个Gson对象：</p>
-<pre><code><span class="type">Gson</span> gson = new <span class="type">GsonBuiler</span><span class="literal">()</span>
-        .setDateFormat(<span class="string">"yyyy-MM-dd'T'HH:mm:ssZ"</span>)
-        .create<span class="literal">()</span>;
-<span class="type">Retrofit</span> retrofit = new <span class="type">Retrofit</span>.<span class="type">Bilder</span><span class="literal">()</span>
-                .baseUrl(<span class="string">"http://api.nuuneoi.com/base/"</span>)
-                .addConverterFactory(<span class="type">GsonConverterFactory</span>.create(gson))
-                .build<span class="literal">()</span>;
-service = retrofit.create(<span class="type">APIService</span>.class);
-</code></pre><h3 id="新的Url解决方式，就像那样">新的Url解决方式，就像<a href=""></a>那样</h3><p>Retrofit 2.0提出了一个心的URL解决概念，不再是之前简单的将BaseUrl和@Url合并在一起，而是像<a href="..."></a>那样，请先看一下下面的示例:</p>
-<p><img src="http://inthecheesefactory.com/uploads/source/blog/retrofit2/apiservice1.png" alt="示例图片"><br><img src="http://inthecheesefactory.com/uploads/source/blog/retrofit2/apiservice2.png" alt="示例图片"><br><img src="http://inthecheesefactory.com/uploads/source/blog/retrofit2/apiservice3.png" alt="示例图片"></p>
-<p>下面是我的一些对于Retrofit 2.0 URL声明模式的建议：</p>
-<pre><code>Base URL：永远用<span class="keyword">*</span><span class="keyword">*</span>/<span class="keyword">*</span><span class="keyword">*</span>结尾
-
-<span class="comment">@URL 不要用**/**开头</span>
-</code></pre><p>示例：</p>
-<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">APIService</span></span>{
-    <span class="annotation">@POST</span>(<span class="string">"user/list"</span>)
-    <span class="function">Call&lt;Users&gt; <span class="title">loadUsers</span><span class="params">()</span></span>;
-}
-
-<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span></span>{
-    Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()
-            .baseUrl(<span class="string">"http://api.nuuneoi.com/base/"</span>)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
-    APIService service = retrofit.create(APIService.class);
-}
-</code></pre><p>上面的代码将从<a href="http://api.nuuneoi.com/base/user/list获取数据" target="_blank" rel="external">http://api.nuuneoi.com/base/user/list获取数据</a></p>
-<p>我们也可以在Retrofit 2.0中声明完整的URL</p>
-<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">APIService</span></span>{
-    <span class="annotation">@POST</span>(<span class="string">"http://api.nuuneoi.com/special/user/list"</span>)
-    <span class="function">Call&lt;Users&gt; <span class="title">loadSpecialUsers</span><span class="params">()</span></span>;
-}
-</code></pre><p>在这个示例中BaseUrl将会被忽略。</p>
-<p>和之前的版本相比，你将会看到一个主要的改变，如果你想将自己的项目中的改成Retrofit 2.0，不要忘记修改这些URL部分的代码。</p>
-<h3 id="OkHttp现在是必须的">OkHttp现在是必须的</h3><p>在Retrofit 1.9上，OkHttp是可选的，如果你想使用OKHttp作为网络连接接口的话，你必须手动的把OKHttp的引用添加进你的项目。</p>
-<p>但是在Retrofit 2.0上，OKHttp是必须的，而且会自动引入你的项目中。在Retrofit 2.0上，OkHttp是会自动作为Http连接接口使用的。</p>
-<h3 id="onResponse方法仍然会被调用尽管Response存在一些问题">onResponse方法仍然会被调用尽管Response存在一些问题</h3><p>在Retrofit 1.9上，如果你获取到的响应不能被转换成所定义的对象的话。将会调用failure方法，但是在Retrofit 2.0，不管获取到的响应信息能否转换成定义的类型，都会调用onResponse方法，但是当响应信息不能转换的时候，<strong>response.body()</strong>将会返回null，所以不要忘记处理。</p>
-<p>如果响应中存在任何的问题，比如：404，<strong>onResponse</strong>都会被调用，所以你可以通过<strong>response.errorBody().string()</strong>中获取错误信息。</p>
-<p><img src="http://inthecheesefactory.com/uploads/source/blog/retrofit2/response.jpg" alt="错误信息示例"></p>
-<p>Response/Failure的逻辑跟Retrofit 1.9有很大的不同，所以如果你决定切换到Retrofit 2.0的时候一定要小心处理这些逻辑。</p>
-<h3 id="没有网络连接权限引起的SecurityException">没有网络连接权限引起的SecurityException</h3><p>在Retrofit 1.9上，如果你忘记在<strong>AndroidManifest.xml</strong>中添加网络权限的话，异步的请求将会直接调用<strong>failure</strong>方法，并且会提示没有权限的错误信息，不会有其他的异常抛出。</p>
-<p>但是在Retrofit 2.0上，当你调用<strong>call.enqueue</strong>或者<strong>call.execute</strong>,然后就会直接抛出<strong>SecurityException</strong>异常，如果你不用try-catch解决的话，程序会直接终止。</p>
-<p><img src="http://inthecheesefactory.com/uploads/source/blog/retrofit2/sec.png" alt="错误信息提示"></p>
-<p>这个行为就如同你手动的调用<strong>HttpURLConnection</strong>,这只是个小问题，只要你将权限添加进<strong>AndroidMKanifest.xml</strong>文件中就行了。</p>
-<h3 id="使用OKHttp的拦截器">使用OKHttp的拦截器</h3><p>在Retrofit 1.9上你可以使用请求拦截器去拦截一个请求，但是自从Http连接层移到OKHttp上之后，在2.0中拦截器已经被移除掉了。</p>
-<p>所以我们现在必须使用OKHttp的拦截器，首先你需要创建一个带有拦截器的OKHttpClient对象，如下：</p>
-<pre><code>OkHttpClient client = <span class="keyword">new</span> OkHttpClient();
-client.interceptors.add(<span class="keyword">new</span> Interceptor(){
-    <span class="annotation">@Override</span>
-    <span class="keyword">public</span> <span class="function">Response <span class="title">intercept</span><span class="params">(Chain chain)</span> <span class="keyword">throws</span> IOException</span>{
-        <span class="keyword">return</span> response;
-    }
-});
-</code></pre><p>然后将上面创建的<strong>client</strong>添加到Retrofit的生成器链中。</p>
-<pre><code>Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()
-            .baseUrl(<span class="string">"http://api.nuuneoi.com/base"</span>)
-            .addConverterFactory(GsonConverterFactory.create())
-            .<span class="keyword">client</span>(<span class="keyword">client</span>)
-            .build();
-</code></pre><p>如果想了解更多关于OKHttp拦截器的话，请看<a href="https://github.com/square/okhttp/wiki/Interceptors" target="_blank" rel="external">OKHttp interceptors</a></p>
-<h3 id="在CallAdapter中集成RxJava">在CallAdapter中集成RxJava</h3><p>相比声明一个<strong>Call<t></t></strong>接口，。我们更愿意以我们自己的方式声明，比如：<strong>MyCall<t></t></strong>,这就是Retrofit 2.0的<strong>CallAdapter</strong>机制。</p>
-<p>Retrofit团队提供了一些可用的CallAdapter模块，最流行的一个莫过于集成RxJava的CallAdapter，返回类型是<strong>Observable<t></t></strong>,如果想使用这个，下面的两个模块必须引入项目中：</p>
-<pre><code><span class="keyword">compile</span> <span class="string">'com.squareup.retrofit:adapter-rxjava:2.0.0-beta1'</span>
-<span class="keyword">compile</span> <span class="string">'io.reactivex:rxandroid:1.0.1'</span>
-</code></pre><p>同步一下Gradle，然后在Retrofit创建链中调用<strong>addCallAdapterFactory</strong>方法</p>
-<pre><code><span class="type">Retrofit</span> retrofit = new <span class="type">Retrofit</span>.<span class="type">Builder</span><span class="literal">()</span>
-         .baseUrl(<span class="string">"http://api.nuuneoi.com/base/"</span>)
-        .addConverterFactory(<span class="type">GsonConverterFactory</span>.create<span class="literal">()</span>)
-        .addCallAdapterFactory(<span class="type">RxJavaCallAdapterFactory</span>.create<span class="literal">()</span>)
-        .build<span class="literal">()</span>;
-</code></pre><p>现在服务接口将会返回<strong>Observable<t></t></strong>:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public interface APIService&#123;&#10;&#9;@POST(&#34;list&#34;)&#10;&#9;Call&#60;DessertItemCollectionDao&#62; loadDessertList();&#10;&#9;&#10;&#9;@POST(&#34;list&#34;)&#10;&#9;Observable&#60;DessertItemCollectionDao&#62; loadDessertListRx();&#10;&#125;</span><br></pre></td></tr></table></figure>
-<p>你可以以RxJava的方式使用，如果你想让subscribe部分的代码运行在主线程中，需要添加<strong>observeOn(AndroidSchedulers.mainThread())</strong>.</p>
-<pre><code>Observable&lt;DessertItemCollectionDao&gt; observable = service.loadDessertListRx();
-
-observable.observeOn(AndroidSchedulers.mainThread())
-    .subsribe(<span class="keyword">new</span> Subscriber&lt;DessertItemCollectionDao&gt;(){
-    <span class="annotation">@Override</span>
-    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onCompleted</span><span class="params">()</span></span>{
-         Toast.makeText(getApplicationContext(),
-                    <span class="string">"Completed"</span>,
-                    Toast.LENGTH_SHORT)
-                .show();
-        }
-
-        <span class="annotation">@Override</span>
-        <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable e)</span> </span>{
-            Toast.makeText(getApplicationContext(),
-                    e.getMessage(),
-                    Toast.LENGTH_SHORT)
-                .show();
-        }
-
-        <span class="annotation">@Override</span>
-        <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onNext</span><span class="params">(DessertItemCollectionDao dessertItemCollectionDao)</span> </span>{
-            Toast.makeText(getApplicationContext(),
-                    dessertItemCollectionDao.getData().get(<span class="number">0</span>).getName(),
-                    Toast.LENGTH_SHORT)
-                .show();
-        }
-    });
-</code></pre><h3 id="结论">结论</h3><p>还有一些其他的改变，你可以去看官方的<a href="https://github.com/square/retrofit/blob/master/CHANGELOG.md" target="_blank" rel="external">更新文档</a>，我相信我已经把主要的更改在这篇文章中描述清楚了。</p>
-<p>你也许会好奇什么时候可以把项目替换成Retrofit 2.0，因为他还处于测试阶段，而且你也可能像我一样是一个试用者，Retrofit 2.0没有过bug的工作良好也只是基于我的试验。</p>
-<p>请注意Retrofit 1.9的官方文档已经从Square的github网站上移除了，我建议就从现在开始学习Retrofit 2.0，并且考虑在不就的将来替换成这个新的版本。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1871,7 +1798,7 @@ observable.observeOn(AndroidSchedulers.mainThread())
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-count">16</span>
               <span class="site-state-item-name">文章</span>
             </a>
           </div>
@@ -1885,7 +1812,7 @@ observable.observeOn(AndroidSchedulers.mainThread())
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-count">19</span>
               <span class="site-state-item-name">標籤</span>
               </a>
           </div>
@@ -1967,30 +1894,26 @@ observable.observeOn(AndroidSchedulers.mainThread())
   
   
     
+
+  
     
-
   
 
-    <script type="text/javascript">
-      var disqus_shortname = 'zhanfangzxc';
-      var disqus_identifier = 'index.html';
-      var disqus_title = '';
-      var disqus_url = '';
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zhaoshanshan"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
 
-      function run_disqus_script(disqus_script){
-        var dsq = document.createElement('script');
-        dsq.type = 'text/javascript';
-        dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-      }
-
-      run_disqus_script('count.js');
-      
-    </script>
-  
-
-
+    
   
   
   <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
