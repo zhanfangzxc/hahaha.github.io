@@ -191,10 +191,10 @@ Retrofit 2默认情况下不集成Gson，在之前，你不用去考虑转换器
 	
 **Retrofit 2.x**
 
-public interface UserService {  
-    @POST("/login")
-    Call<User> login();
-}
+	public interface UserService {  
+	    @POST("/login")
+	    Call<User> login();
+	}
 
 ### 请求执行
 
