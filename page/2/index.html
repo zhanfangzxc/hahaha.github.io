@@ -178,6 +178,134 @@
           
           
             
+              <a class="post-title-link" href="/2015/09/18/Monkey测试工具介绍/" itemprop="url">
+                Monkey测试工具介绍
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2015-09-18T14:10:43+08:00" content="2015-09-18">
+            2015-09-18
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分類於
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Android/" itemprop="url" rel="index">
+                  <span itemprop="name">Android</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/09/18/Monkey测试工具介绍/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/18/Monkey测试工具介绍/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p><strong>翻译原文</strong>:<a href="http://antoine-merle.com/introduction-to-the-monkey-runner-tool-2/" target="_blank" rel="external">http://antoine-merle.com/introduction-to-the-monkey-runner-tool-2/</a></p>
+<p>欢迎大家来到我的博客来观看这篇旨在介绍Monkey Runner<a href="http://developer.android.com/tools/help/monkeyrunner_concepts.html" target="_blank" rel="external">(谷歌官方介绍)</a>的文章，这篇文章可能是一篇延伸阅读。</p>
+<p>这篇文章不是一个课程，只是一个介绍，因为目的是让你明白Monkey有多强大，Monkey Runner是一个可以让开发者创建一个程序来控制已经连接的设备，这些程序使用Python创建的，可以安装，运行，操作app，还可以截屏，以下是谷歌API提供的相关的三个模块:</p>
+<ul>
+<li>MonkeyRunner:提供连接设备/模拟器的方法</li>
+<li>MonkeyDevice:提供安装和卸载应用程序的方法</li>
+<li>MonkeyImage:提供截取图片的方法</li>
+</ul>
+<p>让我们开始创建一个Monkey测试文件，命名为mymonkey.py:</p>
+<pre><code><span class="keyword">from</span> com.android.monkeyrunner <span class="keyword">import</span> <span class="type">MonkeyRunner</span>, <span class="type">MonkeyDevice</span>
+<span class="keyword">import</span> commands
+<span class="keyword">import</span> sys
+
+<span class="comment"># starting script</span>
+print <span class="string">"start"</span>
+
+<span class="comment"># connection to the current device, and return a MonkeyDevice object</span>
+device = <span class="type">MonkeyRunner</span>.waitForConnection()
+
+apk_path = device.shell('pm path com.myapp')
+<span class="keyword">if</span> apk_path.startswith('package:'):
+    print <span class="string">"myapp already installed."</span>
+<span class="keyword">else</span>:
+    print <span class="string">"myapp not installed, installing APKs..."</span>
+    device.installPackage('myapp.apk')
+
+print <span class="string">"launching myapp..."</span>
+device.startActivity(component='com.myapp/com.myapp.<span class="type">MainActivity</span>')
+
+<span class="comment">#screenshot</span>
+<span class="type">MonkeyRunner</span>.sleep(<span class="number">1</span>)
+<span class="literal">result</span> = device.takeSnapshot()
+<span class="literal">result</span>.writeToFile('./screenshots/splash.png','png')
+print <span class="string">"screen 1 taken"</span>
+
+<span class="comment">#sending an event which simulate a click on the menu button</span>
+device.press('<span class="type">KEYCODE_MENU</span>', <span class="type">MonkeyDevice</span>.<span class="type">DOWN_AND_UP</span>)
+
+print <span class="string">"end of script"</span>
+</code></pre><p>然后在命令行中执行如下命令:</p>
+<pre><code><span class="tag">monkeyrunner</span> <span class="tag">mymonkey</span><span class="class">.py</span>
+</code></pre><ul>
+<li>monkeyRunner命令直接包含在[android-sdk-path]/tools/</li>
+<li>如果在windows上创建python项目，执行的时候必须写绝对路径(c:/etc)</li>
+</ul>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2015/09/16/Retrofit2-0-Android最好用的http库有史以来最大的更新/" itemprop="url">
                 Retrofit2.0:Android最好用的http库有史以来最大的更新
               </a>
@@ -1237,7 +1365,7 @@ getActivity<span class="literal">()</span>.shouldShowRequestPermissionRationale<
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-count">17</span>
               <span class="site-state-item-name">文章</span>
             </a>
           </div>
@@ -1251,7 +1379,7 @@ getActivity<span class="literal">()</span>.shouldShowRequestPermissionRationale<
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">19</span>
+              <span class="site-state-item-count">21</span>
               <span class="site-state-item-name">標籤</span>
               </a>
           </div>
