@@ -11,11 +11,11 @@ tags:
 
 最近在做一个关于分享经验贴的一个App，其中文章详情界面出现了一个问题就是在界面的最下面有一条操作栏，其中有一项就是一个小的输入框,点击小的输入框，界面样式如下：
 
-![图一](bottom.png)
+![图一](https://github.com/zhanfangzxc/zhanfangzxc.github.io/blob/source/source/_posts/bottom.png?raw=true)
 
 点击左侧的写评论的输入框，会出现如下界面:
 
-![图二](open.png)
+![图二](https://github.com/zhanfangzxc/zhanfangzxc.github.io/blob/source/source/_posts/open.png?raw=true)
 
 这个界面是从底部弹出的一个Dialog，也可以用[透明的Activity实现](http://www.javabeat.net/dialog-activity-android/),我这里使用的是github上的一个[开源的Dialog库](https://github.com/H07000223/FlycoDialog_Master)，因为动画设置，以及界面设置都比较方便，所以就用了这个，但是示例中没有我的这个应用场景，基本上就是一些条目点击选择的示例.
 

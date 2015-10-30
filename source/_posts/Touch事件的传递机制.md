@@ -9,7 +9,7 @@ tags:
 
 图示：
 
-![Touch事件传递](Touch事件传递.jpg)
+![Touch事件传递](https://github.com/zhanfangzxc/zhanfangzxc.github.io/blob/source/source/_posts/Touch%E4%BA%8B%E4%BB%B6%E4%BC%A0%E9%80%92.jpg?raw=true)
 
 这篇文章为收集整理别人的内容，所以非常感谢那些默默付出的大牛们，正是有你们的付出，才让我不断的进步，感谢。
 
