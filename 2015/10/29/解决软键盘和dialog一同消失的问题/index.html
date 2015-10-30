@@ -57,9 +57,9 @@
 点击左侧的写评论的输入框，会出现如下界面:
 
 这个界面是从底部弹出的一个Dialog，也可以用透明的Activity实现,我这里使用的是github上的一个开源的Dialog库，因为动画设置，以及界面设置都比较方便，所以就用了这">
-<meta property="og:image" content="http://zhaoshanshan.me/bottom.png">
-<meta property="og:image" content="http://zhaoshanshan.me/open.png">
-<meta property="og:updated_time" content="2015-10-29T08:55:11.000Z">
+<meta property="og:image" content="https://github.com/zhanfangzxc/zhanfangzxc.github.io/blob/source/source/_posts/bottom.png?raw=true">
+<meta property="og:image" content="https://github.com/zhanfangzxc/zhanfangzxc.github.io/blob/source/source/_posts/open.png?raw=true">
+<meta property="og:updated_time" content="2015-10-30T02:55:14.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="解决软键盘和dialog一同消失的问题">
 <meta name="twitter:description" content="前言最近在做一个关于分享经验贴的一个App，其中文章详情界面出现了一个问题就是在界面的最下面有一条操作栏，其中有一项就是一个小的输入框,点击小的输入框，界面样式如下：
@@ -127,7 +127,7 @@
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
             <i class="menu-item-icon icon-next-home"></i> <br />
-            首頁
+            Startseite
           </a>
         </li>
       
@@ -135,7 +135,7 @@
         <li class="menu-item menu-item-categories">
           <a href="/categories" rel="section">
             <i class="menu-item-icon icon-next-categories"></i> <br />
-            分類
+            Kategorien
           </a>
         </li>
       
@@ -143,7 +143,7 @@
         <li class="menu-item menu-item-about">
           <a href="/about" rel="section">
             <i class="menu-item-icon icon-next-about"></i> <br />
-            關於
+            Über
           </a>
         </li>
       
@@ -151,7 +151,7 @@
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             <i class="menu-item-icon icon-next-archives"></i> <br />
-            歸檔
+            Archiv
           </a>
         </li>
       
@@ -159,7 +159,7 @@
         <li class="menu-item menu-item-tags">
           <a href="/tags" rel="section">
             <i class="menu-item-icon icon-next-tags"></i> <br />
-            標籤
+            Tags
           </a>
         </li>
       
@@ -199,7 +199,7 @@
 
       <div class="post-meta">
         <span class="post-time">
-          發表於
+          Veröffentlicht am
           <time itemprop="dateCreated" datetime="2015-10-29T16:18:45+08:00" content="2015-10-29">
             2015-10-29
           </time>
@@ -227,13 +227,12 @@
 
       
         <span itemprop="articleBody"><h3 id="前言">前言</h3><p>最近在做一个关于分享经验贴的一个App，其中文章详情界面出现了一个问题就是在界面的最下面有一条操作栏，其中有一项就是一个小的输入框,点击小的输入框，界面样式如下：</p>
-<p><img src="bottom.png" alt="图一"></p>
+<p><img src="https://github.com/zhanfangzxc/zhanfangzxc.github.io/blob/source/source/_posts/bottom.png?raw=true" alt="图一"></p>
 <p>点击左侧的写评论的输入框，会出现如下界面:</p>
-<p><img src="open.png" alt="图二"></p>
+<p><img src="https://github.com/zhanfangzxc/zhanfangzxc.github.io/blob/source/source/_posts/open.png?raw=true" alt="图二"></p>
 <p>这个界面是从底部弹出的一个Dialog，也可以用<a href="http://www.javabeat.net/dialog-activity-android/" target="_blank" rel="external">透明的Activity实现</a>,我这里使用的是github上的一个<a href="https://github.com/H07000223/FlycoDialog_Master" target="_blank" rel="external">开源的Dialog库</a>，因为动画设置，以及界面设置都比较方便，所以就用了这个，但是示例中没有我的这个应用场景，基本上就是一些条目点击选择的示例.</p>
 <h3 id="问题描述">问题描述</h3><p>但是我们的项目中存在的问题就是当点击弹出Dialog的时候，要同时弹出软键盘，当点击返回键和或点击除Dialog的其他地方的时候，让Dialog和软件盘同时消失，就因为这个事搞了一天，最后还是借助别人的帮助实现的，但是还是想发出来供以后遇到该问题的朋友参考:</p>
-<p>###解决方案</p>
-<p>以下是解决方案，<strong>是通过计算弹出软键盘之前和之后的高度变化，来实现关闭Dialog的</strong>，在你创建的Dialog文件的<strong>OnCreateView()</strong>方法中添加如下代码:</p>
+<h3 id="解决方案">解决方案</h3><p>以下是解决方案，<strong>是通过计算弹出软键盘之前和之后的高度变化，来实现关闭Dialog的</strong>，在你创建的Dialog文件的<strong>OnCreateView()</strong>方法中添加如下代码:</p>
 <pre><code><span class="comment">//监听视图树的布局变化</span>
 view.getViewTreeObserver().addOnGlobalLayoutListener(<span class="keyword">new</span> ViewTreeObserver.OnGlobalLayoutListener() {
             <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onGlobalLayout</span><span class="params">()</span> </span>{
@@ -269,8 +268,7 @@ view.getViewTreeObserver().addOnGlobalLayoutListener(<span class="keyword">new</
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, <span class="number">0</span>);
             }
         });
-</code></pre><p>###总结</p>
-<p>还有一点值得注意的就是在点击事件中<strong>showDialog</strong>的时候，一定要创建和show写在一起，如果将创建Dialog写在Activity中<strong>onCreate</strong>方法中，在点击事件中写<strong>show</strong>的话，就会存在，键盘第一次出现，可是当点击返回键让Dialog消失了之后，再点击让他显示的时候，就只会显示Dialog，不会显示软键盘，尽管我在Dialog的文件中写了show的监听事件，但是还是没什么效果，很是郁闷，希望找到解决方案的同学可以告知我。</p>
+</code></pre><h3 id="总结">总结</h3><p>还有一点值得注意的就是在点击事件中<strong>showDialog</strong>的时候，一定要创建和show写在一起，如果将创建Dialog写在Activity中<strong>onCreate</strong>方法中，在点击事件中写<strong>show</strong>的话，就会存在，键盘第一次出现，可是当点击返回键让Dialog消失了之后，再点击让他显示的时候，就只会显示Dialog，不会显示软键盘，尽管我在Dialog的文件中写了show的监听事件，但是还是没什么效果，很是郁闷，希望找到解决方案的同学可以告知我。</p>
 </span>
       
     </div>
@@ -345,10 +343,10 @@ view.getViewTreeObserver().addOnGlobalLayoutListener(<span class="keyword">new</
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目錄
+            Inhaltsverzeichnis
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview">
-            本站概覽
+            Übersicht
           </li>
         </ul>
       
@@ -363,21 +361,21 @@ view.getViewTreeObserver().addOnGlobalLayoutListener(<span class="keyword">new</
           <div class="site-state-item site-state-posts">
             <a href="/archives">
               <span class="site-state-item-count">17</span>
-              <span class="site-state-item-name">文章</span>
+              <span class="site-state-item-name">Artikel</span>
             </a>
           </div>
 
           <div class="site-state-item site-state-categories">
             <a href="/categories">
               <span class="site-state-item-count">2</span>
-              <span class="site-state-item-name">分類</span>
+              <span class="site-state-item-name">Kategorien</span>
               </a>
           </div>
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
               <span class="site-state-item-count">21</span>
-              <span class="site-state-item-name">標籤</span>
+              <span class="site-state-item-name">Tags</span>
               </a>
           </div>
 
@@ -421,7 +419,7 @@ view.getViewTreeObserver().addOnGlobalLayoutListener(<span class="keyword">new</
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-number">2.</span> <span class="nav-text">问题描述</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-number">2.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
@@ -446,11 +444,11 @@ view.getViewTreeObserver().addOnGlobalLayoutListener(<span class="keyword">new</
 </div>
 
 <div class="powered-by">
-  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 強力驅動
+  Erstellt mit  <a class="theme-link" href="http://hexo.io">Hexo</a>
 </div>
 
 <div class="theme-info">
-  主題 -
+  Theme -
   <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
     NexT
   </a>
