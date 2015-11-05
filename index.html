@@ -114,7 +114,7 @@
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
             <i class="menu-item-icon icon-next-home"></i> <br />
-            Startseite
+            首頁
           </a>
         </li>
       
@@ -122,7 +122,7 @@
         <li class="menu-item menu-item-categories">
           <a href="/categories" rel="section">
             <i class="menu-item-icon icon-next-categories"></i> <br />
-            Kategorien
+            分類
           </a>
         </li>
       
@@ -130,7 +130,7 @@
         <li class="menu-item menu-item-about">
           <a href="/about" rel="section">
             <i class="menu-item-icon icon-next-about"></i> <br />
-            Über
+            關於
           </a>
         </li>
       
@@ -138,7 +138,7 @@
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             <i class="menu-item-icon icon-next-archives"></i> <br />
-            Archiv
+            歸檔
           </a>
         </li>
       
@@ -146,7 +146,7 @@
         <li class="menu-item menu-item-tags">
           <a href="/tags" rel="section">
             <i class="menu-item-icon icon-next-tags"></i> <br />
-            Tags
+            標籤
           </a>
         </li>
       
@@ -178,6 +178,103 @@
           
           
             
+              <a class="post-title-link" href="/2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/" itemprop="url">
+                实现RecyclerView的下拉刷新和上拉加载更多
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2015-11-04T16:28:14+08:00" content="2015-11-04">
+            2015-11-04
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>这两天项目中牵涉了对于RecyclerView的上拉加载更多和下拉刷新的功能，所以总结一下:</p>
+<p>我们的下拉刷新使用的是<strong>android.support.v4.widget.SwipeRefreshLayout</strong>,而上拉加载更多使用的方案是通过给RecyclerView添加<strong>footerview</strong>来实现的。</p>
+<p>所以代码是这样的:</p>
+<pre><code>mSwipeRefreshLayout.setOnRefreshListener(<span class="keyword">this</span>);
+
+<span class="annotation">@Override</span>
+<span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onRefresh</span><span class="params">()</span></span>{
+    <span class="comment">//在这里执行下拉刷新的功能</span>
+}
+
+<span class="comment">//以下是上拉加载更多的方法</span>
+<span class="keyword">int</span> lastVisibleItem<span class="comment">//最后一条可见的item</span>
+mRvMessage.addOnScrollListener(<span class="keyword">new</span> RecyclerView.OnScrollListener() {
+            <span class="annotation">@Override</span>
+            <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onScrollStateChanged</span><span class="params">(RecyclerView recyclerView, <span class="keyword">int</span> newState)</span> </span>{
+                <span class="keyword">super</span>.onScrollStateChanged(recyclerView, newState);
+                <span class="keyword">int</span> totalCount = mLinearLayoutManager.getItemCount();<span class="comment">//RecyclerView中的总的条目的数量(此处代表的是可见的和不可见的总数)</span>
+                <span class="keyword">if</span>(newState == RecyclerView.SCROLL_STATE_IDLE &amp;&amp; lastVisibleItem + <span class="number">1</span>==totalCount){
+                        <span class="comment">//此处添加加载更多的代码，一般为取数据库或者加载网络等</span>
+                }
+            }
+
+            <span class="annotation">@Override</span>
+            <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onScrolled</span><span class="params">(RecyclerView recyclerView, <span class="keyword">int</span> dx, <span class="keyword">int</span> dy)</span> </span>{
+                <span class="keyword">super</span>.onScrolled(recyclerView, dx, dy);
+                <span class="comment">//每次滑动的时候要更新最后一条可见的item的id</span>
+                lastVisibleItem = mLinearLayoutManager.findLastVisibleItemPosition();
+            }
+        });
+</code></pre></span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2015/10/29/解决软键盘和dialog一同消失的问题/" itemprop="url">
                 解决软键盘和dialog一同消失的问题
               </a>
@@ -188,7 +285,7 @@
 
       <div class="post-meta">
         <span class="post-time">
-          Veröffentlicht am
+          發表於
           <time itemprop="dateCreated" datetime="2015-10-29T16:18:45+08:00" content="2015-10-29">
             2015-10-29
           </time>
@@ -299,7 +396,7 @@ view.getViewTreeObserver().addOnGlobalLayoutListener(<span class="keyword">new</
 
       <div class="post-meta">
         <span class="post-time">
-          Veröffentlicht am
+          發表於
           <time itemprop="dateCreated" datetime="2015-10-23T16:54:03+08:00" content="2015-10-23">
             2015-10-23
           </time>
@@ -491,7 +588,7 @@ view.getViewTreeObserver().addOnGlobalLayoutListener(<span class="keyword">new</
 
       <div class="post-meta">
         <span class="post-time">
-          Veröffentlicht am
+          發表於
           <time itemprop="dateCreated" datetime="2015-10-12T09:39:49+08:00" content="2015-10-12">
             2015-10-12
           </time>
@@ -499,7 +596,7 @@ view.getViewTreeObserver().addOnGlobalLayoutListener(<span class="keyword">new</
 
         
           <span class="post-category" >
-            &nbsp; | &nbsp; in
+            &nbsp; | &nbsp; 分類於
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
                 <a href="/categories/Android/" itemprop="url" rel="index">
@@ -817,7 +914,7 @@ observable.observeOn(AndroidSchedulers.mainThread()).subscribe(<span class="keyw
 
       <div class="post-meta">
         <span class="post-time">
-          Veröffentlicht am
+          發表於
           <time itemprop="dateCreated" datetime="2015-10-09T12:12:33+08:00" content="2015-10-09">
             2015-10-09
           </time>
@@ -825,7 +922,7 @@ observable.observeOn(AndroidSchedulers.mainThread()).subscribe(<span class="keyw
 
         
           <span class="post-category" >
-            &nbsp; | &nbsp; in
+            &nbsp; | &nbsp; 分類於
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
                 <a href="/categories/Android/" itemprop="url" rel="index">
@@ -920,7 +1017,7 @@ sendStickyBroadcast()<span class="comment">;</span>
 
       <div class="post-meta">
         <span class="post-time">
-          Veröffentlicht am
+          發表於
           <time itemprop="dateCreated" datetime="2015-10-08T13:47:59+08:00" content="2015-10-08">
             2015-10-08
           </time>
@@ -928,7 +1025,7 @@ sendStickyBroadcast()<span class="comment">;</span>
 
         
           <span class="post-category" >
-            &nbsp; | &nbsp; in
+            &nbsp; | &nbsp; 分類於
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
                 <a href="/categories/Android/" itemprop="url" rel="index">
@@ -1123,7 +1220,7 @@ NotificationManagerCompat.from(<span class="keyword">this</span>).notify(<span c
 
       <div class="post-meta">
         <span class="post-time">
-          Veröffentlicht am
+          發表於
           <time itemprop="dateCreated" datetime="2015-09-24T15:57:16+08:00" content="2015-09-24">
             2015-09-24
           </time>
@@ -1131,7 +1228,7 @@ NotificationManagerCompat.from(<span class="keyword">this</span>).notify(<span c
 
         
           <span class="post-category" >
-            &nbsp; | &nbsp; in
+            &nbsp; | &nbsp; 分類於
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
                 <a href="/categories/Android/" itemprop="url" rel="index">
@@ -1217,7 +1314,7 @@ NotificationManagerCompat.from(<span class="keyword">this</span>).notify(<span c
 
       <div class="post-meta">
         <span class="post-time">
-          Veröffentlicht am
+          發表於
           <time itemprop="dateCreated" datetime="2015-09-23T16:22:08+08:00" content="2015-09-23">
             2015-09-23
           </time>
@@ -1290,7 +1387,7 @@ NotificationManagerCompat.from(<span class="keyword">this</span>).notify(<span c
 
       <div class="post-meta">
         <span class="post-time">
-          Veröffentlicht am
+          發表於
           <time itemprop="dateCreated" datetime="2015-09-22T10:28:32+08:00" content="2015-09-22">
             2015-09-22
           </time>
@@ -1298,7 +1395,7 @@ NotificationManagerCompat.from(<span class="keyword">this</span>).notify(<span c
 
         
           <span class="post-category" >
-            &nbsp; | &nbsp; in
+            &nbsp; | &nbsp; 分類於
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
                 <a href="/categories/Fragment/" itemprop="url" rel="index">
@@ -1515,7 +1612,7 @@ FragmentTransaction <span class="keyword">transaction</span> = getFragmentManage
 
       <div class="post-meta">
         <span class="post-time">
-          Veröffentlicht am
+          發表於
           <time itemprop="dateCreated" datetime="2015-09-21T10:30:23+08:00" content="2015-09-21">
             2015-09-21
           </time>
@@ -1523,7 +1620,7 @@ FragmentTransaction <span class="keyword">transaction</span> = getFragmentManage
 
         
           <span class="post-category" >
-            &nbsp; | &nbsp; in
+            &nbsp; | &nbsp; 分類於
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
                 <a href="/categories/Android/" itemprop="url" rel="index">
@@ -1658,91 +1755,6 @@ dependencies {
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/09/19/Espresso测试/" itemprop="url">
-                Espresso测试
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          Veröffentlicht am
-          <time itemprop="dateCreated" datetime="2015-09-19T16:34:50+08:00" content="2015-09-19">
-            2015-09-19
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; in
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/Android/" itemprop="url" rel="index">
-                  <span itemprop="name">Android</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2015/09/19/Espresso测试/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/19/Espresso测试/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>Espresso备忘单:</p>
-<p><img src="https://google.github.io/android-testing-support-library/assets/espresso-cheat-sheet-2.1.0.png" alt="备忘单"></p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1781,22 +1793,22 @@ dependencies {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">17</span>
-              <span class="site-state-item-name">Artikel</span>
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">文章</span>
             </a>
           </div>
 
           <div class="site-state-item site-state-categories">
             <a href="/categories">
               <span class="site-state-item-count">2</span>
-              <span class="site-state-item-name">Kategorien</span>
+              <span class="site-state-item-name">分類</span>
               </a>
           </div>
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
               <span class="site-state-item-count">21</span>
-              <span class="site-state-item-name">Tags</span>
+              <span class="site-state-item-name">標籤</span>
               </a>
           </div>
 
@@ -1854,11 +1866,11 @@ dependencies {
 </div>
 
 <div class="powered-by">
-  Erstellt mit  <a class="theme-link" href="http://hexo.io">Hexo</a>
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 強力驅動
 </div>
 
 <div class="theme-info">
-  Theme -
+  主題 -
   <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
     NexT
   </a>

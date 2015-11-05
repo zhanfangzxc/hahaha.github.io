@@ -32,7 +32,7 @@
 
 
 
-  <meta name="keywords" content="Android,数据绑定," />
+  <meta name="keywords" content="Android,RecyclerView," />
 
 
 
@@ -43,35 +43,25 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="上一篇文章，我们使一个基础的twitter客户端运行起来了，但是让我们有点不太理解为什么，所以现在我们就来了解一下数据绑定库都做了什么和如何工作的。
-首先要做的就是在我们项目的顶级build.gradle文件中的buildscript模块中添加一个依赖项:
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependenci">
+<meta name="description" content="这两天项目中牵涉了对于RecyclerView的上拉加载更多和下拉刷新的功能，所以总结一下:
+我们的下拉刷新使用的是android.support.v4.widget.SwipeRefreshLayout,而上拉加载更多使用的方案是通过给RecyclerView添加footerview来实现的。
+所以代码是这样的:
+mSwipeRefreshLayout.setOnRefreshListener(">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[翻译]数据绑定part 2">
-<meta property="og:url" content="http://zhaoshanshan.me/2015/09/21/翻译-数据绑定part-2/index.html">
+<meta property="og:title" content="实现RecyclerView的下拉刷新和上拉加载更多">
+<meta property="og:url" content="http://zhaoshanshan.me/2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/index.html">
 <meta property="og:site_name" content="ZhaoShanShan’s Blog">
-<meta property="og:description" content="上一篇文章，我们使一个基础的twitter客户端运行起来了，但是让我们有点不太理解为什么，所以现在我们就来了解一下数据绑定库都做了什么和如何工作的。
-首先要做的就是在我们项目的顶级build.gradle文件中的buildscript模块中添加一个依赖项:
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependenci">
-<meta property="og:image" content="https://blog.stylingandroid.com/wp-content/uploads/2015/08/Part11-1024x768.png">
-<meta property="og:updated_time" content="2015-09-21T07:12:17.000Z">
+<meta property="og:description" content="这两天项目中牵涉了对于RecyclerView的上拉加载更多和下拉刷新的功能，所以总结一下:
+我们的下拉刷新使用的是android.support.v4.widget.SwipeRefreshLayout,而上拉加载更多使用的方案是通过给RecyclerView添加footerview来实现的。
+所以代码是这样的:
+mSwipeRefreshLayout.setOnRefreshListener(">
+<meta property="og:updated_time" content="2015-11-04T09:31:36.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="[翻译]数据绑定part 2">
-<meta name="twitter:description" content="上一篇文章，我们使一个基础的twitter客户端运行起来了，但是让我们有点不太理解为什么，所以现在我们就来了解一下数据绑定库都做了什么和如何工作的。
-首先要做的就是在我们项目的顶级build.gradle文件中的buildscript模块中添加一个依赖项:
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependenci">
+<meta name="twitter:title" content="实现RecyclerView的下拉刷新和上拉加载更多">
+<meta name="twitter:description" content="这两天项目中牵涉了对于RecyclerView的上拉加载更多和下拉刷新的功能，所以总结一下:
+我们的下拉刷新使用的是android.support.v4.widget.SwipeRefreshLayout,而上拉加载更多使用的方案是通过给RecyclerView添加footerview来实现的。
+所以代码是这样的:
+mSwipeRefreshLayout.setOnRefreshListener(">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -81,7 +71,7 @@ buildscript {
   };
 </script>
 
-  <title> [翻译]数据绑定part 2 | ZhaoShanShan’s Blog </title>
+  <title> 实现RecyclerView的下拉刷新和上拉加载更多 | ZhaoShanShan’s Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
@@ -196,7 +186,7 @@ buildscript {
           
           
             
-              [翻译]数据绑定part 2
+              实现RecyclerView的下拉刷新和上拉加载更多
             
           
         </h1>
@@ -205,34 +195,19 @@ buildscript {
       <div class="post-meta">
         <span class="post-time">
           發表於
-          <time itemprop="dateCreated" datetime="2015-09-21T10:30:23+08:00" content="2015-09-21">
-            2015-09-21
+          <time itemprop="dateCreated" datetime="2015-11-04T16:28:14+08:00" content="2015-11-04">
+            2015-11-04
           </time>
         </span>
 
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分類於
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/Android/" itemprop="url" rel="index">
-                  <span itemprop="name">Android</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
         
 
         
           
             <span class="post-comments-count">
               &nbsp; | &nbsp;
-              <a href="/2015/09/21/翻译-数据绑定part-2/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/21/翻译-数据绑定part-2/" itemprop="commentsCount"></span>
+              <a href="/2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/" itemprop="commentsCount"></span>
               </a>
             </span>
           
@@ -246,88 +221,36 @@ buildscript {
       
 
       
-        <span itemprop="articleBody"><p>上一篇文章，我们使一个基础的twitter客户端运行起来了，但是让我们有点不太理解为什么，所以现在我们就来了解一下数据绑定库都做了什么和如何工作的。</p>
-<p>首先要做的就是在我们项目的顶级<strong>build.gradle</strong>文件中的<strong>buildscript</strong>模块中添加一个依赖项:</p>
-<pre><code><span class="keyword">buildscript</span> {
-    <span class="keyword">repositories</span> {
-        jcenter()
-    }
-    <span class="keyword">dependencies</span> {
-        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.3.0'</span>
-        <span class="keyword">classpath</span> <span class="string">"com.android.databinding:dataBinder:1.0-rc1"</span>
-    }
+        <span itemprop="articleBody"><p>这两天项目中牵涉了对于RecyclerView的上拉加载更多和下拉刷新的功能，所以总结一下:</p>
+<p>我们的下拉刷新使用的是<strong>android.support.v4.widget.SwipeRefreshLayout</strong>,而上拉加载更多使用的方案是通过给RecyclerView添加<strong>footerview</strong>来实现的。</p>
+<p>所以代码是这样的:</p>
+<pre><code>mSwipeRefreshLayout.setOnRefreshListener(<span class="keyword">this</span>);
+
+<span class="annotation">@Override</span>
+<span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onRefresh</span><span class="params">()</span></span>{
+    <span class="comment">//在这里执行下拉刷新的功能</span>
 }
 
-<span class="keyword">allprojects</span> {
-    <span class="keyword">repositories</span> {
-        jcenter()
-    }
-}
-</code></pre><p>在子项目中的<strong>build.gradle</strong>文件中，我们需要添加一个构建插件:</p>
-<pre><code>apply plugin: <span class="string">'com.android.application'</span>
-apply plugin: <span class="string">'com.android.databinding'</span> //就是这一行
+<span class="comment">//以下是上拉加载更多的方法</span>
+<span class="keyword">int</span> lastVisibleItem<span class="comment">//最后一条可见的item</span>
+mRvMessage.addOnScrollListener(<span class="keyword">new</span> RecyclerView.OnScrollListener() {
+            <span class="annotation">@Override</span>
+            <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onScrollStateChanged</span><span class="params">(RecyclerView recyclerView, <span class="keyword">int</span> newState)</span> </span>{
+                <span class="keyword">super</span>.onScrollStateChanged(recyclerView, newState);
+                <span class="keyword">int</span> totalCount = mLinearLayoutManager.getItemCount();<span class="comment">//RecyclerView中的总的条目的数量(此处代表的是可见的和不可见的总数)</span>
+                <span class="keyword">if</span>(newState == RecyclerView.SCROLL_STATE_IDLE &amp;&amp; lastVisibleItem + <span class="number">1</span>==totalCount){
+                        <span class="comment">//此处添加加载更多的代码，一般为取数据库或者加载网络等</span>
+                }
+            }
 
-android {
-    compileSdkVersion <span class="number">23</span>
-    buildToolsVersion <span class="string">"23.0.0"</span>
-
-    defaultConfig {
-        applicationId <span class="string">"com.stylingandroid.databinding"</span>
-        minSdkVersion <span class="number">7</span>
-        targetSdkVersion <span class="number">23</span>
-        versionCode <span class="number">1</span>
-        versionName <span class="string">"1.0"</span>
-
-        buildConfigField <span class="string">'String'</span>, <span class="string">'TWITTER_CONSUMER_KEY'</span>, <span class="string">"\"</span>${twitterConsumerKey}\<span class="string">""</span>
-        buildConfigField <span class="string">'String'</span>, <span class="string">'TWITTER_CONSUMER_SECRET'</span>, <span class="string">"\"</span>${twitterConsumerSecret}\<span class="string">""</span>
-        buildConfigField <span class="string">'String'</span>, <span class="string">'TWITTER_ACCESS_KEY'</span>, <span class="string">"\"</span>${twitterAccessKey}\<span class="string">""</span>
-        buildConfigField <span class="string">'String'</span>, <span class="string">'TWITTER_ACCESS_SECRET'</span>, <span class="string">"\"</span>${twitterAccessSecret}\<span class="string">""</span>
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span>
-        }
-    }
-    packagingOptions {
-        exclude <span class="string">'META-INF/LICENSE.txt'</span>
-    }
-    lintOptions {
-        disable <span class="string">'InvalidPackage'</span>
-    }
-}
-
-dependencies {
-    compile <span class="string">'com.android.support:support-annotations:23.0.0'</span>
-    compile <span class="string">'com.android.support:design:23.0.0'</span>
-    compile <span class="string">'com.android.support:appcompat-v7:23.0.0'</span>
-    compile <span class="string">'com.android.support:recyclerview-v7:23.0.0'</span>
-    compile <span class="string">'org.twitter4j:twitter4j-core:4.0.4'</span>
-    compile <span class="string">'org.twitter4j:twitter4j-async:4.0.4'</span>
-    compile <span class="string">'com.github.bumptech.glide:glide:3.6.1'</span>
-}
-</code></pre><p>值得一提的是这里没有关于数据绑定的编译库添加进去，只是一个简单的构建项的添加。</p>
-<p>这可以对于即将发生的事情，给我们一个线索，数据绑定是通过在执行的过程中构建和生成的样板式的代码，通常与绑定数据到视图有关。</p>
-<p>在我们的例子中，他解析布局文件和检测被<strong>layout</strong>包装器在<strong>layout/status_item.xml</strong>,基于上面的文件名称，会自动生成一个数据绑定类，命名为<strong>StatusItemBinding</strong>，而且这是一个会在ViewHolder实现类中引用的神秘的类。</p>
-<p>然后数据绑定会剔除被<layout>包装的代码，然后移除数据绑定表达式，最后将这些合并成<strong>StatusItemBinding</strong>类，换句话说就是将他转变成一个标准的Android xml文件，并且添加一个java类在运行时实现了绑定。</layout></p>
-<p>所以我们现在再看<strong>StatusViewHolder</strong>的时候就会感觉很清晰，而且也明白了是怎么回事:</p>
-<pre><code>public <span class="class"><span class="keyword">class</span> <span class="title">StatusViewHolder</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">RecyclerView</span>.<span class="title">ViewHolder</span>{</span>
-    <span class="keyword">private</span> <span class="type">StatusItemBinding</span> binding;
-
-    public <span class="type">StatusViewHolder</span>(<span class="type">View</span> itemView){
-        <span class="keyword">super</span>(itemView);
-        binding = <span class="type">DataBinding</span>.bind(itemView);    } 
-
-    public void bind(<span class="type">Status</span> status){
-        binding.setStatus(status);
-    }
-}
-</code></pre><p>在构造函数中我们调用<strong>DataBindingUtil.bind(itemView)</strong>将会在构建过程中生成一个StatusItemBinding，然后在<strong>bind(Status status)</strong>方法中我们将会调用一个setter在StatusItemBinding实例中，这个setter是在我们原始布局中声明的类型为<strong>.data.Status</strong>,命名为status的<strong><data></data></strong>节点生成的，当我们调用settter的时候，它将会从原始布局中提取数据绑定表达式执行必要的绑定。</p>
-<p>现在我们更好的理解了他是怎么工作的而且为什么当app运行的时候我们能看到tweets的列表</p>
-<p><img src="https://blog.stylingandroid.com/wp-content/uploads/2015/08/Part11-1024x768.png" alt="https://blog.stylingandroid.com/wp-content/uploads/2015/08/Part11-1024x768.png"></p>
-<p>非常好，一个简单的布局，有三个items被绑定，并没有节省我们多少时间，只是对于TextView来说省去了找views和设置内容的时间。然而并没有结束，这里还可以为我们做好多关于数据绑定的事情，当我们从Twitter中提取出了image URL之后，然后将他绑定到ImageView中之后，图片却并没有显示出来，我们需要包含一个图像加载库，在下一篇文章中，我们将看到怎样通过数据绑定自动加载图片。</p>
-<p>在这篇文章中主要是一些说明，并没有增加额外的代码，所以我们可以使用上一篇文章中的代码。</p>
-</span>
+            <span class="annotation">@Override</span>
+            <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onScrolled</span><span class="params">(RecyclerView recyclerView, <span class="keyword">int</span> dx, <span class="keyword">int</span> dy)</span> </span>{
+                <span class="keyword">super</span>.onScrolled(recyclerView, dx, dy);
+                <span class="comment">//每次滑动的时候要更新最后一条可见的item的id</span>
+                lastVisibleItem = mLinearLayoutManager.findLastVisibleItemPosition();
+            }
+        });
+</code></pre></span>
       
     </div>
 
@@ -337,7 +260,7 @@ dependencies {
           
             <a href="/tags/Android/" rel="tag">#Android</a>
           
-            <a href="/tags/数据绑定/" rel="tag">#数据绑定</a>
+            <a href="/tags/RecyclerView/" rel="tag">#RecyclerView</a>
           
         </div>
       
@@ -346,13 +269,11 @@ dependencies {
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/09/22/Fragment介绍/" rel="prev">Fragment介绍</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/09/19/Espresso测试/" rel="next">Espresso测试</a>
+              <a href="/2015/10/29/解决软键盘和dialog一同消失的问题/" rel="next">解决软键盘和dialog一同消失的问题</a>
             
           </div>
         </div>
@@ -377,8 +298,8 @@ dependencies {
         
           <div class="comments" id="comments">
             
-              <div class="ds-thread" data-thread-key="2015/09/21/翻译-数据绑定part-2/"
-                   data-title="[翻译]数据绑定part 2" data-url="http://zhaoshanshan.me/2015/09/21/翻译-数据绑定part-2/">
+              <div class="ds-thread" data-thread-key="2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/"
+                   data-title="实现RecyclerView的下拉刷新和上拉加载更多" data-url="http://zhaoshanshan.me/2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/">
               </div>
             
           </div>
