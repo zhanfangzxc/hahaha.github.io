@@ -32,7 +32,7 @@
 
 
 
-  <meta name="keywords" content="Acdroid,Touch事件," />
+  <meta name="keywords" content="Android,Webview," />
 
 
 
@@ -43,37 +43,28 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="图示：
-
-这篇文章为收集整理别人的内容，所以非常感谢那些默默付出的大牛们，正是有你们的付出，才让我不断的进步，感谢。
-以下图片中的黑色箭头为ACTION_DOWN事件的分发顺序，绿色箭头是ACTION_UP和ACTION_MOVE的事件分发顺序。
-ViewGroup和View都不消耗事件，最终交给Activity消耗
-实际开发中我们经常会setOnTouchListener，这个会在onTouch">
+<meta name="description" content="如果你想在自己的项目中添加加载网页的功能的话，就需要使用Webview。
+添加WebView&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&amp;gt;
+&amp;lt;WebView  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:id=&quot;@+id/webview&quot;
+    and">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Touch事件的传递机制">
-<meta property="og:url" content="http://zhaoshanshan.me/2015/09/24/Touch事件的传递机制/index.html">
+<meta property="og:title" content="Webview操作整理">
+<meta property="og:url" content="http://zhaoshanshan.me/2015/11/17/Webview操作整理/index.html">
 <meta property="og:site_name" content="ZhaoShanShan’s Blog">
-<meta property="og:description" content="图示：
-
-这篇文章为收集整理别人的内容，所以非常感谢那些默默付出的大牛们，正是有你们的付出，才让我不断的进步，感谢。
-以下图片中的黑色箭头为ACTION_DOWN事件的分发顺序，绿色箭头是ACTION_UP和ACTION_MOVE的事件分发顺序。
-ViewGroup和View都不消耗事件，最终交给Activity消耗
-实际开发中我们经常会setOnTouchListener，这个会在onTouch">
-<meta property="og:image" content="https://github.com/zhanfangzxc/zhanfangzxc.github.io/blob/source/source/_posts/Touch%E4%BA%8B%E4%BB%B6%E4%BC%A0%E9%80%92.jpg?raw=true">
-<meta property="og:image" content="http://fangjie.info/wp-content/uploads/2015/09/view1-1024x629.png">
-<meta property="og:image" content="http://fangjie.info/wp-content/uploads/2015/09/view2.png">
-<meta property="og:image" content="http://fangjie.info/wp-content/uploads/2015/09/view3.png">
-<meta property="og:image" content="http://fangjie.info/wp-content/uploads/2015/09/view4.png">
-<meta property="og:image" content="http://fangjie.info/wp-content/uploads/2015/09/view5.png">
-<meta property="og:updated_time" content="2015-10-30T02:56:55.000Z">
+<meta property="og:description" content="如果你想在自己的项目中添加加载网页的功能的话，就需要使用Webview。
+添加WebView&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&amp;gt;
+&amp;lt;WebView  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:id=&quot;@+id/webview&quot;
+    and">
+<meta property="og:updated_time" content="2015-11-17T10:01:16.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Touch事件的传递机制">
-<meta name="twitter:description" content="图示：
-
-这篇文章为收集整理别人的内容，所以非常感谢那些默默付出的大牛们，正是有你们的付出，才让我不断的进步，感谢。
-以下图片中的黑色箭头为ACTION_DOWN事件的分发顺序，绿色箭头是ACTION_UP和ACTION_MOVE的事件分发顺序。
-ViewGroup和View都不消耗事件，最终交给Activity消耗
-实际开发中我们经常会setOnTouchListener，这个会在onTouch">
+<meta name="twitter:title" content="Webview操作整理">
+<meta name="twitter:description" content="如果你想在自己的项目中添加加载网页的功能的话，就需要使用Webview。
+添加WebView&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&amp;gt;
+&amp;lt;WebView  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:id=&quot;@+id/webview&quot;
+    and">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -83,7 +74,7 @@ ViewGroup和View都不消耗事件，最终交给Activity消耗
   };
 </script>
 
-  <title> Touch事件的传递机制 | ZhaoShanShan’s Blog </title>
+  <title> Webview操作整理 | ZhaoShanShan’s Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
@@ -198,7 +189,7 @@ ViewGroup和View都不消耗事件，最终交给Activity消耗
           
           
             
-              Touch事件的传递机制
+              Webview操作整理
             
           
         </h1>
@@ -207,34 +198,19 @@ ViewGroup和View都不消耗事件，最终交给Activity消耗
       <div class="post-meta">
         <span class="post-time">
           發表於
-          <time itemprop="dateCreated" datetime="2015-09-24T15:57:16+08:00" content="2015-09-24">
-            2015-09-24
+          <time itemprop="dateCreated" datetime="2015-11-17T16:08:26+08:00" content="2015-11-17">
+            2015-11-17
           </time>
         </span>
 
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分類於
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/Android/" itemprop="url" rel="index">
-                  <span itemprop="name">Android</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
         
 
         
           
             <span class="post-comments-count">
               &nbsp; | &nbsp;
-              <a href="/2015/09/24/Touch事件的传递机制/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/24/Touch事件的传递机制/" itemprop="commentsCount"></span>
+              <a href="/2015/11/17/Webview操作整理/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/17/Webview操作整理/" itemprop="commentsCount"></span>
               </a>
             </span>
           
@@ -248,18 +224,154 @@ ViewGroup和View都不消耗事件，最终交给Activity消耗
       
 
       
-        <span itemprop="articleBody"><p>图示：</p>
-<p><img src="https://github.com/zhanfangzxc/zhanfangzxc.github.io/blob/source/source/_posts/Touch%E4%BA%8B%E4%BB%B6%E4%BC%A0%E9%80%92.jpg?raw=true" alt="Touch事件传递"></p>
-<p>这篇文章为收集整理别人的内容，所以非常感谢那些默默付出的大牛们，正是有你们的付出，才让我不断的进步，感谢。</p>
-<p>以下图片中的黑色箭头为<strong>ACTION_DOWN</strong>事件的分发顺序，绿色箭头是<strong>ACTION_UP</strong>和<strong>ACTION_MOVE</strong>的事件分发顺序。</p>
-<h4 id="ViewGroup和View都不消耗事件，最终交给Activity消耗">ViewGroup和View都不消耗事件，最终交给Activity消耗</h4><p><img src="http://fangjie.info/wp-content/uploads/2015/09/view1-1024x629.png" alt="Activity消耗事件"></p>
-<p>实际开发中我们经常会<strong>setOnTouchListener</strong>，这个会在<strong>onTouchEvent</strong>之前调用，如果这个方法返回false的话，那么事件会传递到<strong>onTouchEvent</strong>;如果返回true，相当于拦截了事件。</p>
-<h4 id="Touch的区域是在ViewGroup之内，View之外">Touch的区域是在ViewGroup之内，View之外</h4><p><img src="http://fangjie.info/wp-content/uploads/2015/09/view2.png" alt="Touch ViewGroup"></p>
-<h4 id="View消耗事件">View消耗事件</h4><p><img src="http://fangjie.info/wp-content/uploads/2015/09/view3.png" alt="View消耗事件"></p>
-<h4 id="ViewGroup消耗事件，但经过View传递">ViewGroup消耗事件，但经过View传递</h4><p><img src="http://fangjie.info/wp-content/uploads/2015/09/view4.png" alt="ViewGroup消耗事件">      </p>
-<h4 id="ViewGroup消耗事件，但是不经过View传递">ViewGroup消耗事件，但是不经过View传递</h4><p><img src="http://fangjie.info/wp-content/uploads/2015/09/view5.png" alt="ViewGroup"></p>
-<h4 id="参考文章">参考文章</h4><p>图解View的事件分发机制:<a href="http://fangjie.info/%E5%9B%BE%E8%A7%A3view%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91%E6%9C%BA%E5%88%B6/?utm_source=tuicool" target="_blank" rel="external">http://fangjie.info/%E5%9B%BE%E8%A7%A3view%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91%E6%9C%BA%E5%88%B6/?utm_source=tuicool</a></p>
-</span>
+        <span itemprop="articleBody"><p>如果你想在自己的项目中添加加载网页的功能的话，就需要使用Webview。</p>
+<h3 id="添加WebView">添加WebView</h3><pre><code><span class="pi">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="tag">&lt;<span class="title">WebView</span>  <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span>
+    <span class="attribute">android:id</span>=<span class="value">"@+id/webview"</span>
+    <span class="attribute">android:layout_width</span>=<span class="value">"fill_parent"</span>
+    <span class="attribute">android:layout_height</span>=<span class="value">"fill_parent"</span>
+/&gt;</span>
+</code></pre><ul>
+<li><p>加载网页</p>
+<pre><code>WebView myWebView = (WebView) findViewById(R.<span class="property">id</span>.webview);
+myWebView.loadUrl(<span class="string">"http://www.example.com"</span>);
+</code></pre></li>
+<li><p>添加权限</p>
+<pre><code><span class="tag">&lt;<span class="title">manifest</span> <span class="attribute">...</span> &gt;</span>
+<span class="tag">&lt;<span class="title">uses-permission</span> <span class="attribute">android:name</span>=<span class="value">"android.permission.INTERNET"</span> /&gt;</span>
+...
+<span class="tag">&lt;/<span class="title">manifest</span>&gt;</span>
+</code></pre></li>
+</ul>
+<h3 id="在WebView中使用JavaScript">在WebView中使用JavaScript</h3><p>JavaScript默认在Webview中是不可用的，但是你可以通过<strong>WebSettings</strong>让他变为可用，具体代码:</p>
+<pre><code>WebView myWebView = (WebView) findViewById(R.id.webview)<span class="comment">;</span>
+WebSettings webSettings = myWebView.getSettings()<span class="comment">;</span>
+webSettings.setJavaScriptEnabled(true)<span class="comment">;</span>
+</code></pre><p>WebSettings中还存在很多其他的有用的设置。</p>
+<h3 id="将javaScript代码绑定到Android代码中">将javaScript代码绑定到Android代码中</h3><p>首先，在你的项目中添加如下类：</p>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebAppInterface</span></span>{
+    Context context;
+    WebAppInterface(Context c){
+        context = c;
+    }
+
+    <span class="annotation">@JavaScriptInterface</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showToast</span><span class="params">()</span></span>{
+         Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
+    }
+}
+</code></pre><p>在targetSdkVersion为17或者更高的时候，需要添加<strong>@JavaScriptInterface</strong>到类中的每一个方法上。</p>
+<p>绑定代码：</p>
+<pre><code>WebView webView = (WebView) findViewById(R.id.webview);
+webView.addJavascriptInterface(<span class="keyword">new</span> WebAppInterface(<span class="keyword">this</span>),<span class="string">"Android"</span>);
+</code></pre><p>此时的html代码中必须要包含以下代码：</p>
+<pre><code>&lt;input typpe=<span class="string">"button"</span> value=<span class="string">"Say hello"</span> onClick=<span class="string">"showAndroidToast('Hello Android!')"</span>
+
+&lt;script <span class="built_in">type</span>=<span class="string">"text/javascript"</span>&gt;
+    <span class="function"><span class="keyword">function</span> <span class="title">showAndroidToast</span><span class="params">(toast)</span></span>{
+        Android.showToast(toast);
+    }
+&lt;/script&gt;
+</code></pre><h3 id="处理Page导航">处理Page导航</h3><p>如果用户要在当前WebView中打开链接，可以使用<strong>setWebViewClient()</strong>为Webview设置<strong>WebviewClient</strong>，比如：</p>
+<pre><code>WebView myWebView = (WebView)findViewById(R.id.webview)<span class="comment">;</span>
+myWebView.setWebViewClient(new WebViewClient())<span class="comment">;</span>
+</code></pre><p>现在，所有的用户点击的跳转都会在Webview中加载。</p>
+<p>如果点击链接的时候，需要更多的控制，那么就需要创建自己的<strong>WebviewClient</strong>,然后覆盖<strong>shouldOverrideUrlLoading()</strong>方法，代码如下：</p>
+<pre><code><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWebviewClient</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">WebViewClient</span>{</span>
+    <span class="annotation">@Override</span>
+    public boolean shouldOverrideUrlLoading(<span class="type">WebView</span> view,<span class="type">String</span> url){
+        <span class="keyword">if</span>(<span class="type">Uri</span>.parse(url).getHost().equals(<span class="string">"www.example.com"</span>)){
+            <span class="comment">//让WebView加载网页</span>
+            <span class="keyword">return</span> <span class="literal">false</span>;
+        }
+        <span class="comment">//不加载网页，跳到另外一Activity</span>
+        <span class="type">Intent</span> intent = <span class="keyword">new</span> <span class="type">Intent</span>(<span class="type">Intent</span>.<span class="type">ACTION_VIEW</span>, <span class="type">Uri</span>.parse(url));
+        startActivity(intent);
+        <span class="keyword">return</span> <span class="literal">true</span>;
+    }
+}
+</code></pre><p>最后：</p>
+<pre><code>WebView myWebView = (WebView) findViewById(R.id.webview)<span class="comment">;</span>
+myWebView.setWebViewClient(new MyWebViewClient())<span class="comment">;</span>
+</code></pre><h3 id="操纵网页浏览历史">操纵网页浏览历史</h3><p>使用设备上的back健来操纵网页的前进后退:</p>
+<pre><code><span class="annotation">@Override</span>
+<span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">onKeyDown</span><span class="params">(<span class="keyword">int</span> keyCode,KeyEvent event)</span></span>{
+    <span class="keyword">if</span>((keyCode == KeyEvent.KEYCODE_BACK)&amp;&amp;myWebView.canGoBack())
+    {
+        myWebView.goBack();
+        <span class="keyword">return</span> <span class="keyword">true</span>;
+    }
+    <span class="function"><span class="keyword">return</span> <span class="keyword">super</span>.<span class="title">onKeyDown</span><span class="params">(keyCode,event)</span></span>;
+}
+</code></pre><h3 id="实现点击WebView中的图片预览的效果">实现点击WebView中的图片预览的效果</h3><p>代码：</p>
+<pre><code><span class="comment">//在Html中添加Javascript代码</span>
+<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addImageClickListner</span><span class="params">()</span> </span>{
+        mWebView.loadUrl(<span class="string">"javascript:(function(){"</span> +
+                <span class="string">"var objs = document.getElementsByTagName(\"img\"); "</span> +
+                <span class="string">"for(var i=0;i&lt;objs.length;i++)  "</span> +
+                <span class="string">"{"</span>
+                + <span class="string">"    objs[i].onclick=function()  "</span> +
+                <span class="string">"    {  "</span>
+                + <span class="string">"        window.imagelistner.openImage(this.src);  "</span> +
+                <span class="string">"    }  "</span> +
+                <span class="string">"}"</span> +
+                <span class="string">"})()"</span>);
+    }
+
+    <span class="comment">//创建自定义的WebviewClient</span>
+
+    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWebViewClient</span> <span class="keyword">extends</span> <span class="title">WebViewClient</span> </span>{
+    <span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldOverrideUrlLoading</span><span class="params">(WebView view, String url)</span> </span>{
+        <span class="keyword">if</span> (url.endsWith(<span class="string">".jpg"</span>) || url.endsWith(<span class="string">".png"</span>) || url.endsWith(<span class="string">".gif"</span>)) {
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        } <span class="keyword">else</span> {
+            <span class="keyword">return</span> <span class="keyword">false</span>;
+        }
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageFinished</span><span class="params">(WebView view, String url)</span> </span>{
+
+        view.getSettings().setJavaScriptEnabled(<span class="keyword">true</span>);
+        mStatusLayout.showContentView(contentLayout);
+        <span class="keyword">super</span>.onPageFinished(view, url);
+        addImageClickListner();
+
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageStarted</span><span class="params">(WebView view, String url, Bitmap favicon)</span> </span>{
+        view.getSettings().setJavaScriptEnabled(<span class="keyword">true</span>);
+
+        <span class="keyword">super</span>.onPageStarted(view, url, favicon);
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceivedError</span><span class="params">(WebView view, <span class="keyword">int</span> errorCode, String description, String failingUrl)</span> </span>{
+
+        <span class="keyword">super</span>.onReceivedError(view, errorCode, description, failingUrl);
+
+    }
+}
+
+  <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JavascriptInterface</span> </span>{
+
+    <span class="keyword">private</span> Context context;
+
+    <span class="function"><span class="keyword">public</span> <span class="title">JavascriptInterface</span><span class="params">(Context context)</span> </span>{
+        <span class="keyword">this</span>.context = context;
+    }
+
+    <span class="annotation">@android</span>.webkit.<span class="function">JavascriptInterface
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">openImage</span><span class="params">(String img)</span> </span>{
+       <span class="comment">//预览图片的代码</span>
+    }
+}
+
+<span class="comment">//最后一步</span>
+  mWebView.addJavascriptInterface(<span class="keyword">new</span> JavascriptInterface(<span class="keyword">this</span>), <span class="string">"imagelistner"</span>);
+</code></pre></span>
       
     </div>
 
@@ -267,9 +379,9 @@ ViewGroup和View都不消耗事件，最终交给Activity消耗
       
         <div class="post-tags">
           
-            <a href="/tags/Acdroid/" rel="tag">#Acdroid</a>
+            <a href="/tags/Android/" rel="tag">#Android</a>
           
-            <a href="/tags/Touch事件/" rel="tag">#Touch事件</a>
+            <a href="/tags/Webview/" rel="tag">#Webview</a>
           
         </div>
       
@@ -278,13 +390,11 @@ ViewGroup和View都不消耗事件，最终交给Activity消耗
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/10/08/代码片段/" rel="prev">代码片段</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/09/23/学习计划/" rel="next">学习计划</a>
+              <a href="/2015/11/05/创建和发布Android库的完整指南/" rel="next">创建和发布Android库的完整指南</a>
             
           </div>
         </div>
@@ -309,8 +419,8 @@ ViewGroup和View都不消耗事件，最终交给Activity消耗
         
           <div class="comments" id="comments">
             
-              <div class="ds-thread" data-thread-key="2015/09/24/Touch事件的传递机制/"
-                   data-title="Touch事件的传递机制" data-url="http://zhaoshanshan.me/2015/09/24/Touch事件的传递机制/">
+              <div class="ds-thread" data-thread-key="2015/11/17/Webview操作整理/"
+                   data-title="Webview操作整理" data-url="http://zhaoshanshan.me/2015/11/17/Webview操作整理/">
               </div>
             
           </div>
@@ -409,7 +519,7 @@ ViewGroup和View都不消耗事件，最终交给Activity消耗
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#ViewGroup和View都不消耗事件，最终交给Activity消耗"><span class="nav-number">1.</span> <span class="nav-text">ViewGroup和View都不消耗事件，最终交给Activity消耗</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Touch的区域是在ViewGroup之内，View之外"><span class="nav-number">2.</span> <span class="nav-text">Touch的区域是在ViewGroup之内，View之外</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#View消耗事件"><span class="nav-number">3.</span> <span class="nav-text">View消耗事件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ViewGroup消耗事件，但经过View传递"><span class="nav-number">4.</span> <span class="nav-text">ViewGroup消耗事件，但经过View传递</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ViewGroup消耗事件，但是不经过View传递"><span class="nav-number">5.</span> <span class="nav-text">ViewGroup消耗事件，但是不经过View传递</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考文章"><span class="nav-number">6.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#添加WebView"><span class="nav-number">1.</span> <span class="nav-text">添加WebView</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在WebView中使用JavaScript"><span class="nav-number">2.</span> <span class="nav-text">在WebView中使用JavaScript</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将javaScript代码绑定到Android代码中"><span class="nav-number">3.</span> <span class="nav-text">将javaScript代码绑定到Android代码中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理Page导航"><span class="nav-number">4.</span> <span class="nav-text">处理Page导航</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操纵网页浏览历史"><span class="nav-number">5.</span> <span class="nav-text">操纵网页浏览历史</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现点击WebView中的图片预览的效果"><span class="nav-number">6.</span> <span class="nav-text">实现点击WebView中的图片预览的效果</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>

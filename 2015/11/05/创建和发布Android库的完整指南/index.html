@@ -1,0 +1,956 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="既然选择远方，便只顾风雨兼程" />
+
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ZhaoShanShan’s Blog" type="application/atom+xml" />
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="原文地址:https://medium.com/android-news/the-complete-guide-to-creating-an-android-library-46628b7fc879#.fpcy9pvc7
+我一直很惊讶于那些Android开发社区中存在的许多又去的第三方开源库没很长时间依赖，我都希望贡献一些自己的开源库，但是我并不知道要怎么做。查询了很多关于如何发布Android开">
+<meta property="og:type" content="article">
+<meta property="og:title" content="创建和发布Android库的完整指南">
+<meta property="og:url" content="http://zhaoshanshan.me/2015/11/05/创建和发布Android库的完整指南/index.html">
+<meta property="og:site_name" content="ZhaoShanShan’s Blog">
+<meta property="og:description" content="原文地址:https://medium.com/android-news/the-complete-guide-to-creating-an-android-library-46628b7fc879#.fpcy9pvc7
+我一直很惊讶于那些Android开发社区中存在的许多又去的第三方开源库没很长时间依赖，我都希望贡献一些自己的开源库，但是我并不知道要怎么做。查询了很多关于如何发布Android开">
+<meta property="og:image" content="https://d262ilb51hltx0.cloudfront.net/max/800/1*kV8pnaeikyXsgse0bWCeUA.png">
+<meta property="og:updated_time" content="2015-11-05T07:31:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="创建和发布Android库的完整指南">
+<meta name="twitter:description" content="原文地址:https://medium.com/android-news/the-complete-guide-to-creating-an-android-library-46628b7fc879#.fpcy9pvc7
+我一直很惊讶于那些Android开发社区中存在的许多又去的第三方开源库没很长时间依赖，我都希望贡献一些自己的开源库，但是我并不知道要怎么做。查询了很多关于如何发布Android开">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'always'
+  };
+</script>
+
+  <title> 创建和发布Android库的完整指南 | ZhaoShanShan’s Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">ZhaoShanShan’s Blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首頁
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分類
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            關於
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            歸檔
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            標籤
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              创建和发布Android库的完整指南
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2015-11-05T11:18:33+08:00" content="2015-11-05">
+            2015-11-05
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/11/05/创建和发布Android库的完整指南/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/05/创建和发布Android库的完整指南/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>原文地址:<a href="https://medium.com/android-news/the-complete-guide-to-creating-an-android-library-46628b7fc879#.fpcy9pvc7" target="_blank" rel="external">https://medium.com/android-news/the-complete-guide-to-creating-an-android-library-46628b7fc879#.fpcy9pvc7</a></p>
+<p>我一直很惊讶于那些Android开发社区中存在的许多又去的第三方开源库没很长时间依赖，我都希望贡献一些自己的开源库，但是我并不知道要怎么做。查询了很多关于如何发布Android开源库的文章之后，我仍然发现在很多不同地方查询到的信息中仍然有许多遗失的细节，所以我今天说明一下我自己的实现过程。</p>
+<p>首先，我使用的是以Gradle为官方构建系统的Android Studio，来创建我左右的Android项目，下载<a href="https://developer.android.com/intl/zh-cn/sdk/index.html" target="_blank" rel="external">Android Studio</a>的最新版本。</p>
+<h3 id="术语">术语</h3><p>在我们开始讲解之前先来了解一些术语：</p>
+<p><strong>Project</strong>——Android Studio中创建的项目代表一个完整的Android App,Android Studio中的项目包含一个或多个模块，就像Eclipse中工作空间的概念。</p>
+<p><strong>Module</strong>——一个模块是一个应用中的一个组建，可以独立的构建，测试或者调试。模块中包括你的应用相关的源代码和资源文件，Android Studio中的一个就像Eclipse中的一个工程。</p>
+<p><strong>AAR</strong>——是一个Android库的二进制版本，一个库项目的主要输出就是一个.aar的包，他是一个编译代码(就像一个jar文件或者是.so文件)和资源文件(manifest,res,assets)的组合.</p>
+<p><strong>Maven中央仓库</strong>——一个由Maven组织提供的仓库，它包括大量常用的开源库，搜索Maven可以浏览Maven中央仓库中的内容，<a href="">Gradle,Please</a>是另外一个允许你搜索Maven仓库的工具，Gradle使用的是jCenter协议，如果你再你的repositories节点(<a href="">Notes about jCenter</a>)写包含jCenter()的话,Maven中央仓库通常被称为Maven中央或中央仓库。</p>
+<p><strong>Sonatype</strong>——Snoatype’s开源软件存储库主机主要是用来为项目所有者和贡献者提供发布他们的组件到中央仓库的服务。</p>
+<p><strong>GPG</strong>——GNU隐私保护(GPG,也GnuPG),GNU项目的自由选择PGP加密软件符合OpenPGP(RFC4880)标准。使用GPG可以加密(解密)文件包含敏感数据,如电子受保护的健康信息(ePHI)由健康保险流通与责任法案(HIPAA)隐私和安全规则。更多GPG,请参阅GNU隐私保护的网站。(此段话全部使用翻译软件翻译)</p>
+<h3 id="准备你的Android库">准备你的Android库</h3><p>我将会使用我的<a href="">Tresle</a>库作为一个示例，这里需要做一些修改才能发不到中央仓库</p>
+<ul>
+<li><p>将库的核心代码和库的使用示例的代码分开，我将这个库分成两个模块，一个是<strong>library</strong>，一个是<strong>sample</strong>。</p>
+</li>
+<li><p>在Sample模块的<strong>build.gradle</strong>中，一定要包含以下内容</p>
+<pre><code>apply plugin: <span class="string">'com.android.application'</span>
+
+<span class="keyword">dependencies</span> {
+    <span class="keyword">compile</span> <span class="keyword">project</span>(<span class="string">':library'</span>)
+}
+</code></pre></li>
+<li><p>在library模块的<strong>build.gradle</strong>文件中，要包含下面的内容</p>
+<pre><code>apply <span class="string">plugin:</span> <span class="string">'com.android.library'</span>
+apply <span class="string">from:</span> <span class="string">'maven-push.gradle'</span>
+</code></pre></li>
+<li><p>在library模块，添加一个<strong>gradle.properties</strong>文件，然后包含如下代码</p>
+<pre><code><span class="setting">POM_NAME=<span class="value">ProjectName</span></span>
+<span class="setting">POM_ARTOFACT_ID=<span class="value">projectname</span></span>
+<span class="setting">POM_PACKAGING=<span class="value">aar</span></span>
+</code></pre></li>
+<li><p>在library模块中，添加一个<strong>maven-push.gradle</strong>文件，然后添加如下代码</p>
+<pre><code><span class="comment">/*
+ * Copyright 2013 Chris Banes
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+apply <span class="string">plugin:</span> <span class="string">'maven'</span>
+apply <span class="string">plugin:</span> <span class="string">'signing'</span>
+
+<span class="keyword">def</span> isReleaseBuild() {
+    <span class="keyword">return</span> VERSION_NAME.contains(<span class="string">"SNAPSHOT"</span>) == <span class="literal">false</span>
+}
+
+<span class="keyword">def</span> getReleaseRepositoryUrl() {
+    <span class="keyword">return</span> hasProperty(<span class="string">'RELEASE_REPOSITORY_URL'</span>) ? RELEASE_REPOSITORY_URL
+            : <span class="string">"https://oss.sonatype.org/service/local/staging/deploy/maven2/"</span>
+}
+
+<span class="keyword">def</span> getSnapshotRepositoryUrl() {
+    <span class="keyword">return</span> hasProperty(<span class="string">'SNAPSHOT_REPOSITORY_URL'</span>) ? SNAPSHOT_REPOSITORY_URL
+            : <span class="string">"https://oss.sonatype.org/content/repositories/snapshots/"</span>
+}
+
+<span class="keyword">def</span> getRepositoryUsername() {
+    <span class="keyword">return</span> hasProperty(<span class="string">'NEXUS_USERNAME'</span>) ? NEXUS_USERNAME : <span class="string">""</span>
+}
+
+<span class="keyword">def</span> getRepositoryPassword() {
+    <span class="keyword">return</span> hasProperty(<span class="string">'NEXUS_PASSWORD'</span>) ? NEXUS_PASSWORD : <span class="string">""</span>
+}
+
+afterEvaluate { project -&gt;
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -&gt; signing.signPom(deployment) }
+
+                pom.groupId = GROUP
+                pom.artifactId = POM_ARTIFACT_ID
+                pom.version = VERSION_NAME
+
+                repository(<span class="string">url:</span> getReleaseRepositoryUrl()) {
+                    authentication(<span class="string">userName:</span> getRepositoryUsername(), <span class="string">password:</span> getRepositoryPassword())
+                }
+                snapshotRepository(<span class="string">url:</span> getSnapshotRepositoryUrl()) {
+                    authentication(<span class="string">userName:</span> getRepositoryUsername(), <span class="string">password:</span> getRepositoryPassword())
+                }
+
+                pom.project {
+                    name POM_NAME
+                    packaging POM_PACKAGING
+                    description POM_DESCRIPTION
+                    url POM_URL
+
+                    scm {
+                        url POM_SCM_URL
+                        connection POM_SCM_CONNECTION
+                        developerConnection POM_SCM_DEV_CONNECTION
+                    }
+
+                    licenses {
+                        license {
+                            name POM_LICENCE_NAME
+                            url POM_LICENCE_URL
+                            distribution POM_LICENCE_DIST
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id POM_DEVELOPER_ID
+                            name POM_DEVELOPER_NAME
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        required { isReleaseBuild() &amp;&amp; gradle.taskGraph.hasTask(<span class="string">"uploadArchives"</span>) }
+        sign configurations.archives
+    }
+
+    <span class="comment">//task androidJavadocs(type: Javadoc) {</span>
+    <span class="comment">//source = android.sourceSets.main.allJava</span>
+    <span class="comment">//}</span>
+
+    <span class="comment">//task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {</span>
+    <span class="comment">//classifier = 'javadoc'</span>
+    <span class="comment">//from androidJavadocs.destinationDir</span>
+    <span class="comment">//}</span>
+
+    task androidSourcesJar(<span class="string">type:</span> Jar) {
+        classifier = <span class="string">'sources'</span>
+        from android.sourceSets.main.java.sourceFiles
+    }
+
+    artifacts {
+        archives androidSourcesJar
+    }
+}
+</code></pre></li>
+<li><p>修改你的项目根目录下的<strong>.gitigore</strong>文件</p>
+<pre><code><span class="preprocessor"># [Android] ========================</span>
+<span class="preprocessor"># Built application files</span>
+*.apk
+*.ap_
+
+<span class="preprocessor"># Files for the Dalvik VM</span>
+*.dex
+
+<span class="preprocessor"># Java class files</span>
+*.class
+
+<span class="preprocessor"># Generated files</span>
+bin/
+gen/
+
+<span class="preprocessor"># Gradle files</span>
+.gradle/
+build/
+
+<span class="preprocessor"># Local configuration file (sdk path, etc)</span>
+local.properties
+
+<span class="preprocessor"># Proguard folder generated by Eclipse</span>
+proguard/
+
+<span class="preprocessor"># Log Files</span>
+*.log
+</code></pre></li>
+</ul>
+<pre><code><span class="preprocessor">## Directory-based project format:</span>
+.idea/
+
+<span class="preprocessor">## File-based project format:</span>
+*.ipr
+*.iws
+
+<span class="preprocessor">## Plugin-specific files:</span>
+
+<span class="preprocessor"># IntelliJ</span>
+out/
+
+<span class="preprocessor"># mpeltonen/sbt-idea plugin</span>
+.idea_modules/
+
+<span class="preprocessor"># JIRA plugin</span>
+atlassian-ide-plugin.xml
+
+<span class="preprocessor"># Crashlytics plugin (for Android Studio and IntelliJ)</span>
+com_crashlytics_export_strings.xml
+
+
+<span class="preprocessor"># [Maven] ========================</span>
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+
+<span class="preprocessor"># [Gradle-Android] ========================</span>
+
+<span class="preprocessor"># Ignore Gradle GUI config</span>
+gradle-app.setting
+
+<span class="preprocessor"># Gradle Signing</span>
+signing.properties
+trestle.keystore
+
+<span class="preprocessor"># Mobile Tools for Java (J2ME)</span>
+.mtj.tmp/
+
+<span class="preprocessor"># Package Files #</span>
+*.jar
+*.war
+*.ear
+
+<span class="preprocessor"># virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml</span>
+hs_err_pid*
+
+<span class="preprocessor"># Misc</span>
+/.idea/workspace.xml
+.DS_Store
+/captures
+**<span class="comment">/*.iml
+*.class</span>
+</code></pre><ul>
+<li><p>修改项目根目录下的<strong>gradle.properties</strong></p>
+<pre><code><span class="comment"># Project-wide Gradle settings.</span>
+
+<span class="comment"># IDE (e.g. Android Studio) users:</span>
+<span class="comment"># Gradle settings configured through the IDE *will override*</span>
+<span class="comment"># any settings specified in this file.</span>
+
+<span class="comment"># For more details on how to configure your build environment visit</span>
+<span class="comment"># http://www.gradle.org/docs/current/userguide/build_environment.html</span>
+
+<span class="comment"># Specifies the JVM arguments used for the daemon process.</span>
+<span class="comment"># The setting is particularly useful for tweaking memory settings.</span>
+<span class="comment"># Default value: -Xmx10248m -XX:MaxPermSize=256m</span>
+<span class="comment"># org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8</span>
+
+<span class="comment"># When configured, Gradle will run in incubating parallel mode.</span>
+<span class="comment"># This option should only be used with decoupled projects. More details, visit</span>
+<span class="comment"># http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects</span>
+<span class="comment"># org.gradle.parallel=true</span>
+
+<span class="setting">VERSION_NAME=<span class="value"><span class="number">0.0</span>.<span class="number">1</span></span></span>
+<span class="setting">VERSION_CODE=<span class="value"><span class="number">1</span></span></span>
+<span class="setting">GROUP=<span class="value">com.github.github_username</span></span>
+
+<span class="setting">POM_DESCRIPTION=<span class="value">A library that does X, Y, and Z</span></span>
+<span class="setting">POM_URL=<span class="value">https://github.com/github_username/ProjectName</span></span>
+<span class="setting">POM_SCM_URL=<span class="value">https://github.com/github_username/ProjectName</span></span>
+<span class="setting">POM_SCM_CONNECTION=<span class="value">scm:git@github.com:github_username/ProjectName.git</span></span>
+<span class="setting">POM_SCM_DEV_CONNECTION=<span class="value">scm:git@github.com:github_username/ProjectName.git</span></span>
+<span class="setting">POM_LICENCE_NAME=<span class="value">The Apache Software License, Version <span class="number">2.0</span></span></span>
+<span class="setting">POM_LICENCE_URL=<span class="value">http://www.apache.org/licenses/LICENSE-<span class="number">2.0</span>.txt</span></span>
+<span class="setting">POM_LICENCE_DIST=<span class="value">repo</span></span>
+<span class="setting">POM_DEVELOPER_ID=<span class="value">github_username</span></span>
+<span class="setting">POM_DEVELOPER_NAME=<span class="value">GitHub FullName</span></span>
+</code></pre></li>
+<li><p>添加一个<strong>README.md</strong>文件来告诉其他开发者你的library是干什么的以及他的用法，如果你需要添加截屏的话，我推荐你使用<a href="https://play.google.com/store/apps/details?id=de.toastcode.screener" target="_blank" rel="external">Screenr</a>生成截屏。</p>
+</li>
+</ul>
+<h3 id="设置GPG">设置GPG</h3><p>如果你的电脑上没有安装GPG的话，那么你需要下载它，在MacOSX上，<a href="https://gist.github.com/IanVaughan/1932175" target="_blank" rel="external">下载命令</a></p>
+<p>如果你从来没有使用过GPG，那么第一步是创建GPG keys:</p>
+<pre><code>$ gpg <span class="comment">--gen-key</span>
+</code></pre><p>如果你存在解决不了的问题，你可以参考<a href="https://kb.iu.edu/d/awio#key" target="_blank" rel="external">Creating an encryption key</a></p>
+<p>接下来，你可以通过下面的命令找到你的key:</p>
+<pre><code>$ gpg --<span class="keyword">list</span>-<span class="built_in">keys</span>
+</code></pre><p>第一行看起来像XXXXX/YYYYYYY <date>,记住，’YYYYYYYY’部分，就是你的key ID。</date></p>
+<p>现在，发布你的keys:</p>
+<pre><code><span class="comment">$</span> <span class="comment">gpg</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">keyserver</span> <span class="comment">hkp://keyserver</span><span class="string">.</span><span class="comment">ubuntu</span><span class="string">.</span><span class="comment">com</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">send</span><span class="literal">-</span><span class="comment">keys</span> <span class="comment">YYYYYYYY</span>
+<span class="comment">$</span> <span class="comment">gpg</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">keyserver</span> <span class="comment">hkp://gpg</span><span class="string">.</span><span class="comment">mit</span><span class="string">.</span><span class="comment">edu</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">send</span><span class="literal">-</span><span class="comment">keys</span> <span class="comment">YYYYYYYY</span>
+</code></pre><p>你也可以使用其他的key服务器，你可能想确保你的keys是否已经发布：</p>
+<pre><code>$ gpg --keyserver hkp:<span class="regexp">//pgp</span>.mit.edu --search-<span class="keyword">keys</span>
+johndoe<span class="variable">@example</span>.com <span class="comment">#使用你的email</span>
+</code></pre><p>你的库已经在<a href="http://gradleplease.appspot.com/" target="_blank" rel="external">Gradle,Please</a>中(别人可以轻松使用你的library)，上传你的project到<a href="http://search.maven.org/" target="_blank" rel="external">Maven Central</a>,最简单的方法就是通过<a href="http://central.sonatype.org/pages/ossrh-guide.html" target="_blank" rel="external">Sonatype</a></p>
+<h3 id="Sonatype">Sonatype</h3><ol>
+<li><p>在<a href="https://issues.sonatype.org/secure/Signup!default.jspa" target="_blank" rel="external">Sonatype</a>创建一个账号。</p>
+</li>
+<li><p>一旦登陆，创建一个<a href="https://issues.sonatype.org/secure/CreateIssue.jspa?issuetype=21&amp;pid=10134" target="_blank" rel="external">新的issue</a></p>
+</li>
+</ol>
+<p><img src="https://d262ilb51hltx0.cloudfront.net/max/800/1*kV8pnaeikyXsgse0bWCeUA.png" alt="https://d262ilb51hltx0.cloudfront.net/max/800/1*kV8pnaeikyXsgse0bWCeUA.png"></p>
+<p>我已经为我的项目创建一个GitHub协议，所以我在新的issue中填写的字段如下:</p>
+<p><strong>Group id</strong>:com.github.<github_username></github_username></p>
+<p><strong>Project URL</strong>:<a href="https://github.com/" target="_blank" rel="external">https://github.com/</a><github_username>/<project_name></project_name></github_username></p>
+<p><strong>SCM url</strong>: <a href="https://github.com/" target="_blank" rel="external">https://github.com/</a><github_username>/<project_name>.git</project_name></github_username></p>
+<p><strong>Username</strong>:<sonatype_username></sonatype_username></p>
+<p><strong>Already Synced to Central</strong>:No</p>
+<p>注意:那些括号只是占位符，你需要用适当的值替换</p>
+<p>当你提交issue的时候，issue的细节就相当于上面的截图，提交之后，会花费两天处理你的issue，你将会收到一个关于你的配置已经准备好，你的库可以发布的确认信息。</p>
+<p>不要部署直到你收到一封邮件证明你的问题已解决，</p>
+<p>如果你的项目已经在中央仓库，那么就需要确保如何迁移到OSSRH。</p>
+<p>修改你本地机器上的 ～/.gradle/gradle.properties:</p>
+<pre><code>NEXUS_USERNAME=sonatype_username
+NEXUS_PASSWORD=sonatype_password
+
+signing.keyId=gpg_key_id 
+signing.password=gpg_password
+signing.secretKeyRingFile=/Users/username/.gnupg/secring<span class="class">.gpg</span>
+org<span class="class">.gradle</span><span class="class">.daemon</span>=true
+</code></pre><p>当你发布这个库时是通过gradle.properties来验证的，所以确保你提供正确的nexus用户名和密码(这里是Sonatype的用户名和密码)，否则你会得到一个未经授权的401错误。</p>
+<p>注意：如果你已经发布你的库了没那么你就不需要在JIRA上创建新的issue，因为对一每一个顶级的groupId来说只用创建一个JIRA，你现在已经有权限向你的groupId或者任何sub-groups部署新的工作(此处省略一部分，尼玛，太不好翻译了!!!)</p>
+<h3 id="发布">发布</h3><p>一旦你已经准备好发布你的library，打开Android Studio右边的Gradle视图，在<strong>Tasks &gt; upload</strong>点击<strong>UploadArchives</strong>,将会上传你的库到<a href="https://oss.sonatype.org/#stagingRepositories" target="_blank" rel="external">Sonatype Staging Repositories</a>;</p>
+<p>去<a href="https://oss.sonatype.org/#stagingRepositories" target="_blank" rel="external">Sonatype Staging Repositories</a>确保你的<strong>Sonatype</strong>账号已经登陆，寻找你的暂存的库，他应该在列表的最后，选中他，然后点击close按钮，关闭意味着你准备发布，如果close操作成功，你将会看到一个Release按钮被激活，你需要刷新页面，点击release按钮，参照<a href="https://books.sonatype.com/nexus-book/reference/staging-repositories.html" target="_blank" rel="external">帮助文档</a>，如果你的库已经发布，那么你就可以返回JIRA然后发布评论来提升你的库，之后你会收到一个Sonatype的一个回应，几分钟之后你的库就可用了，然后几个小时之后就会被同步到Maven中央，再过几个小事就会显示在Gradle中。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/11/17/Webview操作整理/" rel="prev">Webview操作整理</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/" rel="next">实现RecyclerView的下拉刷新和上拉加载更多</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2015/11/05/创建和发布Android库的完整指南/"
+                   data-title="创建和发布Android库的完整指南" data-url="http://zhaoshanshan.me/2015/11/05/创建和发布Android库的完整指南/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://img4.duitang.com/uploads/item/201405/07/20140507210553_NQGUP.thumb.600_0.jpeg" alt="坚持远方" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">坚持远方</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">既然选择远方，便只顾风雨兼程</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-name">文章</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">分類</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-name">標籤</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhanfangzxc" target="_blank">GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5497967279" target="_blank">Weibo</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#术语"><span class="nav-number">1.</span> <span class="nav-text">术语</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#准备你的Android库"><span class="nav-number">2.</span> <span class="nav-text">准备你的Android库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置GPG"><span class="nav-number">3.</span> <span class="nav-text">设置GPG</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sonatype"><span class="nav-number">4.</span> <span class="nav-text">Sonatype</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发布"><span class="nav-number">5.</span> <span class="nav-text">发布</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">赵珊珊</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 強力驅動
+</div>
+
+<div class="theme-info">
+  主題 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zhaoshanshan"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>

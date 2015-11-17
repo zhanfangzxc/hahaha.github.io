@@ -178,6 +178,602 @@
           
           
             
+              <a class="post-title-link" href="/2015/11/17/Webview操作整理/" itemprop="url">
+                Webview操作整理
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2015-11-17T16:08:26+08:00" content="2015-11-17">
+            2015-11-17
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/11/17/Webview操作整理/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/17/Webview操作整理/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>如果你想在自己的项目中添加加载网页的功能的话，就需要使用Webview。</p>
+<h3 id="添加WebView">添加WebView</h3><pre><code><span class="pi">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="tag">&lt;<span class="title">WebView</span>  <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span>
+    <span class="attribute">android:id</span>=<span class="value">"@+id/webview"</span>
+    <span class="attribute">android:layout_width</span>=<span class="value">"fill_parent"</span>
+    <span class="attribute">android:layout_height</span>=<span class="value">"fill_parent"</span>
+/&gt;</span>
+</code></pre><ul>
+<li><p>加载网页</p>
+<pre><code>WebView myWebView = (WebView) findViewById(R.<span class="property">id</span>.webview);
+myWebView.loadUrl(<span class="string">"http://www.example.com"</span>);
+</code></pre></li>
+<li><p>添加权限</p>
+<pre><code><span class="tag">&lt;<span class="title">manifest</span> <span class="attribute">...</span> &gt;</span>
+<span class="tag">&lt;<span class="title">uses-permission</span> <span class="attribute">android:name</span>=<span class="value">"android.permission.INTERNET"</span> /&gt;</span>
+...
+<span class="tag">&lt;/<span class="title">manifest</span>&gt;</span>
+</code></pre></li>
+</ul>
+<h3 id="在WebView中使用JavaScript">在WebView中使用JavaScript</h3><p>JavaScript默认在Webview中是不可用的，但是你可以通过<strong>WebSettings</strong>让他变为可用，具体代码:</p>
+<pre><code>WebView myWebView = (WebView) findViewById(R.id.webview)<span class="comment">;</span>
+WebSettings webSettings = myWebView.getSettings()<span class="comment">;</span>
+webSettings.setJavaScriptEnabled(true)<span class="comment">;</span>
+</code></pre><p>WebSettings中还存在很多其他的有用的设置。</p>
+<h3 id="将javaScript代码绑定到Android代码中">将javaScript代码绑定到Android代码中</h3><p>首先，在你的项目中添加如下类：</p>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebAppInterface</span></span>{
+    Context context;
+    WebAppInterface(Context c){
+        context = c;
+    }
+
+    <span class="annotation">@JavaScriptInterface</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showToast</span><span class="params">()</span></span>{
+         Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
+    }
+}
+</code></pre><p>在targetSdkVersion为17或者更高的时候，需要添加<strong>@JavaScriptInterface</strong>到类中的每一个方法上。</p>
+<p>绑定代码：</p>
+<pre><code>WebView webView = (WebView) findViewById(R.id.webview);
+webView.addJavascriptInterface(<span class="keyword">new</span> WebAppInterface(<span class="keyword">this</span>),<span class="string">"Android"</span>);
+</code></pre><p>此时的html代码中必须要包含以下代码：</p>
+<pre><code>&lt;input typpe=<span class="string">"button"</span> value=<span class="string">"Say hello"</span> onClick=<span class="string">"showAndroidToast('Hello Android!')"</span>
+
+&lt;script <span class="built_in">type</span>=<span class="string">"text/javascript"</span>&gt;
+    <span class="function"><span class="keyword">function</span> <span class="title">showAndroidToast</span><span class="params">(toast)</span></span>{
+        Android.showToast(toast);
+    }
+&lt;/script&gt;
+</code></pre><h3 id="处理Page导航">处理Page导航</h3><p>如果用户要在当前WebView中打开链接，可以使用<strong>setWebViewClient()</strong>为Webview设置<strong>WebviewClient</strong>，比如：</p>
+<pre><code>WebView myWebView = (WebView)findViewById(R.id.webview)<span class="comment">;</span>
+myWebView.setWebViewClient(new WebViewClient())<span class="comment">;</span>
+</code></pre><p>现在，所有的用户点击的跳转都会在Webview中加载。</p>
+<p>如果点击链接的时候，需要更多的控制，那么就需要创建自己的<strong>WebviewClient</strong>,然后覆盖<strong>shouldOverrideUrlLoading()</strong>方法，代码如下：</p>
+<pre><code><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWebviewClient</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">WebViewClient</span>{</span>
+    <span class="annotation">@Override</span>
+    public boolean shouldOverrideUrlLoading(<span class="type">WebView</span> view,<span class="type">String</span> url){
+        <span class="keyword">if</span>(<span class="type">Uri</span>.parse(url).getHost().equals(<span class="string">"www.example.com"</span>)){
+            <span class="comment">//让WebView加载网页</span>
+            <span class="keyword">return</span> <span class="literal">false</span>;
+        }
+        <span class="comment">//不加载网页，跳到另外一Activity</span>
+        <span class="type">Intent</span> intent = <span class="keyword">new</span> <span class="type">Intent</span>(<span class="type">Intent</span>.<span class="type">ACTION_VIEW</span>, <span class="type">Uri</span>.parse(url));
+        startActivity(intent);
+        <span class="keyword">return</span> <span class="literal">true</span>;
+    }
+}
+</code></pre><p>最后：</p>
+<pre><code>WebView myWebView = (WebView) findViewById(R.id.webview)<span class="comment">;</span>
+myWebView.setWebViewClient(new MyWebViewClient())<span class="comment">;</span>
+</code></pre><h3 id="操纵网页浏览历史">操纵网页浏览历史</h3><p>使用设备上的back健来操纵网页的前进后退:</p>
+<pre><code><span class="annotation">@Override</span>
+<span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">onKeyDown</span><span class="params">(<span class="keyword">int</span> keyCode,KeyEvent event)</span></span>{
+    <span class="keyword">if</span>((keyCode == KeyEvent.KEYCODE_BACK)&amp;&amp;myWebView.canGoBack())
+    {
+        myWebView.goBack();
+        <span class="keyword">return</span> <span class="keyword">true</span>;
+    }
+    <span class="function"><span class="keyword">return</span> <span class="keyword">super</span>.<span class="title">onKeyDown</span><span class="params">(keyCode,event)</span></span>;
+}
+</code></pre><h3 id="实现点击WebView中的图片预览的效果">实现点击WebView中的图片预览的效果</h3><p>代码：</p>
+<pre><code><span class="comment">//在Html中添加Javascript代码</span>
+<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addImageClickListner</span><span class="params">()</span> </span>{
+        mWebView.loadUrl(<span class="string">"javascript:(function(){"</span> +
+                <span class="string">"var objs = document.getElementsByTagName(\"img\"); "</span> +
+                <span class="string">"for(var i=0;i&lt;objs.length;i++)  "</span> +
+                <span class="string">"{"</span>
+                + <span class="string">"    objs[i].onclick=function()  "</span> +
+                <span class="string">"    {  "</span>
+                + <span class="string">"        window.imagelistner.openImage(this.src);  "</span> +
+                <span class="string">"    }  "</span> +
+                <span class="string">"}"</span> +
+                <span class="string">"})()"</span>);
+    }
+
+    <span class="comment">//创建自定义的WebviewClient</span>
+
+    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWebViewClient</span> <span class="keyword">extends</span> <span class="title">WebViewClient</span> </span>{
+    <span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldOverrideUrlLoading</span><span class="params">(WebView view, String url)</span> </span>{
+        <span class="keyword">if</span> (url.endsWith(<span class="string">".jpg"</span>) || url.endsWith(<span class="string">".png"</span>) || url.endsWith(<span class="string">".gif"</span>)) {
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        } <span class="keyword">else</span> {
+            <span class="keyword">return</span> <span class="keyword">false</span>;
+        }
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageFinished</span><span class="params">(WebView view, String url)</span> </span>{
+
+        view.getSettings().setJavaScriptEnabled(<span class="keyword">true</span>);
+        mStatusLayout.showContentView(contentLayout);
+        <span class="keyword">super</span>.onPageFinished(view, url);
+        addImageClickListner();
+
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageStarted</span><span class="params">(WebView view, String url, Bitmap favicon)</span> </span>{
+        view.getSettings().setJavaScriptEnabled(<span class="keyword">true</span>);
+
+        <span class="keyword">super</span>.onPageStarted(view, url, favicon);
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceivedError</span><span class="params">(WebView view, <span class="keyword">int</span> errorCode, String description, String failingUrl)</span> </span>{
+
+        <span class="keyword">super</span>.onReceivedError(view, errorCode, description, failingUrl);
+
+    }
+}
+
+  <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JavascriptInterface</span> </span>{
+
+    <span class="keyword">private</span> Context context;
+
+    <span class="function"><span class="keyword">public</span> <span class="title">JavascriptInterface</span><span class="params">(Context context)</span> </span>{
+        <span class="keyword">this</span>.context = context;
+    }
+
+    <span class="annotation">@android</span>.webkit.<span class="function">JavascriptInterface
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">openImage</span><span class="params">(String img)</span> </span>{
+       <span class="comment">//预览图片的代码</span>
+    }
+}
+
+<span class="comment">//最后一步</span>
+  mWebView.addJavascriptInterface(<span class="keyword">new</span> JavascriptInterface(<span class="keyword">this</span>), <span class="string">"imagelistner"</span>);
+</code></pre></span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2015/11/05/创建和发布Android库的完整指南/" itemprop="url">
+                创建和发布Android库的完整指南
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2015-11-05T11:18:33+08:00" content="2015-11-05">
+            2015-11-05
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/11/05/创建和发布Android库的完整指南/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/05/创建和发布Android库的完整指南/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>原文地址:<a href="https://medium.com/android-news/the-complete-guide-to-creating-an-android-library-46628b7fc879#.fpcy9pvc7" target="_blank" rel="external">https://medium.com/android-news/the-complete-guide-to-creating-an-android-library-46628b7fc879#.fpcy9pvc7</a></p>
+<p>我一直很惊讶于那些Android开发社区中存在的许多又去的第三方开源库没很长时间依赖，我都希望贡献一些自己的开源库，但是我并不知道要怎么做。查询了很多关于如何发布Android开源库的文章之后，我仍然发现在很多不同地方查询到的信息中仍然有许多遗失的细节，所以我今天说明一下我自己的实现过程。</p>
+<p>首先，我使用的是以Gradle为官方构建系统的Android Studio，来创建我左右的Android项目，下载<a href="https://developer.android.com/intl/zh-cn/sdk/index.html" target="_blank" rel="external">Android Studio</a>的最新版本。</p>
+<h3 id="术语">术语</h3><p>在我们开始讲解之前先来了解一些术语：</p>
+<p><strong>Project</strong>——Android Studio中创建的项目代表一个完整的Android App,Android Studio中的项目包含一个或多个模块，就像Eclipse中工作空间的概念。</p>
+<p><strong>Module</strong>——一个模块是一个应用中的一个组建，可以独立的构建，测试或者调试。模块中包括你的应用相关的源代码和资源文件，Android Studio中的一个就像Eclipse中的一个工程。</p>
+<p><strong>AAR</strong>——是一个Android库的二进制版本，一个库项目的主要输出就是一个.aar的包，他是一个编译代码(就像一个jar文件或者是.so文件)和资源文件(manifest,res,assets)的组合.</p>
+<p><strong>Maven中央仓库</strong>——一个由Maven组织提供的仓库，它包括大量常用的开源库，搜索Maven可以浏览Maven中央仓库中的内容，<a href="">Gradle,Please</a>是另外一个允许你搜索Maven仓库的工具，Gradle使用的是jCenter协议，如果你再你的repositories节点(<a href="">Notes about jCenter</a>)写包含jCenter()的话,Maven中央仓库通常被称为Maven中央或中央仓库。</p>
+<p><strong>Sonatype</strong>——Snoatype’s开源软件存储库主机主要是用来为项目所有者和贡献者提供发布他们的组件到中央仓库的服务。</p>
+<p><strong>GPG</strong>——GNU隐私保护(GPG,也GnuPG),GNU项目的自由选择PGP加密软件符合OpenPGP(RFC4880)标准。使用GPG可以加密(解密)文件包含敏感数据,如电子受保护的健康信息(ePHI)由健康保险流通与责任法案(HIPAA)隐私和安全规则。更多GPG,请参阅GNU隐私保护的网站。(此段话全部使用翻译软件翻译)</p>
+<h3 id="准备你的Android库">准备你的Android库</h3><p>我将会使用我的<a href="">Tresle</a>库作为一个示例，这里需要做一些修改才能发不到中央仓库</p>
+<ul>
+<li><p>将库的核心代码和库的使用示例的代码分开，我将这个库分成两个模块，一个是<strong>library</strong>，一个是<strong>sample</strong>。</p>
+</li>
+<li><p>在Sample模块的<strong>build.gradle</strong>中，一定要包含以下内容</p>
+<pre><code>apply plugin: <span class="string">'com.android.application'</span>
+
+<span class="keyword">dependencies</span> {
+    <span class="keyword">compile</span> <span class="keyword">project</span>(<span class="string">':library'</span>)
+}
+</code></pre></li>
+<li><p>在library模块的<strong>build.gradle</strong>文件中，要包含下面的内容</p>
+<pre><code>apply <span class="string">plugin:</span> <span class="string">'com.android.library'</span>
+apply <span class="string">from:</span> <span class="string">'maven-push.gradle'</span>
+</code></pre></li>
+<li><p>在library模块，添加一个<strong>gradle.properties</strong>文件，然后包含如下代码</p>
+<pre><code><span class="setting">POM_NAME=<span class="value">ProjectName</span></span>
+<span class="setting">POM_ARTOFACT_ID=<span class="value">projectname</span></span>
+<span class="setting">POM_PACKAGING=<span class="value">aar</span></span>
+</code></pre></li>
+<li><p>在library模块中，添加一个<strong>maven-push.gradle</strong>文件，然后添加如下代码</p>
+<pre><code><span class="comment">/*
+ * Copyright 2013 Chris Banes
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+apply <span class="string">plugin:</span> <span class="string">'maven'</span>
+apply <span class="string">plugin:</span> <span class="string">'signing'</span>
+
+<span class="keyword">def</span> isReleaseBuild() {
+    <span class="keyword">return</span> VERSION_NAME.contains(<span class="string">"SNAPSHOT"</span>) == <span class="literal">false</span>
+}
+
+<span class="keyword">def</span> getReleaseRepositoryUrl() {
+    <span class="keyword">return</span> hasProperty(<span class="string">'RELEASE_REPOSITORY_URL'</span>) ? RELEASE_REPOSITORY_URL
+            : <span class="string">"https://oss.sonatype.org/service/local/staging/deploy/maven2/"</span>
+}
+
+<span class="keyword">def</span> getSnapshotRepositoryUrl() {
+    <span class="keyword">return</span> hasProperty(<span class="string">'SNAPSHOT_REPOSITORY_URL'</span>) ? SNAPSHOT_REPOSITORY_URL
+            : <span class="string">"https://oss.sonatype.org/content/repositories/snapshots/"</span>
+}
+
+<span class="keyword">def</span> getRepositoryUsername() {
+    <span class="keyword">return</span> hasProperty(<span class="string">'NEXUS_USERNAME'</span>) ? NEXUS_USERNAME : <span class="string">""</span>
+}
+
+<span class="keyword">def</span> getRepositoryPassword() {
+    <span class="keyword">return</span> hasProperty(<span class="string">'NEXUS_PASSWORD'</span>) ? NEXUS_PASSWORD : <span class="string">""</span>
+}
+
+afterEvaluate { project -&gt;
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -&gt; signing.signPom(deployment) }
+
+                pom.groupId = GROUP
+                pom.artifactId = POM_ARTIFACT_ID
+                pom.version = VERSION_NAME
+
+                repository(<span class="string">url:</span> getReleaseRepositoryUrl()) {
+                    authentication(<span class="string">userName:</span> getRepositoryUsername(), <span class="string">password:</span> getRepositoryPassword())
+                }
+                snapshotRepository(<span class="string">url:</span> getSnapshotRepositoryUrl()) {
+                    authentication(<span class="string">userName:</span> getRepositoryUsername(), <span class="string">password:</span> getRepositoryPassword())
+                }
+
+                pom.project {
+                    name POM_NAME
+                    packaging POM_PACKAGING
+                    description POM_DESCRIPTION
+                    url POM_URL
+
+                    scm {
+                        url POM_SCM_URL
+                        connection POM_SCM_CONNECTION
+                        developerConnection POM_SCM_DEV_CONNECTION
+                    }
+
+                    licenses {
+                        license {
+                            name POM_LICENCE_NAME
+                            url POM_LICENCE_URL
+                            distribution POM_LICENCE_DIST
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id POM_DEVELOPER_ID
+                            name POM_DEVELOPER_NAME
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        required { isReleaseBuild() &amp;&amp; gradle.taskGraph.hasTask(<span class="string">"uploadArchives"</span>) }
+        sign configurations.archives
+    }
+
+    <span class="comment">//task androidJavadocs(type: Javadoc) {</span>
+    <span class="comment">//source = android.sourceSets.main.allJava</span>
+    <span class="comment">//}</span>
+
+    <span class="comment">//task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {</span>
+    <span class="comment">//classifier = 'javadoc'</span>
+    <span class="comment">//from androidJavadocs.destinationDir</span>
+    <span class="comment">//}</span>
+
+    task androidSourcesJar(<span class="string">type:</span> Jar) {
+        classifier = <span class="string">'sources'</span>
+        from android.sourceSets.main.java.sourceFiles
+    }
+
+    artifacts {
+        archives androidSourcesJar
+    }
+}
+</code></pre></li>
+<li><p>修改你的项目根目录下的<strong>.gitigore</strong>文件</p>
+<pre><code><span class="preprocessor"># [Android] ========================</span>
+<span class="preprocessor"># Built application files</span>
+*.apk
+*.ap_
+
+<span class="preprocessor"># Files for the Dalvik VM</span>
+*.dex
+
+<span class="preprocessor"># Java class files</span>
+*.class
+
+<span class="preprocessor"># Generated files</span>
+bin/
+gen/
+
+<span class="preprocessor"># Gradle files</span>
+.gradle/
+build/
+
+<span class="preprocessor"># Local configuration file (sdk path, etc)</span>
+local.properties
+
+<span class="preprocessor"># Proguard folder generated by Eclipse</span>
+proguard/
+
+<span class="preprocessor"># Log Files</span>
+*.log
+</code></pre></li>
+</ul>
+<pre><code><span class="preprocessor">## Directory-based project format:</span>
+.idea/
+
+<span class="preprocessor">## File-based project format:</span>
+*.ipr
+*.iws
+
+<span class="preprocessor">## Plugin-specific files:</span>
+
+<span class="preprocessor"># IntelliJ</span>
+out/
+
+<span class="preprocessor"># mpeltonen/sbt-idea plugin</span>
+.idea_modules/
+
+<span class="preprocessor"># JIRA plugin</span>
+atlassian-ide-plugin.xml
+
+<span class="preprocessor"># Crashlytics plugin (for Android Studio and IntelliJ)</span>
+com_crashlytics_export_strings.xml
+
+
+<span class="preprocessor"># [Maven] ========================</span>
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+
+<span class="preprocessor"># [Gradle-Android] ========================</span>
+
+<span class="preprocessor"># Ignore Gradle GUI config</span>
+gradle-app.setting
+
+<span class="preprocessor"># Gradle Signing</span>
+signing.properties
+trestle.keystore
+
+<span class="preprocessor"># Mobile Tools for Java (J2ME)</span>
+.mtj.tmp/
+
+<span class="preprocessor"># Package Files #</span>
+*.jar
+*.war
+*.ear
+
+<span class="preprocessor"># virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml</span>
+hs_err_pid*
+
+<span class="preprocessor"># Misc</span>
+/.idea/workspace.xml
+.DS_Store
+/captures
+**<span class="comment">/*.iml
+*.class</span>
+</code></pre><ul>
+<li><p>修改项目根目录下的<strong>gradle.properties</strong></p>
+<pre><code><span class="comment"># Project-wide Gradle settings.</span>
+
+<span class="comment"># IDE (e.g. Android Studio) users:</span>
+<span class="comment"># Gradle settings configured through the IDE *will override*</span>
+<span class="comment"># any settings specified in this file.</span>
+
+<span class="comment"># For more details on how to configure your build environment visit</span>
+<span class="comment"># http://www.gradle.org/docs/current/userguide/build_environment.html</span>
+
+<span class="comment"># Specifies the JVM arguments used for the daemon process.</span>
+<span class="comment"># The setting is particularly useful for tweaking memory settings.</span>
+<span class="comment"># Default value: -Xmx10248m -XX:MaxPermSize=256m</span>
+<span class="comment"># org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8</span>
+
+<span class="comment"># When configured, Gradle will run in incubating parallel mode.</span>
+<span class="comment"># This option should only be used with decoupled projects. More details, visit</span>
+<span class="comment"># http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects</span>
+<span class="comment"># org.gradle.parallel=true</span>
+
+<span class="setting">VERSION_NAME=<span class="value"><span class="number">0.0</span>.<span class="number">1</span></span></span>
+<span class="setting">VERSION_CODE=<span class="value"><span class="number">1</span></span></span>
+<span class="setting">GROUP=<span class="value">com.github.github_username</span></span>
+
+<span class="setting">POM_DESCRIPTION=<span class="value">A library that does X, Y, and Z</span></span>
+<span class="setting">POM_URL=<span class="value">https://github.com/github_username/ProjectName</span></span>
+<span class="setting">POM_SCM_URL=<span class="value">https://github.com/github_username/ProjectName</span></span>
+<span class="setting">POM_SCM_CONNECTION=<span class="value">scm:git@github.com:github_username/ProjectName.git</span></span>
+<span class="setting">POM_SCM_DEV_CONNECTION=<span class="value">scm:git@github.com:github_username/ProjectName.git</span></span>
+<span class="setting">POM_LICENCE_NAME=<span class="value">The Apache Software License, Version <span class="number">2.0</span></span></span>
+<span class="setting">POM_LICENCE_URL=<span class="value">http://www.apache.org/licenses/LICENSE-<span class="number">2.0</span>.txt</span></span>
+<span class="setting">POM_LICENCE_DIST=<span class="value">repo</span></span>
+<span class="setting">POM_DEVELOPER_ID=<span class="value">github_username</span></span>
+<span class="setting">POM_DEVELOPER_NAME=<span class="value">GitHub FullName</span></span>
+</code></pre></li>
+<li><p>添加一个<strong>README.md</strong>文件来告诉其他开发者你的library是干什么的以及他的用法，如果你需要添加截屏的话，我推荐你使用<a href="https://play.google.com/store/apps/details?id=de.toastcode.screener" target="_blank" rel="external">Screenr</a>生成截屏。</p>
+</li>
+</ul>
+<h3 id="设置GPG">设置GPG</h3><p>如果你的电脑上没有安装GPG的话，那么你需要下载它，在MacOSX上，<a href="https://gist.github.com/IanVaughan/1932175" target="_blank" rel="external">下载命令</a></p>
+<p>如果你从来没有使用过GPG，那么第一步是创建GPG keys:</p>
+<pre><code>$ gpg <span class="comment">--gen-key</span>
+</code></pre><p>如果你存在解决不了的问题，你可以参考<a href="https://kb.iu.edu/d/awio#key" target="_blank" rel="external">Creating an encryption key</a></p>
+<p>接下来，你可以通过下面的命令找到你的key:</p>
+<pre><code>$ gpg --<span class="keyword">list</span>-<span class="built_in">keys</span>
+</code></pre><p>第一行看起来像XXXXX/YYYYYYY <date>,记住，’YYYYYYYY’部分，就是你的key ID。</date></p>
+<p>现在，发布你的keys:</p>
+<pre><code><span class="comment">$</span> <span class="comment">gpg</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">keyserver</span> <span class="comment">hkp://keyserver</span><span class="string">.</span><span class="comment">ubuntu</span><span class="string">.</span><span class="comment">com</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">send</span><span class="literal">-</span><span class="comment">keys</span> <span class="comment">YYYYYYYY</span>
+<span class="comment">$</span> <span class="comment">gpg</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">keyserver</span> <span class="comment">hkp://gpg</span><span class="string">.</span><span class="comment">mit</span><span class="string">.</span><span class="comment">edu</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">send</span><span class="literal">-</span><span class="comment">keys</span> <span class="comment">YYYYYYYY</span>
+</code></pre><p>你也可以使用其他的key服务器，你可能想确保你的keys是否已经发布：</p>
+<pre><code>$ gpg --keyserver hkp:<span class="regexp">//pgp</span>.mit.edu --search-<span class="keyword">keys</span>
+johndoe<span class="variable">@example</span>.com <span class="comment">#使用你的email</span>
+</code></pre><p>你的库已经在<a href="http://gradleplease.appspot.com/" target="_blank" rel="external">Gradle,Please</a>中(别人可以轻松使用你的library)，上传你的project到<a href="http://search.maven.org/" target="_blank" rel="external">Maven Central</a>,最简单的方法就是通过<a href="http://central.sonatype.org/pages/ossrh-guide.html" target="_blank" rel="external">Sonatype</a></p>
+<h3 id="Sonatype">Sonatype</h3><ol>
+<li><p>在<a href="https://issues.sonatype.org/secure/Signup!default.jspa" target="_blank" rel="external">Sonatype</a>创建一个账号。</p>
+</li>
+<li><p>一旦登陆，创建一个<a href="https://issues.sonatype.org/secure/CreateIssue.jspa?issuetype=21&amp;pid=10134" target="_blank" rel="external">新的issue</a></p>
+</li>
+</ol>
+<p><img src="https://d262ilb51hltx0.cloudfront.net/max/800/1*kV8pnaeikyXsgse0bWCeUA.png" alt="https://d262ilb51hltx0.cloudfront.net/max/800/1*kV8pnaeikyXsgse0bWCeUA.png"></p>
+<p>我已经为我的项目创建一个GitHub协议，所以我在新的issue中填写的字段如下:</p>
+<p><strong>Group id</strong>:com.github.<github_username></github_username></p>
+<p><strong>Project URL</strong>:<a href="https://github.com/" target="_blank" rel="external">https://github.com/</a><github_username>/<project_name></project_name></github_username></p>
+<p><strong>SCM url</strong>: <a href="https://github.com/" target="_blank" rel="external">https://github.com/</a><github_username>/<project_name>.git</project_name></github_username></p>
+<p><strong>Username</strong>:<sonatype_username></sonatype_username></p>
+<p><strong>Already Synced to Central</strong>:No</p>
+<p>注意:那些括号只是占位符，你需要用适当的值替换</p>
+<p>当你提交issue的时候，issue的细节就相当于上面的截图，提交之后，会花费两天处理你的issue，你将会收到一个关于你的配置已经准备好，你的库可以发布的确认信息。</p>
+<p>不要部署直到你收到一封邮件证明你的问题已解决，</p>
+<p>如果你的项目已经在中央仓库，那么就需要确保如何迁移到OSSRH。</p>
+<p>修改你本地机器上的 ～/.gradle/gradle.properties:</p>
+<pre><code>NEXUS_USERNAME=sonatype_username
+NEXUS_PASSWORD=sonatype_password
+
+signing.keyId=gpg_key_id 
+signing.password=gpg_password
+signing.secretKeyRingFile=/Users/username/.gnupg/secring<span class="class">.gpg</span>
+org<span class="class">.gradle</span><span class="class">.daemon</span>=true
+</code></pre><p>当你发布这个库时是通过gradle.properties来验证的，所以确保你提供正确的nexus用户名和密码(这里是Sonatype的用户名和密码)，否则你会得到一个未经授权的401错误。</p>
+<p>注意：如果你已经发布你的库了没那么你就不需要在JIRA上创建新的issue，因为对一每一个顶级的groupId来说只用创建一个JIRA，你现在已经有权限向你的groupId或者任何sub-groups部署新的工作(此处省略一部分，尼玛，太不好翻译了!!!)</p>
+<h3 id="发布">发布</h3><p>一旦你已经准备好发布你的library，打开Android Studio右边的Gradle视图，在<strong>Tasks &gt; upload</strong>点击<strong>UploadArchives</strong>,将会上传你的库到<a href="https://oss.sonatype.org/#stagingRepositories" target="_blank" rel="external">Sonatype Staging Repositories</a>;</p>
+<p>去<a href="https://oss.sonatype.org/#stagingRepositories" target="_blank" rel="external">Sonatype Staging Repositories</a>确保你的<strong>Sonatype</strong>账号已经登陆，寻找你的暂存的库，他应该在列表的最后，选中他，然后点击close按钮，关闭意味着你准备发布，如果close操作成功，你将会看到一个Release按钮被激活，你需要刷新页面，点击release按钮，参照<a href="https://books.sonatype.com/nexus-book/reference/staging-repositories.html" target="_blank" rel="external">帮助文档</a>，如果你的库已经发布，那么你就可以返回JIRA然后发布评论来提升你的库，之后你会收到一个Sonatype的一个回应，几分钟之后你的库就可用了，然后几个小时之后就会被同步到Maven中央，再过几个小事就会显示在Gradle中。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/" itemprop="url">
                 实现RecyclerView的下拉刷新和上拉加载更多
               </a>
@@ -1366,395 +1962,6 @@ NotificationManagerCompat.from(<span class="keyword">this</span>).notify(<span c
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/09/22/Fragment介绍/" itemprop="url">
-                Fragment介绍
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2015-09-22T10:28:32+08:00" content="2015-09-22">
-            2015-09-22
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分類於
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/Fragment/" itemprop="url" rel="index">
-                  <span itemprop="name">Fragment</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2015/09/22/Fragment介绍/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/22/Fragment介绍/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>原文:<a href="http://developer.android.com/intl/zh-cn/guide/components/fragments.html#CommunicatingWithActivity" target="_blank" rel="external">http://developer.android.com/intl/zh-cn/guide/components/fragments.html#CommunicatingWithActivity</a></p>
-<h3 id="Fragment介绍">Fragment介绍</h3><p><strong>Fragment</strong>是可以在Activity中替换的用户行为和用户接口，多个Fragment之间的相互作用是通过<strong>FragmentManager</strong>，而FragmentManager是可以通过<strong>Activity.getFragmentManager()</strong>和<strong>Fragment.getFragmentManager()</strong>.</p>
-<p><strong>Fragment</strong>拥有自己的生命周期，但是他的生命周期同时又依赖Activity的生命周期，Fragment和Activity是密切相关的，不能单独使用，如果Activity的状态是stopped，那么这个Activity中的Fragment也将处于stopped的状态，当所有的Activity被回收的时候，所有的fragments也将会被回收。</p>
-<h3 id="Fragment的生命周期">Fragment的生命周期</h3><p><img src="http://developer.android.com/images/fragment_lifecycle.png" alt="Fragment生命周期"></p>
-<ul>
-<li>onAttach():当Fragment和Activity建立联系的时候调用</li>
-<li>onCreate(Bundle):初始化创建Fragment的时候调用</li>
-<li>onCreateView(LayoutInflater,ViewGroup,Bundle):创建并返回与之关联的view视图</li>
-<li>onActivityCreated(Bundle):告诉Fragment，Activity已经完成自己的<strong>Activity.onCreate()</strong>方法</li>
-<li>onViewStateRestored(Bundle):告诉Fragment，保存的所有view视图中的状态都已经恢复了</li>
-<li>onStart():使Fragment对用户可见</li>
-<li>onResume():使Fragment开始与用户交互</li>
-</ul>
-<p>当这个Fragment不再使用的时候，将会回掉如下方法:</p>
-<ul>
-<li>onPause():Fragment不再与用户交互，因为activity的状态为paused或者Fragment操作被修改了</li>
-<li>onStop():fragment对用户不可见，因为activity的状态为stopped或者activity中的Fragment被修改了</li>
-<li>onDestoryView():允许Fragment清理与视图相关联的资源</li>
-<li>onDestory():最后清理Fragment的状态</li>
-<li>onDetach():当Fragment与activity失去关联的时候调用</li>
-</ul>
-<h3 id="添加一个用户界面">添加一个用户界面</h3><p>Fragment经常被用作Activity的一部分，为Fragment提供一个布局，需要实现<strong>onCreate()</strong>方法，当Fragment绘制布局的时候由Android系统调用,你实现这个方法的时候必须返回一个<strong>View</strong>。</p>
-<p>注意:如果你的Fragment是<strong>ListFragment</strong>的子类，<strong>onCreateView</strong>方法的默认实现方式会返回一个<strong>ListView</strong>，所以你不需要再去实现这个方法。</p>
-<pre><code>public static <span class="class"><span class="keyword">class</span> <span class="title">ExampleFragment</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Fragment</span>{</span>
-    <span class="annotation">@Override</span>
-    public <span class="type">View</span> onCreateView(<span class="type">LayoutInflater</span> inflater,<span class="type">ViewGroup</span> container,<span class="type">Bundle</span> savedInstanceState){
-        <span class="keyword">return</span> inflater.inflate(<span class="type">R</span>.layout.example_fragment,container,<span class="literal">false</span>);
-    }
-}
-
-<span class="comment">//这里缺少对改方法的解释</span>
-</code></pre><h3 id="向Activity添加一个Fragment">向Activity添加一个Fragment</h3><p>Fragment经常被作为activity的一部分添加进去，这里提供两种添加Fragment的方法：</p>
-<ul>
-<li><p>在Activity布局文件中声明Fragment</p>
-<pre><code>&lt;?xml <span class="property">version</span>=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>&gt;
-&lt;LinearLayout xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span>
-    android:orientation=<span class="string">"horizontal"</span>
-    android:layout_width=<span class="string">"match_parent"</span>
-    android:layout_height=<span class="string">"match_parent"</span>&gt;
-
-    &lt;fragment android:<span class="property">name</span>=<span class="string">"com.example.news.ArticleListFragment"</span>
-            android:<span class="property">id</span>=<span class="string">"@+id/list"</span>
-            android:layout_weight=<span class="string">"1"</span>
-            android:layout_width=<span class="string">"0dp"</span>
-            android:layout_height=<span class="string">"match_parent"</span> /&gt;
-    &lt;fragment android:<span class="property">name</span>=<span class="string">"com.example.news.ArticleReaderFragment"</span>
-            android:<span class="property">id</span>=<span class="string">"@+id/viewer"</span>
-            android:layout_weight=<span class="string">"2"</span>
-            android:layout_width=<span class="string">"0dp"</span>
-            android:layout_height=<span class="string">"match_parent"</span> /&gt;
-&lt;/LinearLayout&gt;
-</code></pre></li>
-</ul>
-<p>每个Fragment需要一个唯一的标识符用来当activity重启的时候恢复Fragment，你可以使用他来执行捕获Fragment来执行事务，比如说移除它，这里有三种给Fragment提供id的方法：</p>
-<ul>
-<li>提供一个<strong>android:id</strong>作为Fragment的唯一标识符</li>
-<li>提供一个<strong>android:tag</strong>作为一个唯一标识符</li>
-<li>如果同时提供两者的话，系统会优先使用id</li>
-</ul>
-<h3 id="或者，向一个已经存在的ViewGroup中自动添加一个Fragment">或者，向一个已经存在的ViewGroup中自动添加一个Fragment</h3><p>在acticity运行的任何时候，都可以向activity布局中添加Fragment，具体代码：</p>
-<pre><code>FragmentManager <span class="keyword">fragment</span>Manager = getFragmentManager();
-FragmentTransaction <span class="keyword">fragment</span>Transaction = <span class="keyword">fragment</span>Manager.beginTransaction();
-ExampleFragment <span class="keyword">fragment</span> = new ExampleFragment();
-<span class="keyword">fragment</span>Transaction.add(R.id.fragment_container,<span class="keyword">fragment</span>);
-<span class="keyword">fragment</span>Transaction.commit();
-</code></pre><p><strong>add()</strong>方法的第一个参数是一个将会被Fragment替换的ViewGroup，是一个资源id，第二个参数是将要添加的Fragment。</p>
-<p>如果你想要通过<strong>FragmentTransaction</strong>改变状态，你需要调用<strong>commit</strong>方法来使改变起作用。</p>
-<h3 id="管理Fragments">管理Fragments</h3><p>在你的activity中管理Fragment需要使用<strong>FragmentManager</strong>，在activity中调用<strong>getFragmentManager()</strong>来获得<strong>FragmentManager</strong>。</p>
-<p>你可以使用<strong>FragmentManager</strong>做以下事情:</p>
-<ul>
-<li>获取在activity中存在的Fragment，使用<strong>findFragmentById()</strong>或者<strong>findFragmentByTag()</strong></li>
-<li>从回退栈中弹出Fragment。使用<strong>popBackStack()</strong></li>
-<li>当回退栈改变的时候，注册一个监听器，使用<strong>addOnBackStackChangedListener</strong></li>
-</ul>
-<p>如果想了解更多关于这些方法和其他方法的信息，请参考<strong>FragmentManager</strong>类的文档。</p>
-<p>还可以使用<strong>FragmentManager</strong>开启一个事务，然后执行事务，比如添加和移除Fragment。</p>
-<h3 id="执行Fragment事务">执行Fragment事务</h3><p>使用Fragment最大的特色就是可以在activity中对他们执行添加、移除、替换以及其他的行为，你还可以保存事务到一个由acticvity管理的后退栈中。</p>
-<p>你可以从<strong>FragmentManager</strong>中获取一个<strong>FragmentTransaction</strong>事务</p>
-<pre><code>FragmentManager <span class="keyword">fragment</span>Manager = getFragmentManager();
-FragmentTransaction <span class="keyword">fragment</span>Transaction = <span class="keyword">fragment</span>Manager.beginTransaction();
-</code></pre><p>每个事务是你想同时执行的一组改变，你可以使用<strong>add()</strong>，<strong>remove()</strong>，<strong>replace()</strong>方法，然后把这些事务应用到activity上，需要使用<strong>commit</strong>方法。</p>
-<p>在你执行<strong>commit</strong>方法之前，你想要调用<strong>addToBackStack()</strong>把Fragment事务添加到一个后退栈中，这个后退栈是由activity管理的，允许用户按返回键的时候返回前一个Fragment的状态。</p>
-<pre><code>Fragment newFragment = new ExampleFragment();
-FragmentTransaction <span class="keyword">transaction</span> = getFragmentManager().beginTransaction();
-
-<span class="keyword">transaction</span>.replace(R.<span class="property">id</span>.fragment_container,newFragment);
-<span class="keyword">transaction</span>.addToBackStack(null);
-<span class="keyword">transaction</span>.commit();
-</code></pre><p>如果你向事务中添加了多个改变，然后调用<strong>addToBackStack()</strong>中的时候，在你调用commit方法之前，所有的改变都会被当成一个单独的事务添加到回退栈中，如果你点击了后退按钮，会把那些所有的改变全都回转过来。</p>
-<p>你向<strong>FragmentTransaction</strong>中添加变化的时候，需要注意的是：</p>
-<ul>
-<li>你必须在最后调用<strong>commit()</strong></li>
-<li>当你添加了多个fragments向同一个container中时，你添加的顺序也就是你出现的顺序。</li>
-</ul>
-<p>当执行一个移除fragment的事务的时候，如果没有调用<strong>addToBackStack()</strong>方法，那么Fragment将会被回收，当用户操作返回按钮的时候，将不会出现被移除的Fragment；当调用<strong>addToBackStack()</strong>方法的时候，Fragment并没有被移除，而是stopped</p>
-<blockquote>
-<p>如果在Fragment事务中想执行一个过度动画雨啊的话，需要在调用<strong>commit()</strong>方法之前调用<strong>setTransition()</strong>。</p>
-</blockquote>
-<p>调用<strong>Commit()</strong>方法并不能理解执行事务，相反的，这个事务实在activity的ui线程(也称主线程)执行的，然而你可以从ui线程调用<strong>executePendingTransaction()</strong>来利己执行提交事务，当然没必要这样做，除非别的线程的工作依赖这个事务的提交。</p>
-<h3 id="和Activity交互">和Activity交互</h3><p>Fragment可以通过<strong>getActivity()</strong>来获取Activity的实例，而且可以轻松执行任务，比如说查找activity布局中的view。</p>
-<pre><code>View listView = getActivity().findViewById(R.<span class="property">id</span>.<span class="type">list</span>);
-</code></pre><p>在activity中也可以通过<strong>FragmentManager</strong>中的一些方法来获取Fragment的实例，比如<strong>findFragmentById()</strong>或者<strong>findFragmentByTag()</strong></p>
-<pre><code>ExampleFragment fragment = (ExampleFragment)getFragmentManager().findFragmentById(R.<span class="property">id</span>.example_fragment);
-</code></pre><h3 id="向Activity创建一个事件回调">向Activity创建一个事件回调</h3><p>有时候，Fragment需要向Activity分享一个事件，一个很好的做法就是在Fragment中定义一个回调接口然后需要在activity中实现它，当一个activity通过这个接口接收到一个回掉的时候，可以向其它Fragment分享信息。</p>
-<p>当一个新闻app在一个activity中存在两个Fragment，一个用来显示新闻列表，一个用来显示文章，所以FragmentA必须告诉FragmentB哪一篇文章被选择了，所以在这个列表中，新闻列表Fragment必须声明一个<strong>OnArticleSelectedListener</strong>接口:</p>
-<pre><code>public static <span class="class"><span class="keyword">class</span> <span class="title">FragmentA</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">ListFragment</span>{</span>
-    public interface <span class="type">OnArticleSelectedListener</span>{
-        public void onArticleSelected(<span class="type">Uri</span> articleUri);
-    }
-}
-</code></pre><p>然后在activity中需要实现<strong>OnArticleSelectedListener</strong>接口，并且重写<strong>onArticleSelected()</strong>，将从FragmentA中得到的事件通知FragmentB。为了确保activity实现了这个接口，FragmentA的<strong>onAttach()</strong>方法中必须初始化一个<strong>OnArticleSelectedListener</strong>由activity转换而来的实例。</p>
-<pre><code>public static <span class="class"><span class="keyword">class</span> <span class="title">FragmentA</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">ListFragment</span>{</span>
-    <span class="type">OnArticleSelectedListener</span> mListener;
-
-    <span class="annotation">@Override</span>
-    puiblic void onAttach(<span class="type">Activity</span> activity){
-        <span class="keyword">super</span>.onAttach(activity);
-        <span class="keyword">try</span>{
-            mListener = (<span class="type">OnArticleSelectedListener</span>)activity;
-        }<span class="keyword">catch</span> (<span class="type">ClassCastException</span> e) {
-            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">ClassCastException</span>(activity.toString() + <span class="string">" must implement OnArticleSelectedListener"</span>);
-        }
-    }
-}
-</code></pre><p>接下来就是传递事件的逻辑</p>
-<pre><code>public static <span class="class"><span class="keyword">class</span> <span class="title">FragmentA</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">ListFragment</span> {</span>
-    <span class="type">OnArticleSelectedListener</span> mListener;
-    ...
-    <span class="annotation">@Override</span>
-    public void onListItemClick(<span class="type">ListView</span> l, <span class="type">View</span> v, int position, long id) {
-        <span class="comment">// Append the clicked item's row ID with the content provider Uri</span>
-        <span class="type">Uri</span> noteUri = <span class="type">ContentUris</span>.withAppendedId(<span class="type">ArticleColumns</span>.<span class="type">CONTENT_URI</span>, id);
-        <span class="comment">// Send the event and Uri to the host activity</span>
-        mListener.onArticleSelected(noteUri);
-    }
-    ...
-}
-</code></pre><h3 id="向Action_Bar中添加条目">向Action Bar中添加条目</h3><p>Fragment可以通过实现<strong>onCreateOptionMenu()</strong>方法来向activity的选项菜单中添加菜单项。为了使这个方法接收到调用，所以你必须在<strong>onCreate</strong>方法中调用<strong>setHasOptionsMenu</strong>,表明Fragment将要添加选项到选项菜单中。</p>
-<h3 id="管理Fragment的生命周期">管理Fragment的生命周期</h3><p>管理Fragment和管理activity的生命周期很像</p>
-<p><img src="http://developer.android.com/images/activity_fragment_lifecycle.png" alt="Fragment和Activity的生命周期对比"></p>
-<p>像activity一样，你可以用<strong>Bundle</strong>来保存一个Fragment的状态，当activity被杀死的时候，你需要保存Fragment的状态，当activity被恢复的时候，可以恢复那些状态，你可以在<strong>onSaveInstanceState()</strong>回调方法中保存Fragment的状态，并且通过<strong>onCreate，onCreateView，onActivityCreated()</strong>方法来恢复之前所保存的状态，更多关于保存状态的信息，请看activities文档。</p>
-<p>有一些不同的是，Fragment和Activity是如何存储进各自的后退栈的，对于Activity来说，当一个Activity状态变为stopped的时候，由系统管理的activities后退栈会将当前回收的activity替换进后退栈，但是对于Fragment来说，只有在提交事务之前调用了<strong>addToBackStack()</strong>方法才能进入由activity管理的后退栈。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/09/21/翻译-数据绑定part-2/" itemprop="url">
-                [翻译]数据绑定part 2
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2015-09-21T10:30:23+08:00" content="2015-09-21">
-            2015-09-21
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分類於
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/Android/" itemprop="url" rel="index">
-                  <span itemprop="name">Android</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2015/09/21/翻译-数据绑定part-2/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/21/翻译-数据绑定part-2/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>上一篇文章，我们使一个基础的twitter客户端运行起来了，但是让我们有点不太理解为什么，所以现在我们就来了解一下数据绑定库都做了什么和如何工作的。</p>
-<p>首先要做的就是在我们项目的顶级<strong>build.gradle</strong>文件中的<strong>buildscript</strong>模块中添加一个依赖项:</p>
-<pre><code><span class="keyword">buildscript</span> {
-    <span class="keyword">repositories</span> {
-        jcenter()
-    }
-    <span class="keyword">dependencies</span> {
-        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.3.0'</span>
-        <span class="keyword">classpath</span> <span class="string">"com.android.databinding:dataBinder:1.0-rc1"</span>
-    }
-}
-
-<span class="keyword">allprojects</span> {
-    <span class="keyword">repositories</span> {
-        jcenter()
-    }
-}
-</code></pre><p>在子项目中的<strong>build.gradle</strong>文件中，我们需要添加一个构建插件:</p>
-<pre><code>apply plugin: <span class="string">'com.android.application'</span>
-apply plugin: <span class="string">'com.android.databinding'</span> //就是这一行
-
-android {
-    compileSdkVersion <span class="number">23</span>
-    buildToolsVersion <span class="string">"23.0.0"</span>
-
-    defaultConfig {
-        applicationId <span class="string">"com.stylingandroid.databinding"</span>
-        minSdkVersion <span class="number">7</span>
-        targetSdkVersion <span class="number">23</span>
-        versionCode <span class="number">1</span>
-        versionName <span class="string">"1.0"</span>
-
-        buildConfigField <span class="string">'String'</span>, <span class="string">'TWITTER_CONSUMER_KEY'</span>, <span class="string">"\"</span>${twitterConsumerKey}\<span class="string">""</span>
-        buildConfigField <span class="string">'String'</span>, <span class="string">'TWITTER_CONSUMER_SECRET'</span>, <span class="string">"\"</span>${twitterConsumerSecret}\<span class="string">""</span>
-        buildConfigField <span class="string">'String'</span>, <span class="string">'TWITTER_ACCESS_KEY'</span>, <span class="string">"\"</span>${twitterAccessKey}\<span class="string">""</span>
-        buildConfigField <span class="string">'String'</span>, <span class="string">'TWITTER_ACCESS_SECRET'</span>, <span class="string">"\"</span>${twitterAccessSecret}\<span class="string">""</span>
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span>
-        }
-    }
-    packagingOptions {
-        exclude <span class="string">'META-INF/LICENSE.txt'</span>
-    }
-    lintOptions {
-        disable <span class="string">'InvalidPackage'</span>
-    }
-}
-
-dependencies {
-    compile <span class="string">'com.android.support:support-annotations:23.0.0'</span>
-    compile <span class="string">'com.android.support:design:23.0.0'</span>
-    compile <span class="string">'com.android.support:appcompat-v7:23.0.0'</span>
-    compile <span class="string">'com.android.support:recyclerview-v7:23.0.0'</span>
-    compile <span class="string">'org.twitter4j:twitter4j-core:4.0.4'</span>
-    compile <span class="string">'org.twitter4j:twitter4j-async:4.0.4'</span>
-    compile <span class="string">'com.github.bumptech.glide:glide:3.6.1'</span>
-}
-</code></pre><p>值得一提的是这里没有关于数据绑定的编译库添加进去，只是一个简单的构建项的添加。</p>
-<p>这可以对于即将发生的事情，给我们一个线索，数据绑定是通过在执行的过程中构建和生成的样板式的代码，通常与绑定数据到视图有关。</p>
-<p>在我们的例子中，他解析布局文件和检测被<strong>layout</strong>包装器在<strong>layout/status_item.xml</strong>,基于上面的文件名称，会自动生成一个数据绑定类，命名为<strong>StatusItemBinding</strong>，而且这是一个会在ViewHolder实现类中引用的神秘的类。</p>
-<p>然后数据绑定会剔除被<layout>包装的代码，然后移除数据绑定表达式，最后将这些合并成<strong>StatusItemBinding</strong>类，换句话说就是将他转变成一个标准的Android xml文件，并且添加一个java类在运行时实现了绑定。</layout></p>
-<p>所以我们现在再看<strong>StatusViewHolder</strong>的时候就会感觉很清晰，而且也明白了是怎么回事:</p>
-<pre><code>public <span class="class"><span class="keyword">class</span> <span class="title">StatusViewHolder</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">RecyclerView</span>.<span class="title">ViewHolder</span>{</span>
-    <span class="keyword">private</span> <span class="type">StatusItemBinding</span> binding;
-
-    public <span class="type">StatusViewHolder</span>(<span class="type">View</span> itemView){
-        <span class="keyword">super</span>(itemView);
-        binding = <span class="type">DataBinding</span>.bind(itemView);    } 
-
-    public void bind(<span class="type">Status</span> status){
-        binding.setStatus(status);
-    }
-}
-</code></pre><p>在构造函数中我们调用<strong>DataBindingUtil.bind(itemView)</strong>将会在构建过程中生成一个StatusItemBinding，然后在<strong>bind(Status status)</strong>方法中我们将会调用一个setter在StatusItemBinding实例中，这个setter是在我们原始布局中声明的类型为<strong>.data.Status</strong>,命名为status的<strong><data></data></strong>节点生成的，当我们调用settter的时候，它将会从原始布局中提取数据绑定表达式执行必要的绑定。</p>
-<p>现在我们更好的理解了他是怎么工作的而且为什么当app运行的时候我们能看到tweets的列表</p>
-<p><img src="https://blog.stylingandroid.com/wp-content/uploads/2015/08/Part11-1024x768.png" alt="https://blog.stylingandroid.com/wp-content/uploads/2015/08/Part11-1024x768.png"></p>
-<p>非常好，一个简单的布局，有三个items被绑定，并没有节省我们多少时间，只是对于TextView来说省去了找views和设置内容的时间。然而并没有结束，这里还可以为我们做好多关于数据绑定的事情，当我们从Twitter中提取出了image URL之后，然后将他绑定到ImageView中之后，图片却并没有显示出来，我们需要包含一个图像加载库，在下一篇文章中，我们将看到怎样通过数据绑定自动加载图片。</p>
-<p>在这篇文章中主要是一些说明，并没有增加额外的代码，所以我们可以使用上一篇文章中的代码。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1793,7 +2000,7 @@ dependencies {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-count">20</span>
               <span class="site-state-item-name">文章</span>
             </a>
           </div>
@@ -1807,7 +2014,7 @@ dependencies {
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">21</span>
+              <span class="site-state-item-count">22</span>
               <span class="site-state-item-name">標籤</span>
               </a>
           </div>
