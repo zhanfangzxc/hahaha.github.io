@@ -186,3 +186,45 @@ WebSettings中还存在很多其他的有用的设置。
     
     //最后一步
       mWebView.addJavascriptInterface(new JavascriptInterface(this), "imagelistner");
+      
+### WebView拦截替换网络请求数据
+
+如果想让WebView在处理网络请求的时候将某些请求拦截替换成某些特殊的资源，就需要用到下面的方法：
+
+**shouldInterceptRequest**
+
+示例代码：
+
+	webview.setWebViewClient(new WebViewClient(){
+		@Override
+		public WebResourceReponse shouldInterceptRequest(Webview view,String url){
+			WebResourceResponse reponse = null;
+			if(url.contains("logo")){
+				try {
+	              InputStream localCopy = getAssets().open("droidyue.png");
+	              response = new WebResourceResponse("image/png", "UTF-8", localCopy);
+	          	} catch (IOException e) {
+	              e.printStackTrace();
+	          	}    
+			}    
+		}
+	})
+	
+WevResourceResponse需要设定耽搁属性，MIME类型，数据编码，数据流形式。
+
+### 常见问题汇总
+
+- Android 4.4中播放Html5的音频或视频，出现的**E/chromium: [ERROR:in_process_view_renderer.cc(189)] Failed to request GL process. Deadlock likely: 0**问题
+
+解决方案:**mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);**
+
+参考链接:[https://code.google.com/p/android/issues/detail?id=63754](https://code.google.com/p/android/issues/detail?id=63754)
+
+### 参考文章
+
+[http://droidyue.com/blog/2014/11/23/block-web-resource-in-webview/](http://droidyue.com/blog/2014/11/23/block-web-resource-in-webview/)
+
+**WebView问题总结**:[http://blog.csdn.net/t12x3456/article/details/13769731](http://blog.csdn.net/t12x3456/article/details/13769731)
+
+**WebView使用小结**:[http://blog.csdn.net/janice0529/article/details/41318755](http://blog.csdn.net/janice0529/article/details/41318755)
+
