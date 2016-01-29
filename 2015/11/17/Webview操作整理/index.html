@@ -57,7 +57,7 @@
 &amp;lt;WebView  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     android:id=&quot;@+id/webview&quot;
     and">
-<meta property="og:updated_time" content="2015-11-17T10:01:16.000Z">
+<meta property="og:updated_time" content="2016-01-19T02:00:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Webview操作整理">
 <meta name="twitter:description" content="如果你想在自己的项目中添加加载网页的功能的话，就需要使用Webview。
@@ -371,7 +371,33 @@ myWebView.setWebViewClient(new MyWebViewClient())<span class="comment">;</span>
 
 <span class="comment">//最后一步</span>
   mWebView.addJavascriptInterface(<span class="keyword">new</span> JavascriptInterface(<span class="keyword">this</span>), <span class="string">"imagelistner"</span>);
-</code></pre></span>
+</code></pre><h3 id="WebView拦截替换网络请求数据">WebView拦截替换网络请求数据</h3><p>如果想让WebView在处理网络请求的时候将某些请求拦截替换成某些特殊的资源，就需要用到下面的方法：</p>
+<p><strong>shouldInterceptRequest</strong></p>
+<p>示例代码：</p>
+<pre><code>webview.setWebViewClient(<span class="keyword">new</span> WebViewClient(){
+    <span class="annotation">@Override</span>
+    <span class="keyword">public</span> <span class="function">WebResourceReponse <span class="title">shouldInterceptRequest</span><span class="params">(Webview view,String url)</span></span>{
+        WebResourceResponse reponse = <span class="keyword">null</span>;
+        <span class="keyword">if</span>(url.contains(<span class="string">"logo"</span>)){
+            <span class="keyword">try</span> {
+              InputStream localCopy = getAssets().open(<span class="string">"droidyue.png"</span>);
+              response = <span class="keyword">new</span> WebResourceResponse(<span class="string">"image/png"</span>, <span class="string">"UTF-8"</span>, localCopy);
+              } <span class="keyword">catch</span> (IOException e) {
+              e.printStackTrace();
+              }    
+        }    
+    }
+})
+</code></pre><p>WevResourceResponse需要设定耽搁属性，MIME类型，数据编码，数据流形式。</p>
+<h3 id="常见问题汇总">常见问题汇总</h3><ul>
+<li>Android 4.4中播放Html5的音频或视频，出现的<strong>E/chromium: [ERROR:in_process_view_renderer.cc(189)] Failed to request GL process. Deadlock likely: 0</strong>问题</li>
+</ul>
+<p>解决方案:<strong>mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);</strong></p>
+<p>参考链接:<a href="https://code.google.com/p/android/issues/detail?id=63754" target="_blank" rel="external">https://code.google.com/p/android/issues/detail?id=63754</a></p>
+<h3 id="参考文章">参考文章</h3><p><a href="http://droidyue.com/blog/2014/11/23/block-web-resource-in-webview/" target="_blank" rel="external">http://droidyue.com/blog/2014/11/23/block-web-resource-in-webview/</a></p>
+<p><strong>WebView问题总结</strong>:<a href="http://blog.csdn.net/t12x3456/article/details/13769731" target="_blank" rel="external">http://blog.csdn.net/t12x3456/article/details/13769731</a></p>
+<p><strong>WebView使用小结</strong>:<a href="http://blog.csdn.net/janice0529/article/details/41318755" target="_blank" rel="external">http://blog.csdn.net/janice0529/article/details/41318755</a></p>
+</span>
       
     </div>
 
@@ -389,6 +415,8 @@ myWebView.setWebViewClient(new MyWebViewClient())<span class="comment">;</span>
       
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/11/19/Intent常用操作/" rel="prev">Intent常用操作</a>
             
           </div>
 
@@ -460,7 +488,7 @@ myWebView.setWebViewClient(new MyWebViewClient())<span class="comment">;</span>
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-count">31</span>
               <span class="site-state-item-name">文章</span>
             </a>
           </div>
@@ -474,7 +502,7 @@ myWebView.setWebViewClient(new MyWebViewClient())<span class="comment">;</span>
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-count">29</span>
               <span class="site-state-item-name">標籤</span>
               </a>
           </div>
@@ -519,7 +547,7 @@ myWebView.setWebViewClient(new MyWebViewClient())<span class="comment">;</span>
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#添加WebView"><span class="nav-number">1.</span> <span class="nav-text">添加WebView</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在WebView中使用JavaScript"><span class="nav-number">2.</span> <span class="nav-text">在WebView中使用JavaScript</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将javaScript代码绑定到Android代码中"><span class="nav-number">3.</span> <span class="nav-text">将javaScript代码绑定到Android代码中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理Page导航"><span class="nav-number">4.</span> <span class="nav-text">处理Page导航</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操纵网页浏览历史"><span class="nav-number">5.</span> <span class="nav-text">操纵网页浏览历史</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现点击WebView中的图片预览的效果"><span class="nav-number">6.</span> <span class="nav-text">实现点击WebView中的图片预览的效果</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#添加WebView"><span class="nav-number">1.</span> <span class="nav-text">添加WebView</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在WebView中使用JavaScript"><span class="nav-number">2.</span> <span class="nav-text">在WebView中使用JavaScript</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将javaScript代码绑定到Android代码中"><span class="nav-number">3.</span> <span class="nav-text">将javaScript代码绑定到Android代码中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理Page导航"><span class="nav-number">4.</span> <span class="nav-text">处理Page导航</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操纵网页浏览历史"><span class="nav-number">5.</span> <span class="nav-text">操纵网页浏览历史</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现点击WebView中的图片预览的效果"><span class="nav-number">6.</span> <span class="nav-text">实现点击WebView中的图片预览的效果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WebView拦截替换网络请求数据"><span class="nav-number">7.</span> <span class="nav-text">WebView拦截替换网络请求数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常见问题汇总"><span class="nav-number">8.</span> <span class="nav-text">常见问题汇总</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文章"><span class="nav-number">9.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
@@ -536,7 +564,7 @@ myWebView.setWebViewClient(new MyWebViewClient())<span class="comment">;</span>
       <div class="footer-inner"> <div class="copyright" >
   
   &copy; &nbsp; 
-  <span itemprop="copyrightYear">2015</span>
+  <span itemprop="copyrightYear">2016</span>
   <span class="with-love">
     <i class="icon-next-heart"></i>
   </span>

@@ -1,0 +1,689 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="既然选择远方，便只顾风雨兼程" />
+
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ZhaoShanShan’s Blog" type="application/atom+xml" />
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="原文地址:https://medium.com/google-developers/custom-text-selection-actions-with-action-process-text-191f792d2999?linkId=20000023#.ow1rpqsbm
+Android 6.0介绍了一个新的浮动文本选择工具栏，它将带给我们标准的文本选择行为，例如在所选择的文本附近会出现剪切，复制">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用ACTION_PROCESS_TEXT创建一个自定义的文本选择行为">
+<meta property="og:url" content="http://zhaoshanshan.me/2016/01/04/使用ACTION-PROCESS-TEXT创建一个自定义的文本选择行为/index.html">
+<meta property="og:site_name" content="ZhaoShanShan’s Blog">
+<meta property="og:description" content="原文地址:https://medium.com/google-developers/custom-text-selection-actions-with-action-process-text-191f792d2999?linkId=20000023#.ow1rpqsbm
+Android 6.0介绍了一个新的浮动文本选择工具栏，它将带给我们标准的文本选择行为，例如在所选择的文本附近会出现剪切，复制">
+<meta property="og:image" content="https://d262ilb51hltx0.cloudfront.net/max/800/1*D4zZzPlBTk5cEN9Qn0-cBA.gif">
+<meta property="og:updated_time" content="2016-01-04T06:56:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用ACTION_PROCESS_TEXT创建一个自定义的文本选择行为">
+<meta name="twitter:description" content="原文地址:https://medium.com/google-developers/custom-text-selection-actions-with-action-process-text-191f792d2999?linkId=20000023#.ow1rpqsbm
+Android 6.0介绍了一个新的浮动文本选择工具栏，它将带给我们标准的文本选择行为，例如在所选择的文本附近会出现剪切，复制">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'always'
+  };
+</script>
+
+  <title> 使用ACTION_PROCESS_TEXT创建一个自定义的文本选择行为 | ZhaoShanShan’s Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">ZhaoShanShan’s Blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首頁
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分類
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            關於
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            歸檔
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            標籤
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              使用ACTION_PROCESS_TEXT创建一个自定义的文本选择行为
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2016-01-04T09:15:55+08:00" content="2016-01-04">
+            2016-01-04
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/01/04/使用ACTION-PROCESS-TEXT创建一个自定义的文本选择行为/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/04/使用ACTION-PROCESS-TEXT创建一个自定义的文本选择行为/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>原文地址:<a href="https://medium.com/google-developers/custom-text-selection-actions-with-action-process-text-191f792d2999?linkId=20000023#.ow1rpqsbm" target="_blank" rel="external">https://medium.com/google-developers/custom-text-selection-actions-with-action-process-text-191f792d2999?linkId=20000023#.ow1rpqsbm</a></p>
+<p>Android 6.0介绍了一个新的浮动文本选择工具栏，它将带给我们标准的文本选择行为，例如在所选择的文本附近会出现剪切，复制，粘贴等行为，<strong>ACTION_PROCESS_TEXT</strong>使任何的app添加自定义的文本选择工具栏成为可能。</p>
+<p><img src="https://d262ilb51hltx0.cloudfront.net/max/800/1*D4zZzPlBTk5cEN9Qn0-cBA.gif" alt="https://d262ilb51hltx0.cloudfront.net/max/800/1*D4zZzPlBTk5cEN9Qn0-cBA.gif"></p>
+<p>像维基百科，谷歌翻译已经利用他可以查找和翻译选中的文本。</p>
+<p>你已经可以看到在你的文档中添加这个功能的一些说明文档和博客(总之：使用一个标准的TextView/EditText是可以工作的，但是需要注意的是你的EditText需要设置android:id属性，如果你使用的是<strong>AppCompatActivity</strong>并且想在API 23+设备上使用浮动文本选择工具栏的话，你需要调用<strong>getDelegate().setHandleNativeActionModesEnabled(false)</strong>)</p>
+<p>但是实现<strong>ACTION_PROCESS_TEXT</strong>和添加你自己的行为才是这篇文章要讲述的重点:</p>
+<h3 id="跨越app通讯_-》_Intent_Filters">跨越app通讯 -》 Intent Filters</h3><p>当创建的功能需要跨越app的时候，你的Android Manifest 和intent filters作为一个公共的API连接到每个组件使其他的APP可以查询到。</p>
+<p><strong>ACTION_PROCESS_TEXT</strong>也毫不例外，你将要添加一个intent filter 到你的清淡文件中的一个Activity中。</p>
+<pre><code><span class="tag">&lt;<span class="title">activity</span> <span class="attribute">android:name</span>=<span class="value">"@string/process_text_action_name"</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">intent-filter</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">action</span> <span class="attribute">android:name</span>=<span class="value">"android.intent.action.PROCESS_TEXT"</span>/&gt;</span>
+        <span class="tag">&lt;<span class="title">category</span> <span class="attribute">android:name</span>=<span class="value">"android.intent.category.DEFAULT"</span>/&gt;</span>
+        <span class="tag">&lt;<span class="title">data</span> <span class="attribute">android:mimetype</span>=<span class="value">"text/plain"</span>/&gt;</span>
+    <span class="tag">&lt;/<span class="title">intent-filter</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">activity</span>&gt;</span>
+</code></pre><p>如果你想要多个行动，你需要为每个单独的活动添加上述代码，如果你想只在自己的app中出现所创建的功能，而不在其他应用中出现，那么你可以添加<strong>android:exported=”false”</strong>来确保这些行为只会在你的app中出现。</p>
+<p>注意你的将要作为文本选择工具栏显示的Activity的android:name要确保他比较短，一个行为动词或者一个可认识的作为你的app的标志。比如，谷歌翻译使用“Translate”作为一个不太常见的行为(有多少人安装了多少翻译软件？),维基百科使用“Search Wikipedia”作为搜索，对很多app来说可能是更常见的行为。</p>
+<h3 id="获取选择的文本">获取选择的文本</h3><p>当你的app设置了intent filter之后，其他的app将会通过选择的文本开启你的activity并且通过文本选择工具栏来选择你所定义的行为。但是并不会增加任何价值，除非你要看所选择的文本。</p>
+<p>这也是<strong>EXTRA_PROCESS_TEXT</strong>进来的原因，他是包含在intent中的字符串，代表所选择的文本，不要呗欺骗了——尽管你已经使用了text/plain intent filter,如果你注意到一些样式直接使用CharSequence在你的app中，请不要惊讶。</p>
+<p>因此在你的<strong>onCreate()</strong>方法中会看到如下的代码:</p>
+<pre><code><span class="annotation">@Override</span>
+<span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span></span>{
+    <span class="keyword">super</span>.onCreate(saved);
+    setContentView(R.layout.process_text_main);
+    CharSequence text = getIntent().getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
+
+}
+</code></pre><p>如果你使用的是android:launchMode=”singleTop”的话，会有一个警告,然后你可能想要在<strong>onNewIntent()</strong>中执行text，常见的操作就是当你创建的时候在onCreate()和onNewIntent()中调用handleIntent()方法。</p>
+<p>这就是使用ACTION_PROCESS_TEXT作为你的应用程序的入口所要做的操作，至于之后用它做什么，全部由你决定。</p>
+<h3 id="返回结果">返回结果</h3><p>还有一个额外的包含在<strong>ACTION_PROCESS_TEXT</strong>的intent通过:EXTRA_PROCESS_TEXT_READONLY,这个布尔值可以表示你刚刚接收到的所选择的文本是可以被用户编辑的。</p>
+<p>代码如下：</p>
+<pre><code><span class="built_in">boolean</span> <span class="keyword">readonly</span> = getIntent()
+    .getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY,<span class="literal">false</span>);
+</code></pre><p>你可以使用它作为一个提示提供一种返回修改过的内容给发送的应用程序的能力，从而替换选择的文本。这个可以作为你的activity工作，但是开始于startActivityForResult(),将会通过在Activity结束的时候调用setResult()返回一个结果。</p>
+<pre><code><span class="type">Intent</span> <span class="type">intent</span> = new <span class="type">Intent</span>();
+<span class="type">intent</span>.putExtra(<span class="type">Intent</span>.EXTRA_PROCESS_TEXT,replacementText);
+setResult(RESULT_OK,<span class="type">intent</span>);
+</code></pre><p>你可以想象一个按钮被替换，在Activity返回的时候调用setResult()。</p>
+<h3 id="常见问题">常见问题</h3><p>在开始编写程序之前，这里有一些关于ACTION_PROCESS_TEXT的常见问题</p>
+<p>问题:如何通过ACTION_PROCESS_TEXT触发服务</p>
+<p>回答:不能直接触发，系统只会查找包含正确intent filter的Activity,这并不意味着你不能通过你的Activity来开启一项服务使用Theme.Translucent.NoTitleBar或者Theme.NoDisplay的主题，但是你要确保你接收到他们的行为的时候有一个用户可见的提示，例如一个通知，或者一个吐司。</p>
+<p>问题:我能仅对特定类型的文本触发它吗？</p>
+<p>回答:不能，你的选项将会出现在任何人任何时间选择文本的时候，当然，用户不会选择一个翻译，除非他们需要翻译，但是你要小心的防守代码，因为你不知道你将会收到什么类型的文本。</p>
+<p>问题:所有的app都需要实现ACTION_PROCESS_TEXT吗？</p>
+<p>回答:的确是没必要的，不是每个应用程序都要实现ACTION<br>_PTOCESS_TEXT，但是要确保我们所实现的任何行为都是普遍的并且对安装应用的用户来说是真正有用的。</p>
+<h3 id="相关文章">相关文章</h3><p><a href="http://android-developers.blogspot.com/2015/10/in-app-translations-in-android.html" target="_blank" rel="external">http://android-developers.blogspot.com/2015/10/in-app-translations-in-android.html</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/01/07/adb常用命令/" rel="prev">adb常用命令</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/28/重点整理/" rel="next">重点整理</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2016/01/04/使用ACTION-PROCESS-TEXT创建一个自定义的文本选择行为/"
+                   data-title="使用ACTION_PROCESS_TEXT创建一个自定义的文本选择行为" data-url="http://zhaoshanshan.me/2016/01/04/使用ACTION-PROCESS-TEXT创建一个自定义的文本选择行为/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://img4.duitang.com/uploads/item/201405/07/20140507210553_NQGUP.thumb.600_0.jpeg" alt="坚持远方" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">坚持远方</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">既然选择远方，便只顾风雨兼程</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">31</span>
+              <span class="site-state-item-name">文章</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">分類</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">29</span>
+              <span class="site-state-item-name">標籤</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhanfangzxc" target="_blank">GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5497967279" target="_blank">Weibo</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#跨越app通讯_-》_Intent_Filters"><span class="nav-number">1.</span> <span class="nav-text">跨越app通讯 -》 Intent Filters</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取选择的文本"><span class="nav-number">2.</span> <span class="nav-text">获取选择的文本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#返回结果"><span class="nav-number">3.</span> <span class="nav-text">返回结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常见问题"><span class="nav-number">4.</span> <span class="nav-text">常见问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相关文章"><span class="nav-number">5.</span> <span class="nav-text">相关文章</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">赵珊珊</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 強力驅動
+</div>
+
+<div class="theme-info">
+  主題 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zhaoshanshan"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>

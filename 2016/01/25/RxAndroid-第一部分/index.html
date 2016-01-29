@@ -1,0 +1,704 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="既然选择远方，便只顾风雨兼程" />
+
+
+
+  <meta name="keywords" content="Android,RxAndroid," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ZhaoShanShan’s Blog" type="application/atom+xml" />
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="原文地址:https://medium.com/crunching-rxandroid/crunching-rxandroid-part-1-4ac7b7123238#.vo9v1p16d
+在上一篇文章中我们了解了一些基本的Rxjava的东西，接下来我们准备更深入一点。
+首先，我们今天的主要目的就是当我们已经更多的了解了上篇文章的内容之后就开始缩短代码，让我们开始创建一些东西并且只把输入作为Tex">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxAndroid 第一部分">
+<meta property="og:url" content="http://zhaoshanshan.me/2016/01/25/RxAndroid-第一部分/index.html">
+<meta property="og:site_name" content="ZhaoShanShan’s Blog">
+<meta property="og:description" content="原文地址:https://medium.com/crunching-rxandroid/crunching-rxandroid-part-1-4ac7b7123238#.vo9v1p16d
+在上一篇文章中我们了解了一些基本的Rxjava的东西，接下来我们准备更深入一点。
+首先，我们今天的主要目的就是当我们已经更多的了解了上篇文章的内容之后就开始缩短代码，让我们开始创建一些东西并且只把输入作为Tex">
+<meta property="og:updated_time" content="2016-01-25T08:16:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxAndroid 第一部分">
+<meta name="twitter:description" content="原文地址:https://medium.com/crunching-rxandroid/crunching-rxandroid-part-1-4ac7b7123238#.vo9v1p16d
+在上一篇文章中我们了解了一些基本的Rxjava的东西，接下来我们准备更深入一点。
+首先，我们今天的主要目的就是当我们已经更多的了解了上篇文章的内容之后就开始缩短代码，让我们开始创建一些东西并且只把输入作为Tex">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'always'
+  };
+</script>
+
+  <title> RxAndroid 第一部分 | ZhaoShanShan’s Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">ZhaoShanShan’s Blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首頁
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分類
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            關於
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            歸檔
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            標籤
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              RxAndroid 第一部分
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2016-01-25T10:56:07+08:00" content="2016-01-25">
+            2016-01-25
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/01/25/RxAndroid-第一部分/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/25/RxAndroid-第一部分/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>原文地址:<a href="https://medium.com/crunching-rxandroid/crunching-rxandroid-part-1-4ac7b7123238#.vo9v1p16d" target="_blank" rel="external">https://medium.com/crunching-rxandroid/crunching-rxandroid-part-1-4ac7b7123238#.vo9v1p16d</a></p>
+<p>在上一篇文章中我们了解了一些基本的Rxjava的东西，接下来我们准备更深入一点。</p>
+<p>首先，我们今天的主要目的就是当我们已经更多的了解了上篇文章的内容之后就开始缩短代码，让我们开始创建一些东西并且只把输入作为TextView的一个文本：</p>
+<pre><code>Action1&lt;<span class="built_in">String</span>&gt; textViewOnNextAction = <span class="keyword">new</span> Action1&lt;<span class="built_in">String</span>&gt;(){
+    <span class="annotation">@Override</span>
+    public <span class="keyword">void</span> call(<span class="built_in">String</span> s){
+        txtPart1.setText(s);
+    }
+}
+</code></pre><p>分析上面的代码，我们可以意识到我们并没有创建一个完整的并且合格的订阅者。我们只实现了当成功的时候将会发生的一些事情，避免了与其他事件相关的我们不需要的代码。</p>
+<p>有时候我们并不仅仅想为某个View设置一个标签，我们真正需要的是将字符串转换成大写的，因为我们想向全世界呼喊，我们可以使用一个函数，或多或少如下面这样</p>
+<pre><code>Func1&lt;<span class="built_in">String</span>,<span class="built_in">String</span>&gt; toUpperCaseMap = new Func1&lt;<span class="built_in">String</span>,<span class="built_in">String</span>&gt;(){
+    <span class="constant">@Override</span>
+    public <span class="built_in">String</span> <span class="built_in">call</span>(){
+        <span class="keyword">return</span> s.toUpperCase()<span class="comment">;</span>
+    }
+}
+</code></pre><p>这时候我们就只需要创建一个新的Observable并且关联所有的逻辑，我们一次只需要发送一个单独的字符串，我们可以使用一个快捷健创建一个可观察到的静态的方法。</p>
+<pre><code><span class="typename">Observable</span>&lt;String&gt; singleObservable = <span class="typename">Observable</span>.just(<span class="string">"Hello,World!"</span>);
+</code></pre><p>现在我们需要将观察者,方法和订阅者串联起来，我们将会看到下面这些：</p>
+<pre><code><span class="tag">singleObservable</span><span class="class">.observableOn</span>(<span class="tag">AndroidSchedulers</span><span class="class">.mainThread</span>())
+    <span class="class">.map</span>(<span class="tag">toUpperCaseMap</span>)
+    <span class="class">.subscribe</span>(<span class="tag">textViewOnNextAction</span>);
+</code></pre><p>你能察觉到这里的新闻吗，我说的就是<strong>map</strong>操作符。</p>
+<h3 id="操作符">操作符</h3><p>再这个例子中，我们说明了第一个操作符，在这个特殊的例子中，一个从字符串到字符串的方法将使我们可以再将他传递给最终的订阅者之前对从观察者的任务进行计算。RxJava提供了许多不同的操作符，我们可以使用他来将任何东西转换成我们需要的数据。</p>
+<h3 id="使用数组和集合">使用数组和集合</h3><p>我们看到了如何发射一个单独的条目，但是当我们想处理一组条目，并且一个接一个的发射他们该怎么做？我们从最简单的情况开始，我们想使用一个字符串数组并且将他们用Toast打印出来。</p>
+<p>让我们定义一个订阅者只是用来对任意输出的字符串进行输出，所以我们必须在队列结束时运行：</p>
+<pre><code>Action1&lt;<span class="built_in">String</span>&gt; toastOnNextAction = <span class="keyword">new</span> Action1&lt;<span class="built_in">String</span>&gt;(){
+    <span class="annotation">@Override</span>
+    public <span class="keyword">void</span> call(<span class="built_in">String</span> s){
+        Toast.makeText(context,s,);
+    }
+}
+</code></pre><p>正如我们看到的一样，这里没有什么新的东西，所以我们可以跳过直接去创建可观察对象，和我们之前例子中所做的一样，但是这里我们可以使用数组来一个接一个的发送条目。</p>
+<pre><code><span class="typename">Observable</span>&lt;String&gt; oneByOneObservable = <span class="typename">Observable</span>.from(manyWords);
+</code></pre><p>使用<strong>from()</strong>方法我们可以按顺序发送数组中的左右条目，我们不会太多的关系是怎么通过他们循环的，太棒了！</p>
+<p>让我们接下来面对一个更复杂一点的例子，我们需要在一次单独的发射中一次发射一个完整的集合,然后处理每一个元素，首先，我们需要发射整个集合，从第一个例子中我们知道该怎么做，从工厂方法中创建一个单独的Observable:</p>
+<pre><code><span class="tag">Observable</span><span class="class">.just</span>(<span class="tag">manyWordList</span>);
+</code></pre><p>然后我们需要一个可观察的东西来返回另一个可观察的东西，或许我们需要一个操作符</p>
+<h3 id="介绍flatMap">介绍flatMap</h3><p>我们看到map操作符可以将一些东西转换成另一些东西，但这不是他唯一能派上用场的地方，在这个例子中我们可以将一个Observable转换成另一个Observable，实现起来非常简单，我们可以再眨眼之间就能看到结果</p>
+<pre><code>Func1&lt;<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt;,Observable&lt;<span class="built_in">String</span>&gt;&gt; getUrls = <span class="keyword">new</span> Func1&lt;<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt;,Observable&lt;<span class="built_in">String</span>&gt;&gt;(){
+    <span class="annotation">@Override</span>
+    public Observable&lt;<span class="built_in">String</span>&gt; call(<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; strings){
+        <span class="keyword">return</span> Observable.from(strings);
+    }
+}
+</code></pre><p>现在我们希望显示一个良好的格式化后的消息，我们可以使用<strong>reduce</strong>运算符,一旦Observable完成大蛇，他将会把获取到的字符串当作一个方法的输入进行合并</p>
+<pre><code>Func2&lt;<span class="built_in">String</span>,<span class="built_in">String</span>,<span class="built_in">String</span>&gt; mergeRoutine = new Func2&lt;<span class="built_in">String</span>,<span class="built_in">String</span>,<span class="built_in">String</span>&gt;(){
+    <span class="constant">@Override</span>
+    public <span class="built_in">String</span> <span class="built_in">call</span>(<span class="built_in">String</span> s,<span class="built_in">String</span> s1){
+        <span class="keyword">return</span> <span class="built_in">String</span>.format(<span class="string">"%s, %s"</span>,s,s1)<span class="comment">;</span>
+    }
+}
+</code></pre><p>最后我们将所有的东西都连接起来，看看会看到什么神奇的事情发生！</p>
+<pre><code><span class="tag">Observable</span><span class="class">.just</span>(<span class="tag">manyWordList</span>)
+    <span class="class">.observableOn</span>(<span class="tag">AndroidSchedulers</span><span class="class">.mainThread</span>())
+    <span class="class">.flatMap</span>(<span class="tag">getUrls</span>)
+    <span class="class">.reduce</span>(<span class="tag">mergeRoutine</span>)
+    <span class="class">.subscribe</span>(<span class="tag">toastOnNextAction</span>);
+</code></pre></span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/RxAndroid/" rel="tag">#RxAndroid</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/25/RxAndroid介绍/" rel="next">RxAndroid介绍</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2016/01/25/RxAndroid-第一部分/"
+                   data-title="RxAndroid 第一部分" data-url="http://zhaoshanshan.me/2016/01/25/RxAndroid-第一部分/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://img4.duitang.com/uploads/item/201405/07/20140507210553_NQGUP.thumb.600_0.jpeg" alt="坚持远方" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">坚持远方</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">既然选择远方，便只顾风雨兼程</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">31</span>
+              <span class="site-state-item-name">文章</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">分類</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">29</span>
+              <span class="site-state-item-name">標籤</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhanfangzxc" target="_blank">GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5497967279" target="_blank">Weibo</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#操作符"><span class="nav-number">1.</span> <span class="nav-text">操作符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用数组和集合"><span class="nav-number">2.</span> <span class="nav-text">使用数组和集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#介绍flatMap"><span class="nav-number">3.</span> <span class="nav-text">介绍flatMap</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">赵珊珊</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 強力驅動
+</div>
+
+<div class="theme-info">
+  主題 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zhaoshanshan"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>
