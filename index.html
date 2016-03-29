@@ -178,6 +178,796 @@
           
           
             
+              <a class="post-title-link" href="/2016/03/29/Cursor-CursorAdapter-以及ContentProvider之间的爱恨纠缠/" itemprop="url">
+                Cursor CursorAdapter 以及ContentProvider之间的爱恨纠缠
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2016-03-29T16:38:21+08:00" content="2016-03-29">
+            2016-03-29
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/03/29/Cursor-CursorAdapter-以及ContentProvider之间的爱恨纠缠/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/29/Cursor-CursorAdapter-以及ContentProvider之间的爱恨纠缠/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h3 id="Cursor_CursorAdapter_以及_ContentProvider三者之间的关系">Cursor CursorAdapter 以及 ContentProvider三者之间的关系</h3><h4 id="Cursor和ContentProvider的关系">Cursor和ContentProvider的关系</h4><p>在写ContentProvider的时候，我们会在query中添加如下代码</p>
+<pre><code><span class="keyword">if</span>(<span class="built_in">cursor</span>!=<span class="keyword">null</span>){
+    <span class="built_in">cursor</span>.setNotificationUri(getContext().getContentResolver(),url);
+}
+</code></pre><p>现在通过源码，我们看看setNotificationUri方法做了什么</p>
+<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">setNotificationUri</span><span class="params">(ContentResolver cr, Uri notifyUri, <span class="keyword">int</span> userHandle)</span> </span>{
+      <span class="keyword">synchronized</span> (mSelfObserverLock) {
+          mNotifyUri = notifyUri;
+          mContentResolver = cr;
+          <span class="keyword">if</span> (mSelfObserver != <span class="keyword">null</span>) {
+          <span class="comment">//如果mSelfObserver不为空的情况下，就取消注册</span>
+         mContentResolver.unregisterContentObserver(mSelfObserver);
+          }
+          <span class="comment">//然后创建个新的SelfContentObserver</span>
+          mSelfObserver = <span class="keyword">new</span> SelfContentObserver(<span class="keyword">this</span>);
+          <span class="comment">//重新注册</span>
+mContentResolver.registerContentObserver(mNotifyUri, <span class="keyword">true</span>, mSelfObserver, userHandle);
+          mSelfObserverRegistered = <span class="keyword">true</span>;
+      }
+  }
+</code></pre><p>在ContentProvider中的delete、update、insert方法中，我们会添加如下代码：</p>
+<pre><code><span class="keyword">if</span>(affectedRow &gt; <span class="number">0</span>){
+    getContext<span class="literal">()</span>.getContentResolver<span class="literal">()</span>.notifyChange(uri,null);
+}
+</code></pre><p>notifyChange方法主要是用来通知所有的观察者数据库改变了，默认情况下CursorAdapter实例是可以收到这个通知的。<br>此时当数据库改变的时候，AbstractCursor中的mSelfObserver中的onChange方法就会执行，下面看一下源码:</p>
+<pre><code>@Override
+   <span class="keyword">public</span> <span class="keyword">void</span> onChange(<span class="built_in">boolean</span> selfChange) {
+       AbstractCursor <span class="built_in">cursor</span> = mCursor.<span class="built_in">get</span>();
+       <span class="keyword">if</span> (<span class="built_in">cursor</span> != <span class="keyword">null</span>) {
+           <span class="built_in">cursor</span>.onChange(<span class="keyword">false</span>);
+       }
+   }
+</code></pre><p>接着就会执行Cursor的onChange方法：</p>
+<pre><code><span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">onChange</span><span class="params">(<span class="keyword">boolean</span> selfChange)</span> </span>{
+    <span class="keyword">synchronized</span> (mSelfObserverLock) {
+    <span class="comment">//此处调用了dispatchChange方法</span>
+        mContentObservable.dispatchChange(selfChange, <span class="keyword">null</span>);
+        <span class="keyword">if</span> (mNotifyUri != <span class="keyword">null</span> &amp;&amp; selfChange) {
+            mContentResolver.notifyChange(mNotifyUri, mSelfObserver);
+        }
+    }
+}
+</code></pre><p>在ContentObservable方法中的dispatchChange方法中调用了所有的ContentObserver的dispatchChange方法，其中就包含在CursorAdapter中注册的ChangeObserver，看ContentObserver的源码可以看到，此处接着会去调用onChange方法，也就是会去调用ChangeObserver的onChange方法。也就是下面所说的onContentChanged()方法。</p>
+<h4 id="Cursor和CursorAdapter的关系">Cursor和CursorAdapter的关系</h4><p>在CursorAdapter的构造函数中需要传入一个Cursor对象，然后构造函数会调用init方法，该方法的源码如下：</p>
+<pre><code><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(Context context, Cursor c, <span class="keyword">int</span> flags)</span> </span>{
+    <span class="keyword">if</span> ((flags &amp; FLAG_AUTO_REQUERY) == FLAG_AUTO_REQUERY) {
+        flags |= FLAG_REGISTER_CONTENT_OBSERVER;
+        mAutoRequery = <span class="keyword">true</span>;
+    } <span class="keyword">else</span> {
+        mAutoRequery = <span class="keyword">false</span>;
+    }
+    <span class="keyword">boolean</span> cursorPresent = c != <span class="keyword">null</span>;
+    mCursor = c;
+    mDataValid = cursorPresent;
+    mContext = context;
+    mRowIDColumn = cursorPresent ? c.getColumnIndexOrThrow(<span class="string">"_id"</span>) : -1;
+    <span class="keyword">if</span> ((flags &amp; FLAG_REGISTER_CONTENT_OBSERVER) == FLAG_REGISTER_CONTENT_OBSERVER) {
+   <span class="comment">//此处创建两个ContentObserver</span>
+        mChangeObserver = <span class="keyword">new</span> ChangeObserver();
+        mDataSetObserver = <span class="keyword">new</span> MyDataSetObserver();
+    } <span class="keyword">else</span> {
+        mChangeObserver = <span class="keyword">null</span>;
+        mDataSetObserver = <span class="keyword">null</span>;
+    }
+
+    <span class="keyword">if</span> (cursorPresent) {
+        <span class="keyword">if</span> (mChangeObserver != <span class="keyword">null</span>) c.registerContentObserver(mChangeObserver);
+        <span class="keyword">if</span> (mDataSetObserver != <span class="keyword">null</span>) c.registerDataSetObserver(mDataSetObserver);
+    }
+}
+</code></pre><p>init方法中会创建两个ContentObserver,一个是ChangeObserver，一个是DataSetObserver,并且通过Cursor注册这两个观察者，如果获取到改变的时候，就会分别调用这两个Observer的onChange方法:</p>
+<pre><code> <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">ChangeObserver</span> <span class="keyword">extends</span> <span class="title">ContentObserver</span> </span>{
+    <span class="function"><span class="keyword">public</span> <span class="title">ChangeObserver</span><span class="params">()</span> </span>{
+        <span class="keyword">super</span>(<span class="keyword">new</span> Handler());
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">deliverSelfNotifications</span><span class="params">()</span> </span>{
+        <span class="keyword">return</span> <span class="keyword">true</span>;
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onChange</span><span class="params">(<span class="keyword">boolean</span> selfChange)</span> </span>{
+        onContentChanged();
+    }
+}
+</code></pre><p> 也就是执行onContentChanged()方法，现在来看看这个方法的源码：</p>
+<pre><code> <span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">onContentChanged</span><span class="params">()</span> </span>{
+     <span class="comment">//如果设置了自动重新查询的话</span>
+    <span class="keyword">if</span> (mAutoRequery &amp;&amp; mCursor != <span class="keyword">null</span> &amp;&amp; !mCursor.isClosed()) {
+        <span class="keyword">if</span> (<span class="keyword">false</span>) Log.v(<span class="string">"Cursor"</span>, <span class="string">"Auto requerying "</span> + mCursor + <span class="string">" due to update"</span>);
+        <span class="comment">//此时Cursor就会重新查询数据</span>
+        mDataValid = mCursor.requery();
+    }
+}
+</code></pre><p>此处虽然是重新查询了，但是没有notifyDataSetChange，所以list怎么刷新的呢，接着看一下Cursor中的requery方法：</p>
+<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">requery</span><span class="params">()</span> </span>{  
+    <span class="keyword">if</span> (mSelfObserver != <span class="keyword">null</span> &amp;&amp; mSelfObserverRegistered == <span class="keyword">false</span>) {  
+        mContentResolver.registerContentObserver(mNotifyUri, <span class="keyword">true</span>, mSelfObserver);  
+        mSelfObserverRegistered = <span class="keyword">true</span>;  
+    }  
+    <span class="comment">//此处DataSetObservable收到变化的时候，就会调用他自己的onChanged方法</span>
+    mDataSetObservable.notifyChanged();  
+    <span class="keyword">return</span> <span class="keyword">true</span>;  
+</code></pre><p>}  </p>
+<p>在他的onChanged方法中：</p>
+<pre><code> <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">MyDataSetObserver</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">DataSetObserver</span> {</span>
+    <span class="annotation">@Override</span>
+    public void onChanged() {
+        mDataValid = <span class="literal">true</span>;
+        <span class="comment">//就是这个了</span>
+        notifyDataSetChanged();
+    }
+
+    <span class="annotation">@Override</span>
+    public void onInvalidated() {
+        mDataValid = <span class="literal">false</span>;
+        notifyDataSetInvalidated();
+    }
+}
+</code></pre></span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/02/29/View事件的分发机制/" itemprop="url">
+                View事件的分发机制
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2016-02-29T15:35:26+08:00" content="2016-02-29">
+            2016-02-29
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/02/29/View事件的分发机制/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/29/View事件的分发机制/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h3 id="点击事件的传递规则">点击事件的传递规则</h3><p>点击事件的分发过程有三个很重要的方法来共同完成，<strong>dispatchTouchEvent()</strong>、<strong>onInterceptTouchEvent()</strong>、<strong>onTouchEvent()</strong>.</p>
+<ul>
+<li>public boolean dispatchTouchEvent(MotionEvent ev)</li>
+</ul>
+<p>用来进行事件的分发，如果事件能够传递给当前的View，那么此方法一定会被调用，返回结果受当前View的onTouchEvent和下级View的dispatchTouchEvent方法的影响，表示是否消耗当前事件。</p>
+<ul>
+<li>public boolean onInterceptTouchEvent(MotionEvent ev)</li>
+</ul>
+<p>用来判断是否拦截某个事件，如果当前View拦截了某个事件，那么再同一个事件序列中，此方法不会被再次调用，返回结果表示是否拦截当前事件。</p>
+<ul>
+<li>public boolean onTouchEvent(MotionEvent event)</li>
+</ul>
+<p>在dispatchTouchEvent方法中调用，用来处理点击事件，返回结果表示是否消耗当前事件，如果不消耗，则在同一个事件序列中，当前View无法再次接收到事件。</p>
+<h3 id="传递机制">传递机制</h3><p>对于一个根View来说，点击事件产生后，他的dispatchEvent方法会被调用，如果该ViewGroup的onInterceptTouchEvent返回true，就表示要拦截该事件，接着就交给ViewGroup的onTouchEvent方法处理，如果onInterceptTouchEvent返回false,这个事件就会传递给子元素，接着子元素的dispatchTouchEvent就会被调用。</p>
+<p>如果一个View需要处理事件的时候，当他设置了onTouchListener,那么onTouchListener的onTouch方法会被调用，这时事件的处理要看onTouch的返回值，返回true，onTouchEvent将不会被调用，返回false，当前view的onTouchEvent会被调用，所以onTouchListener优先级比onTouchEvent要高，而OnClickListener优先级最低。</p>
+<ul>
+<li><p>点击事件传递过程：Activity -&gt; Window -&gt; View</p>
+</li>
+<li><p>requestDisallowInterceptTouchEvent方法可以在子元素中干预父元素的事件分发过程，但是ACTION_DOWN事件除外。</p>
+</li>
+</ul>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/02/26/管理ViewGroup中的触摸事件/" itemprop="url">
+                管理ViewGroup中的触摸事件
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2016-02-26T10:09:59+08:00" content="2016-02-26">
+            2016-02-26
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/02/26/管理ViewGroup中的触摸事件/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/26/管理ViewGroup中的触摸事件/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>处理<strong>ViewGroup</strong>中的触摸时间值得注意的是，因为ViewGroup本身与带有子View的ViewGroup的触摸事件是不同的。为了确保每个View都能正确的接收到触摸事件，需要覆盖<strong>onInterceptTouchEvent()</strong>方法</p>
+<h3 id="ViewGroup拦截触摸事件">ViewGroup拦截触摸事件</h3><p>onInterceptTouchEvent()方法在ViewGroup表面或者它的子View的表面检测到触摸事件的时候会被调用。如果onInterceptTouchEvent返回true，<strong>MotionEvent</strong>会被拦截，意味着该事件将不会传递到子view，但是会到达父View的<strong>onTouchEvent()</strong>.</p>
+<p>onInterceptTouchEvent方法给父View一个提前看到任何触摸事件的机会，如果你在onInterceptTouchEvent()中返回了true，在子视图处理触摸事件的时候将会接受到一个<strong>ACTION_CANCEL</strong>，然后之后的时间将会直接被发送到父view进行处理。onInterceptTouchEvent()也可以返回false，用来监视在视图层次中触摸事件的传递以及自己的onTouchEvent方法中如何处理触摸事件。</p>
+<p>在以下的代码片段中，MyViewGroup类继承ViewGroup，MyViewGroup包含多个子视图，如果你用手指拖过一个水平子视图，子view将不再接收到触摸事件，MyViewGroup将会处理触摸事件通过滚动其内容，如果在子view中点击了按钮，或者垂直滚动子view，父view将不会再拦截他们的触摸事件，因为子view是目标，在这种情况下，onInterceptTouchEvent会返回false，并且MyViewGroup的onTouchEvent()将不会被调用。</p>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyViewGroup</span> <span class="keyword">extends</span> <span class="title">ViewGroup</span></span>{
+    <span class="keyword">private</span> <span class="keyword">int</span> mTouchSlop;
+
+    ...
+
+    ViewConfiguration vc = ViewConfiguration.get(view.getContext());
+    mTouchSlop = vc.getScaledTouchSlop();
+    ...
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">onInterceptTouchEvent</span><span class="params">(MotionEvent ev)</span></span>{
+         <span class="comment">/*
+     * This method JUST determines whether we want to intercept the motion.
+     * If we return true, onTouchEvent will be called and we do the actual
+     * scrolling there.
+     */</span>
+
+        <span class="keyword">final</span> <span class="keyword">int</span> action = MotionEventCompat.getActionMasked(ev);
+
+        <span class="keyword">if</span>(action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP){
+            mIsScrolling = <span class="keyword">false</span>;
+            <span class="keyword">return</span> <span class="keyword">false</span>;<span class="comment">//不拦截触摸事件，让子view处理</span>
+        }
+
+        <span class="keyword">switch</span>(action){
+            <span class="keyword">case</span> MotionEvent.ACTION_CANCEL:
+                <span class="keyword">if</span>(mIsScrolling){
+                    <span class="comment">//正在滚动，所以拦截触摸事件</span>
+                    <span class="keyword">return</span> <span class="keyword">true</span>;
+                }
+
+                <span class="comment">//如果用户手指水平拖动的距离大于touch slop，开始滚动</span>
+                <span class="keyword">final</span> <span class="keyword">int</span> xDiff = calculateDistanceX(ex);
+
+                <span class="comment">//使用ViewConfiguration常量来计算Touch slop</span>
+                <span class="keyword">if</span>(xDiff &gt; mTouchSlop){
+                    mIsScrolling = <span class="keyword">true</span>;
+                    <span class="keyword">return</span> <span class="keyword">false</span>;
+                }
+                <span class="keyword">break</span>;
+        }
+        ...
+    }
+    <span class="comment">//通常，我们不希望拦截触摸事件，应该被子view处理</span>
+    <span class="keyword">return</span> <span class="keyword">false</span>;
+}
+
+<span class="annotation">@Override</span>
+<span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent ev)</span></span>{
+    <span class="comment">//这里是处理触摸事件的地方</span>
+    <span class="comment">//这个方法只有当触摸事件在onInterceptTouchEvent中被拦截的时候才会被调用。</span>
+}
+}
+</code></pre><h3 id="使用ViewConfiguration_常量">使用ViewConfiguration 常量</h3><p>上面的代码片段使用<strong>ViewConfiguraion</strong>初始化了一个mTouchSlop变量，你可以使用ViewConfiguration类访问Android系统中常用的距离，速度等常量。</p>
+<p>Touch Slop通常用于防止当用于执行一些其他的触摸操作，比如触摸屏幕元素造成的意外滚动。</p>
+<p>另外两个常用的ViewConfiguration中的方法是<strong>getScaledMinimumFlingVelocity()</strong>和<strong>getScaledMaximumFlingVelocity()</strong>.这两个方法返回fling的说以后的最大最小速度，以像素每秒为单位，比如：</p>
+<pre><code>ViewConfiguration vc = ViewConfiguration.get(view.getContext());
+<span class="keyword">private</span> <span class="keyword">int</span> mSlop = vc.getScaledTouchSlop();
+<span class="keyword">private</span> <span class="keyword">int</span> mMinFlingVelocity = vc.getScaledMinmumFlingVelocity();
+<span class="keyword">private</span> <span class="keyword">int</span> mMaxFlingVelocity = vc.getScaledMaximumFlingVelocity();
+
+...
+
+<span class="keyword">case</span> MotionEvent.ACTION_MOVE:
+    ...
+    <span class="keyword">float</span> deltaX = motionEvent.getRawX() - mDownX;
+    <span class="keyword">if</span>(Math.abs(deltaX) &gt; mSlop){
+        <span class="comment">//发生滑动</span>
+    }
+
+...
+
+<span class="keyword">case</span> MotionEvent.ACTION_UP:
+    ...
+    <span class="keyword">if</span>(mMinFlingVelocity &lt;= velocityX &amp;&amp; velocityX &lt;= mMaxFlingVelocity &amp;&amp; velocityY &lt; velocityX){
+
+    }
+</code></pre><h3 id="扩展子视图的可触摸区域">扩展子视图的可触摸区域</h3><p>Android提供了一个<strong>TouchDelegate</strong>类来使父view在子view的界限之上扩展子view。这是非常有用的，当子view小的时候，应该有一个大的可接触区域，如果需要的话也可以使用这个方法来缩小子view的接触区域。</p>
+<p>在下面的例子中，ImageButton作为delegate view(将被父view扩展触摸区域的view)，下面是布局文件：</p>
+<pre><code><span class="tag">&lt;<span class="title">RelativeLayout</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span>
+    <span class="attribute">android:id</span>=<span class="value">"@+id/parent_layout"</span>
+    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">tools:context</span>=<span class="value">".MainActivity"</span>&gt;</span>
+
+    <span class="tag">&lt;<span class="title">ImageButton</span> <span class="attribute">android:id</span>=<span class="value">"@+id/button"</span>
+        <span class="attribute">android:layout_width</span>=<span class="value">"wrap_content"</span>
+        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span>
+        <span class="attribute">android:background</span>=<span class="value">"@null"</span>
+        <span class="attribute">android:src</span>=<span class="value">"@drawable/icon"</span>/&gt;</span>
+<span class="tag">&lt;/<span class="title">RelativeLayout</span>&gt;</span>
+</code></pre><p>以下的代码片段如下：</p>
+<ul>
+<li>获取父view并且再ui线程中发送一个Runnable，确保再在调用<strong>getHitRect()</strong>方法之前父view能够布局好子view，getHitRect()方法获取子view在父view坐标中的矩形区域。</li>
+<li>找到子view ImageButton，并且调用getHitRect()方法来获取子view的可触摸区域的边界。</li>
+<li>扩展ImageButton矩形边界的区域。</li>
+<li>实例化一个TouchDelegate,通过扩大矩形和ImageButton的子view作为参数</li>
+<li>设置父视图TouchDelegate</li>
+</ul>
+<p>如果触摸事件发生再子view的课触摸矩形中，父view将会将触摸事件传给子view并且由子view来处理。</p>
+<pre><code>public <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Activity</span>{</span>
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected</span> void onCreate(<span class="type">Bundle</span> savedInstance){
+        <span class="keyword">super</span>.onCreate(savedInstanceState);
+        <span class="comment">//获取父view</span>
+        <span class="type">View</span> parentView = findViewById(<span class="type">R</span>.id.parent_layout);
+
+        parentView.post(<span class="keyword">new</span> <span class="type">Runnable</span>(){
+            <span class="annotation">@Override</span>
+            public void run(){
+                <span class="type">Rect</span> delegateArea = <span class="keyword">new</span> <span class="type">Rect</span>();
+                <span class="type">ImageButton</span> myButton = (<span class="type">ImageButton</span>)findViewById(<span class="type">R</span>.id.button);
+                myButton.setEnabled(<span class="literal">true</span>);
+                myButton.setOnclickListener(<span class="keyword">new</span> <span class="type">View</span>.<span class="type">OnClickListener</span>(){
+                    <span class="type">Toast</span>.makeText(<span class="type">MainActivity</span>.<span class="keyword">this</span>,<span class="string">"Touch occured within ImageButton touch region."</span>,<span class="type">Toast</span>.<span class="type">LENGTH_SHORT</span>).show();
+                });
+            }
+        });
+
+        myButton.getHitRect(delegateArea);
+
+        delegateArea.right += <span class="number">100</span>;
+        delegateArea.bottom += <span class="number">100</span>;
+
+        <span class="type">TouchDelegate</span> touchDelegate = <span class="keyword">new</span> <span class="type">TouchDelegate</span>(delegateArea,myButton);
+
+        <span class="keyword">if</span>(<span class="type">View</span>.<span class="keyword">class</span>.isInstance(myButton.getParent)){
+            ((<span class="type">View</span>)myButton.getParent()).setTouchDelegate(touchDelegate);
+        }
+
+    }
+}
+</code></pre></span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/02/25/为初学者整理/" itemprop="url">
+                为初学者整理
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2016-02-25T16:21:48+08:00" content="2016-02-25">
+            2016-02-25
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/02/25/为初学者整理/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/25/为初学者整理/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h3 id="Activity相关">Activity相关</h3><h4 id="1、爱她就要了解他之Activity">1、爱她就要了解他之Activity</h4><p><a href="http://www.imooc.com/article/4497" target="_blank" rel="external">http://www.imooc.com/article/4497</a></p>
+<ul>
+<li>Activity的生命周期</li>
+<li>Activity的启动方式</li>
+<li>启动常见的系统Activity</li>
+<li>Activity之间传递数据等</li>
+</ul>
+<h4 id="关于获取当前Activity的一些思考">关于获取当前Activity的一些思考</h4><p><a href="http://droidyue.com/blog/2016/02/21/thinking-of-getting-the-current-activity-in-android/" target="_blank" rel="external">http://droidyue.com/blog/2016/02/21/thinking-of-getting-the-current-activity-in-android/</a></p>
+<ul>
+<li>通过使用反射获取Activity</li>
+</ul>
+<h3 id="View相关">View相关</h3><h4 id="1、了解Android的LayoutInflater-inflate()">1、了解Android的LayoutInflater.inflate()</h4><p><strong>原文</strong>:<a href="http://www.imooc.com/article/4497" target="_blank" rel="external">http://www.imooc.com/article/4497</a></p>
+<p><strong>翻译</strong>:<a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2016/0225/3992.html" target="_blank" rel="external">http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2016/0225/3992.html</a></p>
+<ul>
+<li>LayoutInflater.inflate(布局文件,根布局,是否添加根布局)</li>
+<li>LayoutInflater.inflate(布局文件,根布局);等同于上面的方法</li>
+<li>最后一个参数的使用场景，以及设置true/false的时候布局的结构</li>
+<li>RecyclerView以及Fragment中为什么要把最后一个参数设置成false</li>
+<li>如果使用两个参数的方法，同时将根布局参数设置成<strong>null</strong>的使用场景</li>
+</ul>
+<h4 id="RecyclerView介绍">RecyclerView介绍</h4><p><a href="http://www.jianshu.com/p/16712681731e" target="_blank" rel="external">http://www.jianshu.com/p/16712681731e</a></p>
+<p><strong>使用RecyclerView实现联系人列表</strong>:<a href="https://github.com/jiang111/IndexRecyclerView" target="_blank" rel="external">https://github.com/jiang111/IndexRecyclerView</a></p>
+<h3 id="完整项目">完整项目</h3><p><strong>新闻客户端</strong>:<a href="https://github.com/oubowu/OuNews.git" target="_blank" rel="external">https://github.com/oubowu/OuNews.git</a></p>
+<p><strong>MVP架构的知乎客户端</strong>:<a href="https://github.com/fangx/ZhiHuMVP" target="_blank" rel="external">https://github.com/fangx/ZhiHuMVP</a></p>
+<p><a href="https://github.com/oxoooo/mr-mantou-android" target="_blank" rel="external">https://github.com/oxoooo/mr-mantou-android</a></p>
+<h3 id="WebView相关">WebView相关</h3><p><strong>WebView与Javascript相互调用</strong>:<a href="http://mthli.github.io/Android-WebView-JavaScript" target="_blank" rel="external">http://mthli.github.io/Android-WebView-JavaScript</a></p>
+<p>###　内存管理</p>
+<p><strong>Android内存管理机制</strong>:<a href="http://www.jianshu.com/p/56c7cda86ad3" target="_blank" rel="external">http://www.jianshu.com/p/56c7cda86ad3</a></p>
+<p><strong>避免内存泄漏</strong>:<a href="http://www.cnblogs.com/JohnTsai/p/5256295.html" target="_blank" rel="external">http://www.cnblogs.com/JohnTsai/p/5256295.html</a></p>
+<h3 id="RxJava">RxJava</h3><p><strong>RxJava学习</strong>:<a href="https://github.com/jiang111/RxJavaApp" target="_blank" rel="external">https://github.com/jiang111/RxJavaApp</a></p>
+<h3 id="常用模板代码">常用模板代码</h3><p><a href="https://github.com/jiang111/awesome-android-tips" target="_blank" rel="external">https://github.com/jiang111/awesome-android-tips</a></p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/02/23/Android逆向分析总结/" itemprop="url">
+                Android逆向分析总结
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2016-02-23T15:10:15+08:00" content="2016-02-23">
+            2016-02-23
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/02/23/Android逆向分析总结/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/23/Android逆向分析总结/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h3 id="相关文章">相关文章</h3><p><strong>Android逆向分析(1) 反编译看看手Q口令红包的实现原理</strong></p>
+<p><a href="http://blog.zhaiyifan.cn/2016/02/09/android-reverse-1/" target="_blank" rel="external">http://blog.zhaiyifan.cn/2016/02/09/android-reverse-1/</a></p>
+<p><strong>Android逆向分析(2) APK的打包与安装</strong></p>
+<p><a href="http://blog.zhaiyifan.cn/2016/02/13/android-reverse-2/" target="_blank" rel="external">http://blog.zhaiyifan.cn/2016/02/13/android-reverse-2/</a></p>
+<p><strong>编译时替换资源</strong></p>
+<p><a href="http://blog.zhaiyifan.cn/2016/02/18/android-resource-overlay/" target="_blank" rel="external">http://blog.zhaiyifan.cn/2016/02/18/android-resource-overlay/</a></p>
+<p><strong>Android逆向分析(3) Android可执行文件之谜 - DEX与ODEX, OAT与ELF</strong></p>
+<p><a href="http://blog.zhaiyifan.cn/2016/02/24/android-reverse-3/" target="_blank" rel="external">http://blog.zhaiyifan.cn/2016/02/24/android-reverse-3/</a></p>
+<p><strong>携程Android App插件化和动态加载实践</strong></p>
+<p><a href="https://github.com/CtripMobile/DynamicAPK" target="_blank" rel="external">https://github.com/CtripMobile/DynamicAPK</a></p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/02/18/反编译总结/" itemprop="url">
+                反编译总结
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2016-02-18T14:20:40+08:00" content="2016-02-18">
+            2016-02-18
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/02/18/反编译总结/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/18/反编译总结/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h3 id="反编译代码">反编译代码</h3><h4 id="工具">工具</h4><ul>
+<li><p>dex2jar 用于将dex文件转换成jar文件</p>
+<p>下载地址:<a href="http://sourceforge.net/projects/dex2jar/files/" target="_blank" rel="external">http://sourceforge.net/projects/dex2jar/files/</a></p>
+</li>
+<li><p>jd-gui 用于将jar文件转换成java代码</p>
+<p>  下载地址：<a href="http://jd.benow.ca/" target="_blank" rel="external">http://jd.benow.ca/</a></p>
+</li>
+</ul>
+<h4 id="操作步骤">操作步骤</h4><ul>
+<li>将准备好的APK包解压，如果无法解压，可以将后缀换成.zip</li>
+<li><p>将dex文件转换成jar文件</p>
+<pre><code>./d2j-dex2jar<span class="class">.sh</span> qq.apk
+</code></pre></li>
+<li><p>使用jd-gui查看jar文件</p>
+</li>
+</ul>
+<h3 id="反编译资源">反编译资源</h3><h4 id="工具-1">工具</h4><ul>
+<li><p>apktool 用于还原APK文件中的9-patch图片，布局，字符串等资源</p>
+<p>  下载地址：<a href="http://ibotpeaches.github.io/Apktool/install/" target="_blank" rel="external">http://ibotpeaches.github.io/Apktool/install/</a></p>
+</li>
+</ul>
+<h4 id="操作步骤-1">操作步骤</h4><pre><code><span class="tag">apktool</span> <span class="tag">d</span> <span class="tag">qq</span><span class="class">.apk</span>
+</code></pre><p>d是decode的意思，以下是一些附加参数：</p>
+<ul>
+<li>-f 强制删除已经存在的文件夹</li>
+<li>-o 指定文件夹的名称</li>
+<li>-s 不反编译dex文件</li>
+<li>-r 不反编译资源文件</li>
+</ul>
+<h3 id="重新打包">重新打包</h3><p><img src="http://img.blog.csdn.net/20160208234027946" alt="编译后的包目录"></p>
+<ul>
+<li>original 存放的是未经反编译过的原始清单文件</li>
+<li>res 反编译后的资源文件</li>
+<li><p>smali 反编译后的代码文件</p>
+</li>
+<li><p>打包APK</p>
+<pre><code>apktool <span class="tag">b</span> apk文件夹 -o 打包后的APK名字
+</code></pre></li>
+<li><p>签名</p>
+<pre><code><span class="title">jarsingner</span> -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore 签名文件名 -storepass 签名密码 待签名的APK文件名 签名的别名
+</code></pre></li>
+<li><p>对齐操作</p>
+<pre><code>zipalign <span class="number">4</span> 待对齐APK文件名 对齐后的文件名
+</code></pre></li>
+</ul>
+<h4 id="系统的混淆规则">系统的混淆规则</h4><ul>
+<li>混淆还可以压缩代码，将没有用到的方法等都给移除掉</li>
+<li>凡是需要在AndroidManifest.xml中注册的所有类的类名以及从负累重写的方法名都不会被混淆。</li>
+<li><p>类中存在被native声明的方法，就不会被混淆         </p>
+<h4 id="混淆jar包">混淆jar包</h4></li>
+<li><p>第一步，将Class文件打成jar包</p>
+<pre><code>jar -cvf androidTest<span class="class">.jar</span> -C app/buildintermediate/classes/debug
+</code></pre></li>
+<li><p>第二步，在<android sdk="">/tools/proguard/bin目录下能够看到如下文件</android></p>
+</li>
+</ul>
+<p><img src="http://img.blog.csdn.net/20160310231053316" alt="打包工具"></p>
+<ul>
+<li>用<strong><em>sh proguardgui.sh</em></strong> 打开混淆工具</li>
+</ul>
+<h3 id="参考文章">参考文章</h3><p><a href="http://blog.csdn.net/guolin_blog/article/details/49738023" target="_blank" rel="external">郭霖-Android安全攻防战，反编译与混淆技术完全解析(上)</a></p>
+<p><a href="http://www.mak-blog.com/tencent-shell-crack.html" target="_blank" rel="external">腾讯应用加固的脱壳分析和修复</a></p>
+<p><a href="http://blog.csdn.net/guolin_blog/article/details/50451259" target="_blank" rel="external">Android混淆技术</a></p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/01/25/RxAndroid-第一部分/" itemprop="url">
                 RxAndroid 第一部分
               </a>
@@ -565,959 +1355,6 @@ imageView.setImageBitmap(bitmap)<span class="comment">;</span>
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/01/07/adb常用命令/" itemprop="url">
-                adb常用命令
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2016-01-07T17:49:24+08:00" content="2016-01-07">
-            2016-01-07
-          </time>
-        </span>
-
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/01/07/adb常用命令/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/07/adb常用命令/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>原文地址:<a href="http://jcodecraeer.com/a/anzhuokaifa/androidkaifa/2016/0105/3833.html" target="_blank" rel="external">http://jcodecraeer.com/a/anzhuokaifa/androidkaifa/2016/0105/3833.html</a></p>
-<ul>
-<li>adb kill-server 关闭服务</li>
-<li>adb devices 查看所有链接的设备以及对应的序列号</li>
-<li>adb install -r xxx.apk 安装APK,如果同时连接多台设备的话，需要添加<strong>-s &lt;设备号&gt;</strong></li>
-<li>adb uninstall packageName 卸载APK</li>
-<li>adb shell pm clear packageName 清除应用的数据</li>
-<li>adb connect &lt;设备的ip地址&gt; 链接到指定的ip，通常用来wifi调试</li>
-<li>adb shell 进入shell环境</li>
-<li>adb shell dumpsys activity top 查看栈顶Activity,用来获取包名</li>
-<li>adb shell pm list packages -f 查看所有已安装的应用的包名</li>
-<li>adb shell dumpsys activity Activity Manager State</li>
-<li>adb shell dumpsys package 包信息</li>
-<li>adb shell dumpsys meminfo 内存使用情况</li>
-<li>adb shell dumpsys procstats 随着时间的推移，内存的使用情况</li>
-<li>adb shell dumpsys gfxinfo 图形状态</li>
-<li>adb pull <remote> <local> 从手机复制文件出来</local></remote></li>
-<li>adb push <local> <remote> 向手机发送文件</remote></local></li>
-<li>adb shell cat /proc/cpuinfo 查看手机cpu，可以看到手机架构和处理器</li>
-<li>adb version 查看adb版本</li>
-<li>adb help 进入adb帮助界面</li>
-</ul>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/01/04/使用ACTION-PROCESS-TEXT创建一个自定义的文本选择行为/" itemprop="url">
-                使用ACTION_PROCESS_TEXT创建一个自定义的文本选择行为
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2016-01-04T09:15:55+08:00" content="2016-01-04">
-            2016-01-04
-          </time>
-        </span>
-
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/01/04/使用ACTION-PROCESS-TEXT创建一个自定义的文本选择行为/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/04/使用ACTION-PROCESS-TEXT创建一个自定义的文本选择行为/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>原文地址:<a href="https://medium.com/google-developers/custom-text-selection-actions-with-action-process-text-191f792d2999?linkId=20000023#.ow1rpqsbm" target="_blank" rel="external">https://medium.com/google-developers/custom-text-selection-actions-with-action-process-text-191f792d2999?linkId=20000023#.ow1rpqsbm</a></p>
-<p>Android 6.0介绍了一个新的浮动文本选择工具栏，它将带给我们标准的文本选择行为，例如在所选择的文本附近会出现剪切，复制，粘贴等行为，<strong>ACTION_PROCESS_TEXT</strong>使任何的app添加自定义的文本选择工具栏成为可能。</p>
-<p><img src="https://d262ilb51hltx0.cloudfront.net/max/800/1*D4zZzPlBTk5cEN9Qn0-cBA.gif" alt="https://d262ilb51hltx0.cloudfront.net/max/800/1*D4zZzPlBTk5cEN9Qn0-cBA.gif"></p>
-<p>像维基百科，谷歌翻译已经利用他可以查找和翻译选中的文本。</p>
-<p>你已经可以看到在你的文档中添加这个功能的一些说明文档和博客(总之：使用一个标准的TextView/EditText是可以工作的，但是需要注意的是你的EditText需要设置android:id属性，如果你使用的是<strong>AppCompatActivity</strong>并且想在API 23+设备上使用浮动文本选择工具栏的话，你需要调用<strong>getDelegate().setHandleNativeActionModesEnabled(false)</strong>)</p>
-<p>但是实现<strong>ACTION_PROCESS_TEXT</strong>和添加你自己的行为才是这篇文章要讲述的重点:</p>
-<h3 id="跨越app通讯_-》_Intent_Filters">跨越app通讯 -》 Intent Filters</h3><p>当创建的功能需要跨越app的时候，你的Android Manifest 和intent filters作为一个公共的API连接到每个组件使其他的APP可以查询到。</p>
-<p><strong>ACTION_PROCESS_TEXT</strong>也毫不例外，你将要添加一个intent filter 到你的清淡文件中的一个Activity中。</p>
-<pre><code><span class="tag">&lt;<span class="title">activity</span> <span class="attribute">android:name</span>=<span class="value">"@string/process_text_action_name"</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">intent-filter</span>&gt;</span>
-        <span class="tag">&lt;<span class="title">action</span> <span class="attribute">android:name</span>=<span class="value">"android.intent.action.PROCESS_TEXT"</span>/&gt;</span>
-        <span class="tag">&lt;<span class="title">category</span> <span class="attribute">android:name</span>=<span class="value">"android.intent.category.DEFAULT"</span>/&gt;</span>
-        <span class="tag">&lt;<span class="title">data</span> <span class="attribute">android:mimetype</span>=<span class="value">"text/plain"</span>/&gt;</span>
-    <span class="tag">&lt;/<span class="title">intent-filter</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">activity</span>&gt;</span>
-</code></pre><p>如果你想要多个行动，你需要为每个单独的活动添加上述代码，如果你想只在自己的app中出现所创建的功能，而不在其他应用中出现，那么你可以添加<strong>android:exported=”false”</strong>来确保这些行为只会在你的app中出现。</p>
-<p>注意你的将要作为文本选择工具栏显示的Activity的android:name要确保他比较短，一个行为动词或者一个可认识的作为你的app的标志。比如，谷歌翻译使用“Translate”作为一个不太常见的行为(有多少人安装了多少翻译软件？),维基百科使用“Search Wikipedia”作为搜索，对很多app来说可能是更常见的行为。</p>
-<h3 id="获取选择的文本">获取选择的文本</h3><p>当你的app设置了intent filter之后，其他的app将会通过选择的文本开启你的activity并且通过文本选择工具栏来选择你所定义的行为。但是并不会增加任何价值，除非你要看所选择的文本。</p>
-<p>这也是<strong>EXTRA_PROCESS_TEXT</strong>进来的原因，他是包含在intent中的字符串，代表所选择的文本，不要呗欺骗了——尽管你已经使用了text/plain intent filter,如果你注意到一些样式直接使用CharSequence在你的app中，请不要惊讶。</p>
-<p>因此在你的<strong>onCreate()</strong>方法中会看到如下的代码:</p>
-<pre><code><span class="annotation">@Override</span>
-<span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span></span>{
-    <span class="keyword">super</span>.onCreate(saved);
-    setContentView(R.layout.process_text_main);
-    CharSequence text = getIntent().getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
-
-}
-</code></pre><p>如果你使用的是android:launchMode=”singleTop”的话，会有一个警告,然后你可能想要在<strong>onNewIntent()</strong>中执行text，常见的操作就是当你创建的时候在onCreate()和onNewIntent()中调用handleIntent()方法。</p>
-<p>这就是使用ACTION_PROCESS_TEXT作为你的应用程序的入口所要做的操作，至于之后用它做什么，全部由你决定。</p>
-<h3 id="返回结果">返回结果</h3><p>还有一个额外的包含在<strong>ACTION_PROCESS_TEXT</strong>的intent通过:EXTRA_PROCESS_TEXT_READONLY,这个布尔值可以表示你刚刚接收到的所选择的文本是可以被用户编辑的。</p>
-<p>代码如下：</p>
-<pre><code><span class="built_in">boolean</span> <span class="keyword">readonly</span> = getIntent()
-    .getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY,<span class="literal">false</span>);
-</code></pre><p>你可以使用它作为一个提示提供一种返回修改过的内容给发送的应用程序的能力，从而替换选择的文本。这个可以作为你的activity工作，但是开始于startActivityForResult(),将会通过在Activity结束的时候调用setResult()返回一个结果。</p>
-<pre><code><span class="type">Intent</span> <span class="type">intent</span> = new <span class="type">Intent</span>();
-<span class="type">intent</span>.putExtra(<span class="type">Intent</span>.EXTRA_PROCESS_TEXT,replacementText);
-setResult(RESULT_OK,<span class="type">intent</span>);
-</code></pre><p>你可以想象一个按钮被替换，在Activity返回的时候调用setResult()。</p>
-<h3 id="常见问题">常见问题</h3><p>在开始编写程序之前，这里有一些关于ACTION_PROCESS_TEXT的常见问题</p>
-<p>问题:如何通过ACTION_PROCESS_TEXT触发服务</p>
-<p>回答:不能直接触发，系统只会查找包含正确intent filter的Activity,这并不意味着你不能通过你的Activity来开启一项服务使用Theme.Translucent.NoTitleBar或者Theme.NoDisplay的主题，但是你要确保你接收到他们的行为的时候有一个用户可见的提示，例如一个通知，或者一个吐司。</p>
-<p>问题:我能仅对特定类型的文本触发它吗？</p>
-<p>回答:不能，你的选项将会出现在任何人任何时间选择文本的时候，当然，用户不会选择一个翻译，除非他们需要翻译，但是你要小心的防守代码，因为你不知道你将会收到什么类型的文本。</p>
-<p>问题:所有的app都需要实现ACTION_PROCESS_TEXT吗？</p>
-<p>回答:的确是没必要的，不是每个应用程序都要实现ACTION<br>_PTOCESS_TEXT，但是要确保我们所实现的任何行为都是普遍的并且对安装应用的用户来说是真正有用的。</p>
-<h3 id="相关文章">相关文章</h3><p><a href="http://android-developers.blogspot.com/2015/10/in-app-translations-in-android.html" target="_blank" rel="external">http://android-developers.blogspot.com/2015/10/in-app-translations-in-android.html</a></p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/12/28/重点整理/" itemprop="url">
-                重点整理
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2015-12-28T11:59:45+08:00" content="2015-12-28">
-            2015-12-28
-          </time>
-        </span>
-
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2015/12/28/重点整理/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/12/28/重点整理/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h3 id="如何选择compileSdkVersion,minSdkVersion,targetSdkVersion">如何选择compileSdkVersion,minSdkVersion,targetSdkVersion</h3><p>用较低的minSdkVersion来覆盖最大的人群，用最新的SDK设置Target和compile来活的最好的外观和行为。</p>
-<h3 id="退出应用的方式">退出应用的方式</h3><p>原文地址:<a href="http://android.jobbole.com/82316/" target="_blank" rel="external">http://android.jobbole.com/82316/</a></p>
-<ul>
-<li>容器式:建立一个容器，将所有的Activity存储起来，退出时循环遍历finish所有的Activity，但是当Activity异常退出的时候，容器并不会立即释放掉对activity的引用，就会导致内存问题</li>
-<li><p>广播式：在BaseActivity中注册一个广播，退出时发送一个广播，finish退出。</p>
-<pre><code>public <span class="class"><span class="keyword">class</span> <span class="title">BaseActivity</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Activity</span>{</span>
-    <span class="keyword">private</span> static <span class="keyword">final</span> <span class="type">String</span> <span class="type">EXITACTION</span>=<span class="string">"action.exit"</span>;
-    <span class="keyword">private</span> <span class="type">ExitReceiver</span> exitReceiver = <span class="keyword">new</span> <span class="type">ExitReceiver</span>();
-    <span class="annotation">@Override</span>
-    <span class="keyword">protected</span> void onCreate(<span class="type">Bundle</span> savedInstanceState){
-        <span class="keyword">super</span>.onCreate(savedInstanceState);
-        <span class="type">IntentFilter</span> filter = <span class="keyword">new</span> <span class="type">IntentFilter</span>();
-        filter.addAction(<span class="type">EXITACTION</span>);
-        registerReceiver(exitReceiver,filter);
-    }
-
-    <span class="annotation">@Override</span>
-    <span class="keyword">protected</span> void onDestroy(){
-        <span class="keyword">super</span>.onDestroy();
-        unregisterReceiver(exitReceiver);
-    }
-
-    <span class="class"><span class="keyword">class</span> <span class="title">ExitReceiver</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">BroadcastReceiver</span>{</span>
-        <span class="annotation">@Override</span>
-        public void onReceive(<span class="type">Context</span> context,<span class="type">Intent</span> intent){
-            <span class="type">BaseActivity</span>.<span class="keyword">this</span>.finish();
-        }
-    }
-}
-</code></pre></li>
-<li><p>进程式:通过直接杀死当前应用的进程来结束应用</p>
-<pre><code>android.os.Process.killProcess(android.os.Process.myPid())<span class="comment">;</span>
-System.exit(0)<span class="comment">;</span>
-ActivityManager manager = (ActivityManager)getSystemService(ACTIVITY_SERVICE)<span class="comment">;</span>
-manager.killBackgroundProcesses(getPackageName())<span class="comment">;</span>
-</code></pre></li>
-<li><p>RS优雅式：Receiver+singleTask</p>
-<ul>
-<li>第一步：在HomeActivity注册一个退出广播，和第二个广播式一样，但是这里只需要在HomeActivity一个页面注册即可。</li>
-<li>第二步：设置HomeActivity的启动模式为singleTask</li>
-</ul>
-</li>
-</ul>
-<p>当需要退出的时候只需要startActivity(this,HomeActivity.class);,再发送一个退出广播，上面的代码首先会把栈中HomeActivity之上的所有Activity移除出栈，然后接到广播finish自己。</p>
-<h3 id="自定义View继承默认的OnMeasure函数">自定义View继承默认的OnMeasure函数</h3><ul>
-<li>如果自定义View设置为match_parent或者wrap_content没有任何区别，其显示大小由控件决定，他会填满整个父控件的空间。</li>
-<li>如果大小设置为固定的值，那么其显示为大小固定的值。</li>
-</ul>
-<h3 id="正确自定义Application的方法">正确自定义Application的方法</h3><pre><code>public <span class="class"><span class="keyword">class</span> <span class="title">MyApplication</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Application</span>{</span>
-    <span class="keyword">private</span> static <span class="type">MyApplication</span> app;
-
-    public static <span class="type">MyApplication</span> getInstance(){
-        <span class="keyword">return</span> app;
-    }
-
-    <span class="annotation">@Override</span>
-    public void onCreate(){
-        <span class="keyword">super</span>.onCreate();
-        app = <span class="keyword">this</span>;
-    }
-}
-</code></pre><h3 id="View的绘制流程">View的绘制流程</h3><h4 id="onMeasure()">onMeasure()</h4><p><strong>measure(int widthMeasureSpec,int heightMeasureSpec)</strong>:两个参数用来确定视图的宽度和高度的规格和大小。</p>
-<p><strong>MeasureSpec</strong>的值由specSize和specMode共同组成，其中specSize记录的是大小，specMode记录的是规格；specMode有以下三种类型：</p>
-<ol>
-<li>EXACTLY</li>
-</ol>
-<p>表示父试图希望子试图的大小应该有specSize的值来决定，系统默认会按照这个规则来设置子试图的大小。</p>
-<ol>
-<li>AT_MOST</li>
-</ol>
-<p>表示子视图最多只能是specSize中指定的大小，开发人员应该尽可能小的去设置这个视图，并且保证不会超过specSize，系统默认会按照这个规则来设置子视图的大小。</p>
-<ol>
-<li>UNSPECIFIED</li>
-</ol>
-<p>开发人员可以将视图按照自己的意愿设置成任意的大小，没有任何限制。</p>
-<p>通常情况下这两个参数都是由父视图经过计算后传递给子视图的，说明父视图会在一定程度上决定子视图的大小，那么根视图的widthMeasureSpec和heightMeasureSpec是从何而来的呢：</p>
-<pre><code><span class="comment">//ViewRoot中的performTraversals()方法</span>
-
-childWidthMeasureSpec = getRootMeasureSpec<span class="comment">(diresdWindowWidth,lp.width)</span>;
-childHeightMeasureSpec = getRootMeasureSpec<span class="comment">(desiredWindowHeight,lp.height)</span>;
-</code></pre><h4 id="onLayout()">onLayout()</h4><p>getWidth()和getMeasureWidth()方法的区别？</p>
-<p>getMeasureWidth()方法在measure()过程结束后就可以获取到了，而getWidth()方法是要在layout()过程结束后才能获取到。另外getMeasuredWidth()方法中的值是通过setMeasuredDimension()方法来进行设置的，而getWidth()方法中的值是通过视图右边的坐标减去左边的坐标计算出来的。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/12/21/使带有链接的EditText既可以编辑又可以点击/" itemprop="url">
-                使带有链接的EditText既可以编辑又可以点击
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2015-12-21T10:44:58+08:00" content="2015-12-21">
-            2015-12-21
-          </time>
-        </span>
-
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2015/12/21/使带有链接的EditText既可以编辑又可以点击/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/12/21/使带有链接的EditText既可以编辑又可以点击/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>原文地址：<a href="http://blog.danlew.net/2015/12/14/making-edittexts-with-links-both-clickable-and-editable/" target="_blank" rel="external">http://blog.danlew.net/2015/12/14/making-edittexts-with-links-both-clickable-and-editable/</a></p>
-<p>最近，我正在实现一个支持链接的Edittext功能，用户可以添加URL，并且在不编辑的情况下可以点击此链接。</p>
-<p>当Edittext没有获得焦点的状况下，可以点击链接，然而，当EditText获得焦点的时候，链接不可用，用户可以编辑该输入框。</p>
-<p>通过添加一个<strong>OnFocusChangeListener</strong>就可以很简单的实现切换功能，但是用户该如何改变焦点。</p>
-<p>长点击是一个方法，另一个当打可以点击Edittext上的其他任何空白区域。就像：</p>
-<p><img src="http://i.imgur.com/aK3GmtL.png" alt="展示图"></p>
-<p>不幸的是，由于<strong>LinkMovementMethod</strong>的行为，如果文本的最后一部分是一个链接的话，点击任何地方都会引起链接被打开。</p>
-<p>我通过观察发现，这个问题只有在最后的自负是一个链接的时候才会发生，如果我们在文本的最后添加点什么的话？</p>
-<pre><code>//在EditText中创建可以点击的链接
-editText.setMovementMethod(LinkMovementMethod.getInstance())<span class="comment">;</span>
-
-Spnnable spnnable = new SpnnableString("http://blog.danlew.net)<span class="comment">;</span>
-Linkify.addLinks(spnnable,Linkify.WEB_URLS)<span class="comment">;</span>
-
-CharSequence text = TextUtils.concat(spnnable,"\u200B")<span class="comment">;</span>
-
-editText.setText(text)<span class="comment">;</span>
-</code></pre><p>现在点击空白处将不会引起链接被打开的情况并且能切换到编辑模式。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/11/30/ImageLoader分析/" itemprop="url">
-                ImageLoader分析
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2015-11-30T10:48:28+08:00" content="2015-11-30">
-            2015-11-30
-          </time>
-        </span>
-
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2015/11/30/ImageLoader分析/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/30/ImageLoader分析/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h3 id="ImageLoader">ImageLoader</h3><p>用于加载和显示图片到Imageview上，是个单例；</p>
-<h4 id="包含的类">包含的类</h4><ul>
-<li>ImageLoaderConfiguration    ImageLoader的一些配置信息，包括图片宽高，内存大小等等。</li>
-<li>ImageLoaderEngine 用来执行加载和显示图片的具体类</li>
-<li>ImageLoaderListener 加载图片过程中的一些监听方法</li>
-</ul>
-<h4 id="displayImage()的一些重载方法">displayImage()的一些重载方法</h4><p>将添加显示图片的任务到执行池中，图片将直接被显示在ImageView上</p>
-<p>所包含的参数：</p>
-<ul>
-<li>String uri 图片地址</li>
-<li>ImageAware imageAware  用来显示图片的地方，相当于ImageView</li>
-<li>DisplayImageOptions options 显示图片的一些参数</li>
-<li>ImageLoadingListener listener 加载图片的一些监听方法，比如说失败，成功，取消等等，在UI线程中执行</li>
-<li>ImageLoadingProgressListener progressListener 图片加载的进度，在UI线程中执行</li>
-</ul>
-<p>具体代码:</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">void</span> displayImage(String uri, ImageAware imageAware, DisplayImageOptions <span class="keyword">options</span>,
-            ImageLoadingListener listener, ImageLoadingProgressListener progressListener) {
-        checkConfiguration();
-        <span class="keyword">if</span> (imageAware == <span class="keyword">null</span>) {
-            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(ERROR_WRONG_ARGUMENTS);
-        }
-        <span class="keyword">if</span> (listener == <span class="keyword">null</span>) {
-            listener = defaultListener;
-        }
-        <span class="keyword">if</span> (<span class="keyword">options</span> == <span class="keyword">null</span>) {
-            <span class="keyword">options</span> = configuration.defaultDisplayImageOptions;
-        }
-
-        <span class="keyword">if</span> (TextUtils.isEmpty(uri)) {
-            engine.cancelDisplayTaskFor(imageAware);
-            listener.onLoadingStarted(uri, imageAware.getWrappedView());
-            <span class="keyword">if</span> (<span class="keyword">options</span>.shouldShowImageForEmptyUri()) {
-                imageAware.setImageDrawable(<span class="keyword">options</span>.getImageForEmptyUri(configuration.resources));
-            } <span class="keyword">else</span> {
-                imageAware.setImageDrawable(<span class="keyword">null</span>);
-            }
-            listener.onLoadingComplete(uri, imageAware.getWrappedView(), <span class="keyword">null</span>);
-            <span class="keyword">return</span>;
-        }
-
-        ImageSize targetSize = ImageSizeUtils.defineTargetSizeForView(imageAware, configuration.getMaxImageSize());
-        String memoryCacheKey = MemoryCacheUtils.generateKey(uri, targetSize);
-        engine.prepareDisplayTaskFor(imageAware, memoryCacheKey);
-
-        listener.onLoadingStarted(uri, imageAware.getWrappedView());
-
-    <span class="comment">//从内存中根据所存储的key来获取图片</span>
-    <span class="comment">//key的存储规则:[imageUri]_[width]x[height]</span>
-        Bitmap bmp = configuration.memoryCache.get(memoryCacheKey);
-        <span class="comment">//如果图片存在并且没有被内存回收的情况下</span>
-        <span class="keyword">if</span> (bmp != <span class="keyword">null</span> &amp;&amp; !bmp.isRecycled()) {
-            L.d(LOG_LOAD_IMAGE_FROM_MEMORY_CACHE, memoryCacheKey);
-
-            <span class="keyword">if</span> (<span class="keyword">options</span>.shouldPostProcess()) {
-            <span class="comment">//如果允许对图片进行处理</span>
-                ImageLoadingInfo imageLoadingInfo = <span class="keyword">new</span> ImageLoadingInfo(uri, imageAware, targetSize, memoryCacheKey,
-                        <span class="keyword">options</span>, listener, progressListener, engine.getLockForUri(uri));
-                ProcessAndDisplayImageTask displayTask = <span class="keyword">new</span> ProcessAndDisplayImageTask(engine, bmp, imageLoadingInfo,
-                        defineHandler(<span class="keyword">options</span>));
-                <span class="keyword">if</span> (<span class="keyword">options</span>.isSyncLoading()) {
-                    displayTask.run();
-                } <span class="keyword">else</span> {
-                    engine.submit(displayTask);
-                }
-            } <span class="keyword">else</span> {
-                <span class="keyword">options</span>.getDisplayer().display(bmp, imageAware, LoadedFrom.MEMORY_CACHE);
-                listener.onLoadingComplete(uri, imageAware.getWrappedView(), bmp);
-            }
-        } <span class="keyword">else</span> {
-            <span class="keyword">if</span> (<span class="keyword">options</span>.shouldShowImageOnLoading()) {
-                <span class="comment">//如果设置了加载中所需要显示的图片</span>
-                imageAware.setImageDrawable(<span class="keyword">options</span>.getImageOnLoading(configuration.resources));
-            } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">options</span>.isResetViewBeforeLoading()) {
-                imageAware.setImageDrawable(<span class="keyword">null</span>);
-            }
-
-            ImageLoadingInfo imageLoadingInfo = <span class="keyword">new</span> ImageLoadingInfo(uri, imageAware, targetSize, memoryCacheKey,
-                    <span class="keyword">options</span>, listener, progressListener, engine.getLockForUri(uri));
-            LoadAndDisplayImageTask displayTask = <span class="keyword">new</span> LoadAndDisplayImageTask(engine, imageLoadingInfo,
-                    defineHandler(<span class="keyword">options</span>));
-            <span class="keyword">if</span> (<span class="keyword">options</span>.isSyncLoading()) {
-                <span class="comment">//是否同步加载，默认为false</span>
-                displayTask.run();
-            } <span class="keyword">else</span> {
-                engine.submit(displayTask);
-            }
-        }
-    }
-</code></pre><h4 id="loadImage()的一些重载方法">loadImage()的一些重载方法</h4><p>添加加载图片任务到执行池中，图片将在ImageLoadingListener的<strong>OnLoadingComplete</strong>方法中被返回回来</p>
-<p>具体参数：和displayImage方法的参数相同</p>
-<ul>
-<li>String uri</li>
-<li>ImageSize targetImageSize</li>
-<li>DisplayImageOptions options</li>
-<li>ImageLoadingListener listner</li>
-<li>ImageLoadingProgressListener progressListener</li>
-</ul>
-<p>具体代码：</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">void</span> loadImage(String uri, ImageSize targetImageSize, DisplayImageOptions <span class="keyword">options</span>,
-            ImageLoadingListener listener, ImageLoadingProgressListener progressListener) {
-        checkConfiguration();
-        <span class="keyword">if</span> (targetImageSize == <span class="keyword">null</span>) {
-            targetImageSize = configuration.getMaxImageSize();
-        }
-        <span class="keyword">if</span> (<span class="keyword">options</span> == <span class="keyword">null</span>) {
-            <span class="keyword">options</span> = configuration.defaultDisplayImageOptions;
-        }
-
-        NonViewAware imageAware = <span class="keyword">new</span> NonViewAware(uri, targetImageSize, ViewScaleType.CROP);
-        displayImage(uri, imageAware, <span class="keyword">options</span>, listener, progressListener);
-    }
-</code></pre><h4 id="loadImageSync()">loadImageSync()</h4><p>同步加载图片</p>
-<p>具体参数：</p>
-<ul>
-<li>String uri</li>
-<li>DisplayImageOptions options 默认显示图片参数</li>
-</ul>
-<p>具体代码</p>
-<pre><code><span class="keyword">public</span> Bitmap loadImageSync(String uri, ImageSize targetImageSize, DisplayImageOptions <span class="keyword">options</span>) {
-        <span class="keyword">if</span> (<span class="keyword">options</span> == <span class="keyword">null</span>) {
-            <span class="keyword">options</span> = configuration.defaultDisplayImageOptions;
-        }
-        <span class="keyword">options</span> = <span class="keyword">new</span> DisplayImageOptions.Builder().cloneFrom(<span class="keyword">options</span>).syncLoading(<span class="keyword">true</span>).build();
-
-        SyncImageLoadingListener listener = <span class="keyword">new</span> SyncImageLoadingListener();
-        loadImage(uri, targetImageSize, <span class="keyword">options</span>, listener);
-        <span class="keyword">return</span> listener.getLoadedBitmap();
-    }
-</code></pre><h4 id="其他方法">其他方法</h4><ul>
-<li>pause() 暂停ImageLoader，所有新添加的加载和显示图片的任务都会被暂停，然而正在进行中的任务将不会被暂停</li>
-<li>resume() 重新恢复暂停中的任务</li>
-<li>stop() 取消所有的进行和等待中的任务</li>
-<li>destroy() 停止imageLoader并且清空当前的配置信息</li>
-</ul>
-<p>###　ImageLoaderConfiguration</p>
-<p>ImageLoader的配置信息</p>
-<p>主要元素：</p>
-<pre><code><span class="keyword">final</span> Resources resources;
-
-<span class="keyword">final</span> <span class="keyword">int</span> maxImageWidthForMemoryCache;
-<span class="keyword">final</span> <span class="keyword">int</span> maxImageHeightForMemoryCache;
-<span class="keyword">final</span> <span class="keyword">int</span> maxImageWidthForDiskCache;
-<span class="keyword">final</span> <span class="keyword">int</span> maxImageHeightForDiskCache;
-<span class="keyword">final</span> BitmapProcessor processorForDiskCache;
-
-<span class="keyword">final</span> Executor taskExecutor;
-<span class="keyword">final</span> Executor taskExecutorForCachedImages;
-<span class="keyword">final</span> <span class="keyword">boolean</span> customExecutor;
-<span class="keyword">final</span> <span class="keyword">boolean</span> customExecutorForCachedImages;
-
-<span class="keyword">final</span> <span class="keyword">int</span> threadPoolSize;
-<span class="keyword">final</span> <span class="keyword">int</span> threadPriority;
-<span class="keyword">final</span> QueueProcessingType tasksProcessingType;
-
-<span class="keyword">final</span> MemoryCache memoryCache;
-<span class="keyword">final</span> DiskCache diskCache;
-<span class="keyword">final</span> ImageDownloader downloader;
-<span class="keyword">final</span> ImageDecoder decoder;
-<span class="keyword">final</span> DisplayImageOptions defaultDisplayImageOptions;
-
-<span class="keyword">final</span> ImageDownloader networkDeniedDownloader;
-<span class="keyword">final</span> ImageDownloader slowNetworkDownloader;
-
-memoryCacheSize:默认为app可用内存的1/8
-</code></pre><h3 id="ImageLoaderEngine">ImageLoaderEngine</h3><p>用来执行显示图片的任务</p>
-<p>重要方法：</p>
-<pre><code><span class="comment">//提交任务到执行池中</span>
-<span class="keyword">void</span> submit(<span class="keyword">final</span> LoadAndDisplayImageTask <span class="keyword">task</span>) {
-        taskDistributor.execute(<span class="keyword">new</span> Runnable() {
-            @Override
-            <span class="keyword">public</span> <span class="keyword">void</span> run() {
-            <span class="comment">//从disk缓存中获取图片</span>
-                <span class="keyword">File</span> image = configuration.diskCache.get(<span class="keyword">task</span>.getLoadingUri());
-                <span class="keyword">boolean</span> isImageCachedOnDisk = image != <span class="keyword">null</span> &amp;&amp; image.exists();
-                initExecutorsIfNeed();
-                <span class="keyword">if</span> (isImageCachedOnDisk) {
-                    <span class="comment">//如果disk中存在改图片</span>
-                    taskExecutorForCachedImages.execute(<span class="keyword">task</span>);
-                } <span class="keyword">else</span> {
-                    <span class="comment">//如果不存在</span>
-                    taskExecutor.execute(<span class="keyword">task</span>);
-                }
-            }
-        });
-    }
-</code></pre><h3 id="LoadAndDisplayTask">LoadAndDisplayTask</h3><p>用来加载和显示图片的具体的任务</p>
-<p>相关属性和方法:</p>
-<ul>
-<li>ImageDownloader:用来下载图片的接口</li>
-<li>ImageDecoder:解码返回的Bitmap图片</li>
-</ul>
-<p>主要方法:</p>
-<pre><code>@Override
-    public void <span class="keyword">run</span>() {
-        <span class="keyword">if</span> (waitIfPaused()) <span class="keyword">return</span>;
-        <span class="keyword">if</span> (delayIfNeed()) <span class="keyword">return</span>;
-
-        ReentrantLock loadFromUriLock = imageLoadingInfo.loadFromUriLock;
-        <span class="keyword">L</span>.<span class="literal">d</span>(LOG_START_DISPLAY_IMAGE_TASK, memoryCacheKey);
-        <span class="keyword">if</span> (loadFromUriLock.isLocked()) {
-            <span class="keyword">L</span>.<span class="literal">d</span>(LOG_WAITING_FOR_IMAGE_LOADED, memoryCacheKey);
-        }
-
-        loadFromUriLock.lock();
-        Bitmap bmp;
-        try {
-            checkTaskNotActual();
-        <span class="comment">//先从内存中加载图片</span>
-            bmp = configuration.memoryCache.<span class="literal">get</span>(memoryCacheKey);
-            <span class="keyword">if</span> (bmp == null || bmp.isRecycled()) {
-            <span class="comment">//如果图片不存在</span>
-            <span class="comment">//从Disk和网络加载图片</span>
-                bmp = tryLoadBitmap();
-                <span class="keyword">if</span> (bmp == null) <span class="keyword">return</span>; <span class="comment">// listener callback already was fired</span>
-
-                checkTaskNotActual();
-                checkTaskInterrupted();
-
-                <span class="keyword">if</span> (options.shouldPreProcess()) {
-                    <span class="keyword">L</span>.<span class="literal">d</span>(LOG_PREPROCESS_IMAGE, memoryCacheKey);
-                    bmp = options.getPreProcessor().process(bmp);
-                    <span class="keyword">if</span> (bmp == null) {
-                        <span class="keyword">L</span>.<span class="literal">e</span>(ERROR_PRE_PROCESSOR_NULL, memoryCacheKey);
-                    }
-                }
-
-                <span class="keyword">if</span> (bmp != null &amp;&amp; options.isCacheInMemory()) {
-                    <span class="keyword">L</span>.<span class="literal">d</span>(LOG_CACHE_IMAGE_IN_MEMORY, memoryCacheKey);
-                    configuration.memoryCache.put(memoryCacheKey, bmp);
-                }
-            } <span class="keyword">else</span> {
-            <span class="comment">//从内存中加载图片</span>
-                loadedFrom = LoadedFrom.MEMORY_CACHE;
-                <span class="keyword">L</span>.<span class="literal">d</span>(LOG_GET_IMAGE_FROM_MEMORY_CACHE_AFTER_WAITING, memoryCacheKey);
-            }
-
-            <span class="keyword">if</span> (bmp != null &amp;&amp; options.shouldPostProcess()) {
-                <span class="keyword">L</span>.<span class="literal">d</span>(LOG_POSTPROCESS_IMAGE, memoryCacheKey);
-                bmp = options.getPostProcessor().process(bmp);
-                <span class="keyword">if</span> (bmp == null) {
-                    <span class="keyword">L</span>.<span class="literal">e</span>(ERROR_POST_PROCESSOR_NULL, memoryCacheKey);
-                }
-            }
-            checkTaskNotActual();
-            checkTaskInterrupted();
-        } catch (TaskCancelledException <span class="keyword">e</span>) {
-            fireCancelEvent();
-            <span class="keyword">return</span>;
-        } finally {
-            loadFromUriLock.unlock();
-        }
-
-        DisplayBitmapTask displayBitmapTask = new DisplayBitmapTask(bmp, imageLoadingInfo, engine, loadedFrom);
-        runTask(displayBitmapTask, syncLoading, handler, engine);
-    }
-
-    <span class="comment">//tryLoadBitmap()方法用于从Disk和Network加载图片</span>
-
-private Bitmap tryLoadBitmap() throws TaskCancelledException {
-    Bitmap bitmap = null;
-    try {
-        <span class="keyword">File</span> imageFile = configuration.diskCache.<span class="literal">get</span>(uri);
-        <span class="keyword">if</span> (imageFile != null &amp;&amp; imageFile.exists() &amp;&amp; imageFile.<span class="literal">length</span>() &gt; 0) {
-            <span class="keyword">L</span>.<span class="literal">d</span>(LOG_LOAD_IMAGE_FROM_DISK_CACHE, memoryCacheKey);
-            loadedFrom = LoadedFrom.DISC_CACHE;
-
-            checkTaskNotActual();
-            bitmap = decodeImage(Scheme.<span class="keyword">FILE</span>.wrap(imageFile.getAbsolutePath()));
-        }
-        <span class="keyword">if</span> (bitmap == null || bitmap.getWidth() &lt;= 0 || bitmap.getHeight() &lt;= 0) {
-            <span class="keyword">L</span>.<span class="literal">d</span>(LOG_LOAD_IMAGE_FROM_NETWORK, memoryCacheKey);
-            loadedFrom = LoadedFrom.NETWORK;
-
-            String imageUriForDecoding = uri;
-            <span class="keyword">if</span> (options.isCacheOnDisk() &amp;&amp; tryCacheImageOnDisk()) {
-                imageFile = configuration.diskCache.<span class="literal">get</span>(uri);
-                <span class="keyword">if</span> (imageFile != null) {
-                    imageUriForDecoding = Scheme.<span class="keyword">FILE</span>.wrap(imageFile.getAbsolutePath());
-                }
-            }
-
-            checkTaskNotActual();
-            bitmap = decodeImage(imageUriForDecoding);
-
-            <span class="keyword">if</span> (bitmap == null || bitmap.getWidth() &lt;= 0 || bitmap.getHeight() &lt;= 0) {
-                fireFailEvent(FailType.DECODING_ERROR, null);
-            }
-        }
-    } catch (IllegalStateException <span class="keyword">e</span>) {
-        fireFailEvent(FailType.NETWORK_DENIED, null);
-    } catch (TaskCancelledException <span class="keyword">e</span>) {
-        throw <span class="keyword">e</span>;
-    } catch (IOException <span class="keyword">e</span>) {
-        <span class="keyword">L</span>.<span class="literal">e</span>(<span class="keyword">e</span>);
-        fireFailEvent(FailType.IO_ERROR, <span class="keyword">e</span>);
-    } catch (OutOfMemoryError <span class="keyword">e</span>) {
-        <span class="keyword">L</span>.<span class="literal">e</span>(<span class="keyword">e</span>);
-        fireFailEvent(FailType.OUT_OF_MEMORY, <span class="keyword">e</span>);
-    } catch (Throwable <span class="keyword">e</span>) {
-        <span class="keyword">L</span>.<span class="literal">e</span>(<span class="keyword">e</span>);
-        fireFailEvent(FailType.UNKNOWN, <span class="keyword">e</span>);
-    }
-    <span class="keyword">return</span> bitmap;
-}
-</code></pre><h3 id="ImageDownloader">ImageDownloader</h3><p>用于下载图片</p>
-<h3 id="BaseImageDownloader">BaseImageDownloader</h3><pre><code><span class="comment">//createConnection()创建连接</span>
-
-<span class="keyword">protected</span> HttpURLConnection createConnection(<span class="keyword">String</span> url,<span class="keyword">Object</span> extra) <span class="keyword">throws</span> IOException{
-    <span class="keyword">String</span> encodedUrl = Uri.encode(url,ALLOWED_URI_CHARS);
-    HttpURLConnection conn = (HttpURLConnection)<span class="keyword">new</span> URL(encodedUrl).openConnection();
-    conn.setConnectTimeout(connectTimeout);
-    conn.setReadTimeout(readTimeout);
-    <span class="keyword">return</span> conn;
-}
-
-<span class="comment">//从网络获取流</span>
-<span class="keyword">protected</span> InputStream getStreamFromNetwork(<span class="keyword">String</span> imageUri,<span class="keyword">Object</span> extra) <span class="keyword">throws</span> IOException{
-    HttpURLConnection conn = createConnection(imageUri,extra);
-    <span class="built_in">int</span> redirectCount = <span class="number">0</span>;
-    <span class="keyword">while</span>(conn.getResponseCode()/<span class="number">100</span>==<span class="number">3</span>&amp;&amp;redirectCount&lt;MAX_REDIRECT_COUNT){
-        <span class="comment">//如果响应码等于3并且重定向的次数小于5</span>
-        <span class="comment">//那么就用重定向的地址重新创建连接</span>
-        conn=createConnection(conn.getHeaderField(<span class="string">"Location"</span>),extra);
-        redirect++;
-    }
-    InputStream imageStream;
-    <span class="keyword">try</span> {
-        imageStream = conn.getInputStream();
-    } <span class="keyword">catch</span> (IOException e) {
-        <span class="comment">// Read all data to allow reuse connection (http://bit.ly/1ad35PY)</span>
-        IoUtils.readAndCloseStream(conn.getErrorStream());
-        <span class="keyword">throw</span> e;
-    }
-    <span class="comment">//如果响应码不等于200，那么网络请求失败</span>
-    <span class="keyword">if</span> (!shouldBeProcessed(conn)) {
-        IoUtils.closeSilently(imageStream);
-        <span class="keyword">throw</span> <span class="keyword">new</span> IOException(<span class="string">"Image request failed with response code "</span> + conn.getResponseCode());
-    }
-
-    <span class="keyword">return</span> <span class="keyword">new</span> ContentLengthInputStream(<span class="keyword">new</span> BufferedInputStream(imageStream, BUFFER_SIZE), conn.getContentLength());
-}
-
-<span class="comment">//还有其他的一些获取流的方法</span>
-</code></pre><h3 id="MemoryCache">MemoryCache</h3><p>内存缓存</p>
-<p>实现类：</p>
-<ul>
-<li>LruCacheMemory</li>
-<li>LimitedAgeMemoryCache</li>
-<li><p>BaseMemoryCache</p>
-<ul>
-<li>LimitedMemoryCache</li>
-<li>WeakMemoryCache</li>
-</ul>
-</li>
-</ul>
-<h3 id="LruCacheMemory">LruCacheMemory</h3><p>将缓存的图片保存为强引用，当一个位图被访问时，就会被移动到队列的头部，当一个图片被添加进缓存的时候，会被放到队列的末尾。便于垃圾回收</p>
-<h3 id="LimitedAgeMemoryCache">LimitedAgeMemoryCache</h3><p>用来缓存图片，如果缓存时间超过规定值，那么将会被移除</p>
-<h3 id="DiskCache">DiskCache</h3><p>磁盘缓存</p>
-<ul>
-<li>BaseDiskCache 基本的磁盘缓存类</li>
-<li>LimitedAgeDiskCache 如果加载后的时间超过定义的时间，将会被删除，缓存大小未被定义</li>
-<li>UnlimitedDiskCache</li>
-</ul>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/11/25/内存优化总结/" itemprop="url">
-                内存优化总结
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2015-11-25T09:37:05+08:00" content="2015-11-25">
-            2015-11-25
-          </time>
-        </span>
-
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2015/11/25/内存优化总结/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/25/内存优化总结/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h3 id="Handler内存优化">Handler内存优化</h3><pre><code><span class="keyword">private</span> static <span class="class"><span class="keyword">class</span> <span class="title">MyHandler</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Handler</span>{</span>
-    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">WeakReference</span>&lt;<span class="type">MainActivity</span>&gt; mActivity;
-    public <span class="type">MyHandler</span>(<span class="type">MainActivity</span> activity){
-        mActivity = <span class="keyword">new</span> <span class="type">WeakReference</span>&lt;<span class="type">MainActivity</span>&gt;(activity);
-    }
-
-    <span class="annotation">@Override</span>
-    public void handleMessage(<span class="type">Message</span> msg){
-
-    }
-}
-</code></pre><h3 id="参考文章">参考文章</h3><p><a href="https://realm.io/cn/news/droidcon-farber-improving-android-app-performance/" target="_blank" rel="external">https://realm.io/cn/news/droidcon-farber-improving-android-app-performance/</a></p>
-<p><a href="https://github.com/android-cn/android-discuss/issues/254#issuecomment-158659819" target="_blank" rel="external">https://github.com/android-cn/android-discuss/issues/254#issuecomment-158659819</a></p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1556,7 +1393,7 @@ private Bitmap tryLoadBitmap() throws TaskCancelledException {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">31</span>
+              <span class="site-state-item-count">37</span>
               <span class="site-state-item-name">文章</span>
             </a>
           </div>
@@ -1570,7 +1407,7 @@ private Bitmap tryLoadBitmap() throws TaskCancelledException {
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">29</span>
+              <span class="site-state-item-count">34</span>
               <span class="site-state-item-name">標籤</span>
               </a>
           </div>

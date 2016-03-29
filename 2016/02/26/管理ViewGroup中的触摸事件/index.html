@@ -1,0 +1,781 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="既然选择远方，便只顾风雨兼程" />
+
+
+
+  <meta name="keywords" content="Android,触摸事件," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ZhaoShanShan’s Blog" type="application/atom+xml" />
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="处理ViewGroup中的触摸时间值得注意的是，因为ViewGroup本身与带有子View的ViewGroup的触摸事件是不同的。为了确保每个View都能正确的接收到触摸事件，需要覆盖onInterceptTouchEvent()方法
+ViewGroup拦截触摸事件onInterceptTouchEvent()方法在ViewGroup表面或者它的子View的表面检测到触摸事件的时候会被调用。如果o">
+<meta property="og:type" content="article">
+<meta property="og:title" content="管理ViewGroup中的触摸事件">
+<meta property="og:url" content="http://zhaoshanshan.me/2016/02/26/管理ViewGroup中的触摸事件/index.html">
+<meta property="og:site_name" content="ZhaoShanShan’s Blog">
+<meta property="og:description" content="处理ViewGroup中的触摸时间值得注意的是，因为ViewGroup本身与带有子View的ViewGroup的触摸事件是不同的。为了确保每个View都能正确的接收到触摸事件，需要覆盖onInterceptTouchEvent()方法
+ViewGroup拦截触摸事件onInterceptTouchEvent()方法在ViewGroup表面或者它的子View的表面检测到触摸事件的时候会被调用。如果o">
+<meta property="og:updated_time" content="2016-02-26T06:28:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="管理ViewGroup中的触摸事件">
+<meta name="twitter:description" content="处理ViewGroup中的触摸时间值得注意的是，因为ViewGroup本身与带有子View的ViewGroup的触摸事件是不同的。为了确保每个View都能正确的接收到触摸事件，需要覆盖onInterceptTouchEvent()方法
+ViewGroup拦截触摸事件onInterceptTouchEvent()方法在ViewGroup表面或者它的子View的表面检测到触摸事件的时候会被调用。如果o">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'always'
+  };
+</script>
+
+  <title> 管理ViewGroup中的触摸事件 | ZhaoShanShan’s Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">ZhaoShanShan’s Blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首頁
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分類
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            關於
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            歸檔
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            標籤
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              管理ViewGroup中的触摸事件
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2016-02-26T10:09:59+08:00" content="2016-02-26">
+            2016-02-26
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/02/26/管理ViewGroup中的触摸事件/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/26/管理ViewGroup中的触摸事件/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>处理<strong>ViewGroup</strong>中的触摸时间值得注意的是，因为ViewGroup本身与带有子View的ViewGroup的触摸事件是不同的。为了确保每个View都能正确的接收到触摸事件，需要覆盖<strong>onInterceptTouchEvent()</strong>方法</p>
+<h3 id="ViewGroup拦截触摸事件">ViewGroup拦截触摸事件</h3><p>onInterceptTouchEvent()方法在ViewGroup表面或者它的子View的表面检测到触摸事件的时候会被调用。如果onInterceptTouchEvent返回true，<strong>MotionEvent</strong>会被拦截，意味着该事件将不会传递到子view，但是会到达父View的<strong>onTouchEvent()</strong>.</p>
+<p>onInterceptTouchEvent方法给父View一个提前看到任何触摸事件的机会，如果你在onInterceptTouchEvent()中返回了true，在子视图处理触摸事件的时候将会接受到一个<strong>ACTION_CANCEL</strong>，然后之后的时间将会直接被发送到父view进行处理。onInterceptTouchEvent()也可以返回false，用来监视在视图层次中触摸事件的传递以及自己的onTouchEvent方法中如何处理触摸事件。</p>
+<p>在以下的代码片段中，MyViewGroup类继承ViewGroup，MyViewGroup包含多个子视图，如果你用手指拖过一个水平子视图，子view将不再接收到触摸事件，MyViewGroup将会处理触摸事件通过滚动其内容，如果在子view中点击了按钮，或者垂直滚动子view，父view将不会再拦截他们的触摸事件，因为子view是目标，在这种情况下，onInterceptTouchEvent会返回false，并且MyViewGroup的onTouchEvent()将不会被调用。</p>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyViewGroup</span> <span class="keyword">extends</span> <span class="title">ViewGroup</span></span>{
+    <span class="keyword">private</span> <span class="keyword">int</span> mTouchSlop;
+
+    ...
+
+    ViewConfiguration vc = ViewConfiguration.get(view.getContext());
+    mTouchSlop = vc.getScaledTouchSlop();
+    ...
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">onInterceptTouchEvent</span><span class="params">(MotionEvent ev)</span></span>{
+         <span class="comment">/*
+     * This method JUST determines whether we want to intercept the motion.
+     * If we return true, onTouchEvent will be called and we do the actual
+     * scrolling there.
+     */</span>
+
+        <span class="keyword">final</span> <span class="keyword">int</span> action = MotionEventCompat.getActionMasked(ev);
+
+        <span class="keyword">if</span>(action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP){
+            mIsScrolling = <span class="keyword">false</span>;
+            <span class="keyword">return</span> <span class="keyword">false</span>;<span class="comment">//不拦截触摸事件，让子view处理</span>
+        }
+
+        <span class="keyword">switch</span>(action){
+            <span class="keyword">case</span> MotionEvent.ACTION_CANCEL:
+                <span class="keyword">if</span>(mIsScrolling){
+                    <span class="comment">//正在滚动，所以拦截触摸事件</span>
+                    <span class="keyword">return</span> <span class="keyword">true</span>;
+                }
+
+                <span class="comment">//如果用户手指水平拖动的距离大于touch slop，开始滚动</span>
+                <span class="keyword">final</span> <span class="keyword">int</span> xDiff = calculateDistanceX(ex);
+
+                <span class="comment">//使用ViewConfiguration常量来计算Touch slop</span>
+                <span class="keyword">if</span>(xDiff &gt; mTouchSlop){
+                    mIsScrolling = <span class="keyword">true</span>;
+                    <span class="keyword">return</span> <span class="keyword">false</span>;
+                }
+                <span class="keyword">break</span>;
+        }
+        ...
+    }
+    <span class="comment">//通常，我们不希望拦截触摸事件，应该被子view处理</span>
+    <span class="keyword">return</span> <span class="keyword">false</span>;
+}
+
+<span class="annotation">@Override</span>
+<span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent ev)</span></span>{
+    <span class="comment">//这里是处理触摸事件的地方</span>
+    <span class="comment">//这个方法只有当触摸事件在onInterceptTouchEvent中被拦截的时候才会被调用。</span>
+}
+}
+</code></pre><h3 id="使用ViewConfiguration_常量">使用ViewConfiguration 常量</h3><p>上面的代码片段使用<strong>ViewConfiguraion</strong>初始化了一个mTouchSlop变量，你可以使用ViewConfiguration类访问Android系统中常用的距离，速度等常量。</p>
+<p>Touch Slop通常用于防止当用于执行一些其他的触摸操作，比如触摸屏幕元素造成的意外滚动。</p>
+<p>另外两个常用的ViewConfiguration中的方法是<strong>getScaledMinimumFlingVelocity()</strong>和<strong>getScaledMaximumFlingVelocity()</strong>.这两个方法返回fling的说以后的最大最小速度，以像素每秒为单位，比如：</p>
+<pre><code>ViewConfiguration vc = ViewConfiguration.get(view.getContext());
+<span class="keyword">private</span> <span class="keyword">int</span> mSlop = vc.getScaledTouchSlop();
+<span class="keyword">private</span> <span class="keyword">int</span> mMinFlingVelocity = vc.getScaledMinmumFlingVelocity();
+<span class="keyword">private</span> <span class="keyword">int</span> mMaxFlingVelocity = vc.getScaledMaximumFlingVelocity();
+
+...
+
+<span class="keyword">case</span> MotionEvent.ACTION_MOVE:
+    ...
+    <span class="keyword">float</span> deltaX = motionEvent.getRawX() - mDownX;
+    <span class="keyword">if</span>(Math.abs(deltaX) &gt; mSlop){
+        <span class="comment">//发生滑动</span>
+    }
+
+...
+
+<span class="keyword">case</span> MotionEvent.ACTION_UP:
+    ...
+    <span class="keyword">if</span>(mMinFlingVelocity &lt;= velocityX &amp;&amp; velocityX &lt;= mMaxFlingVelocity &amp;&amp; velocityY &lt; velocityX){
+
+    }
+</code></pre><h3 id="扩展子视图的可触摸区域">扩展子视图的可触摸区域</h3><p>Android提供了一个<strong>TouchDelegate</strong>类来使父view在子view的界限之上扩展子view。这是非常有用的，当子view小的时候，应该有一个大的可接触区域，如果需要的话也可以使用这个方法来缩小子view的接触区域。</p>
+<p>在下面的例子中，ImageButton作为delegate view(将被父view扩展触摸区域的view)，下面是布局文件：</p>
+<pre><code><span class="tag">&lt;<span class="title">RelativeLayout</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span>
+    <span class="attribute">android:id</span>=<span class="value">"@+id/parent_layout"</span>
+    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">tools:context</span>=<span class="value">".MainActivity"</span>&gt;</span>
+
+    <span class="tag">&lt;<span class="title">ImageButton</span> <span class="attribute">android:id</span>=<span class="value">"@+id/button"</span>
+        <span class="attribute">android:layout_width</span>=<span class="value">"wrap_content"</span>
+        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span>
+        <span class="attribute">android:background</span>=<span class="value">"@null"</span>
+        <span class="attribute">android:src</span>=<span class="value">"@drawable/icon"</span>/&gt;</span>
+<span class="tag">&lt;/<span class="title">RelativeLayout</span>&gt;</span>
+</code></pre><p>以下的代码片段如下：</p>
+<ul>
+<li>获取父view并且再ui线程中发送一个Runnable，确保再在调用<strong>getHitRect()</strong>方法之前父view能够布局好子view，getHitRect()方法获取子view在父view坐标中的矩形区域。</li>
+<li>找到子view ImageButton，并且调用getHitRect()方法来获取子view的可触摸区域的边界。</li>
+<li>扩展ImageButton矩形边界的区域。</li>
+<li>实例化一个TouchDelegate,通过扩大矩形和ImageButton的子view作为参数</li>
+<li>设置父视图TouchDelegate</li>
+</ul>
+<p>如果触摸事件发生再子view的课触摸矩形中，父view将会将触摸事件传给子view并且由子view来处理。</p>
+<pre><code>public <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Activity</span>{</span>
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected</span> void onCreate(<span class="type">Bundle</span> savedInstance){
+        <span class="keyword">super</span>.onCreate(savedInstanceState);
+        <span class="comment">//获取父view</span>
+        <span class="type">View</span> parentView = findViewById(<span class="type">R</span>.id.parent_layout);
+
+        parentView.post(<span class="keyword">new</span> <span class="type">Runnable</span>(){
+            <span class="annotation">@Override</span>
+            public void run(){
+                <span class="type">Rect</span> delegateArea = <span class="keyword">new</span> <span class="type">Rect</span>();
+                <span class="type">ImageButton</span> myButton = (<span class="type">ImageButton</span>)findViewById(<span class="type">R</span>.id.button);
+                myButton.setEnabled(<span class="literal">true</span>);
+                myButton.setOnclickListener(<span class="keyword">new</span> <span class="type">View</span>.<span class="type">OnClickListener</span>(){
+                    <span class="type">Toast</span>.makeText(<span class="type">MainActivity</span>.<span class="keyword">this</span>,<span class="string">"Touch occured within ImageButton touch region."</span>,<span class="type">Toast</span>.<span class="type">LENGTH_SHORT</span>).show();
+                });
+            }
+        });
+
+        myButton.getHitRect(delegateArea);
+
+        delegateArea.right += <span class="number">100</span>;
+        delegateArea.bottom += <span class="number">100</span>;
+
+        <span class="type">TouchDelegate</span> touchDelegate = <span class="keyword">new</span> <span class="type">TouchDelegate</span>(delegateArea,myButton);
+
+        <span class="keyword">if</span>(<span class="type">View</span>.<span class="keyword">class</span>.isInstance(myButton.getParent)){
+            ((<span class="type">View</span>)myButton.getParent()).setTouchDelegate(touchDelegate);
+        }
+
+    }
+}
+</code></pre></span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/触摸事件/" rel="tag">#触摸事件</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/29/View事件的分发机制/" rel="prev">View事件的分发机制</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/25/为初学者整理/" rel="next">为初学者整理</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2016/02/26/管理ViewGroup中的触摸事件/"
+                   data-title="管理ViewGroup中的触摸事件" data-url="http://zhaoshanshan.me/2016/02/26/管理ViewGroup中的触摸事件/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://img4.duitang.com/uploads/item/201405/07/20140507210553_NQGUP.thumb.600_0.jpeg" alt="坚持远方" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">坚持远方</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">既然选择远方，便只顾风雨兼程</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">37</span>
+              <span class="site-state-item-name">文章</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">分類</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">34</span>
+              <span class="site-state-item-name">標籤</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhanfangzxc" target="_blank">GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5497967279" target="_blank">Weibo</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ViewGroup拦截触摸事件"><span class="nav-number">1.</span> <span class="nav-text">ViewGroup拦截触摸事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用ViewConfiguration_常量"><span class="nav-number">2.</span> <span class="nav-text">使用ViewConfiguration 常量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩展子视图的可触摸区域"><span class="nav-number">3.</span> <span class="nav-text">扩展子视图的可触摸区域</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">赵珊珊</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 強力驅動
+</div>
+
+<div class="theme-info">
+  主題 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"zhaoshanshan"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>
