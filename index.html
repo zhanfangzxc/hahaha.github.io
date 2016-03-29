@@ -216,7 +216,8 @@
 
       
         
-          <span itemprop="articleBody"><h3 id="Cursor_CursorAdapter_以及_ContentProvider三者之间的关系">Cursor CursorAdapter 以及 ContentProvider三者之间的关系</h3><h4 id="Cursor和ContentProvider的关系">Cursor和ContentProvider的关系</h4><p>在写ContentProvider的时候，我们会在query中添加如下代码</p>
+          <span itemprop="articleBody"><h3 id="Cursor_CursorAdapter_以及_ContentProvider三者之间的关系">Cursor CursorAdapter 以及 ContentProvider三者之间的关系</h3><h4 id="题外话">题外话</h4><p>工作了两年，用了太多的开源库，现在回头才发现，自己已经把基础都快丢干净了，甚是羞愧，这段时间为了帮助我弟学习安卓，自己也准备慢慢把这些重要的知识都给捡回来，要不自己真的要被淘汰了。</p>
+<h4 id="进入正题">进入正题</h4><p>我们一般在写ContentProvider的时候，我们会在query中添加如下代码</p>
 <pre><code><span class="keyword">if</span>(<span class="built_in">cursor</span>!=<span class="keyword">null</span>){
     <span class="built_in">cursor</span>.setNotificationUri(getContext().getContentResolver(),url);
 }

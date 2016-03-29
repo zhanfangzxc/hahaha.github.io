@@ -43,25 +43,22 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="Cursor CursorAdapter 以及 ContentProvider三者之间的关系Cursor和ContentProvider的关系在写ContentProvider的时候，我们会在query中添加如下代码
-if(cursor!=null){
-    cursor.setNotificationUri(getContext().getContentResolver(),url);
-}">
+<meta name="description" content="Cursor CursorAdapter 以及 ContentProvider三者之间的关系题外话工作了两年，用了太多的开源库，现在回头才发现，自己已经把基础都快丢干净了，甚是羞愧，这段时间为了帮助我弟学习安卓，自己也准备慢慢把这些重要的知识都给捡回来，要不自己真的要被淘汰了。
+进入正题我们一般在写ContentProvider的时候，我们会在query中添加如下代码
+if(cursor!=nul">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Cursor CursorAdapter 以及ContentProvider之间的爱恨纠缠">
 <meta property="og:url" content="http://zhaoshanshan.me/2016/03/29/Cursor-CursorAdapter-以及ContentProvider之间的爱恨纠缠/index.html">
 <meta property="og:site_name" content="ZhaoShanShan’s Blog">
-<meta property="og:description" content="Cursor CursorAdapter 以及 ContentProvider三者之间的关系Cursor和ContentProvider的关系在写ContentProvider的时候，我们会在query中添加如下代码
-if(cursor!=null){
-    cursor.setNotificationUri(getContext().getContentResolver(),url);
-}">
-<meta property="og:updated_time" content="2016-03-29T08:43:50.000Z">
+<meta property="og:description" content="Cursor CursorAdapter 以及 ContentProvider三者之间的关系题外话工作了两年，用了太多的开源库，现在回头才发现，自己已经把基础都快丢干净了，甚是羞愧，这段时间为了帮助我弟学习安卓，自己也准备慢慢把这些重要的知识都给捡回来，要不自己真的要被淘汰了。
+进入正题我们一般在写ContentProvider的时候，我们会在query中添加如下代码
+if(cursor!=nul">
+<meta property="og:updated_time" content="2016-03-29T08:54:43.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cursor CursorAdapter 以及ContentProvider之间的爱恨纠缠">
-<meta name="twitter:description" content="Cursor CursorAdapter 以及 ContentProvider三者之间的关系Cursor和ContentProvider的关系在写ContentProvider的时候，我们会在query中添加如下代码
-if(cursor!=null){
-    cursor.setNotificationUri(getContext().getContentResolver(),url);
-}">
+<meta name="twitter:description" content="Cursor CursorAdapter 以及 ContentProvider三者之间的关系题外话工作了两年，用了太多的开源库，现在回头才发现，自己已经把基础都快丢干净了，甚是羞愧，这段时间为了帮助我弟学习安卓，自己也准备慢慢把这些重要的知识都给捡回来，要不自己真的要被淘汰了。
+进入正题我们一般在写ContentProvider的时候，我们会在query中添加如下代码
+if(cursor!=nul">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -221,7 +218,8 @@ if(cursor!=null){
       
 
       
-        <span itemprop="articleBody"><h3 id="Cursor_CursorAdapter_以及_ContentProvider三者之间的关系">Cursor CursorAdapter 以及 ContentProvider三者之间的关系</h3><h4 id="Cursor和ContentProvider的关系">Cursor和ContentProvider的关系</h4><p>在写ContentProvider的时候，我们会在query中添加如下代码</p>
+        <span itemprop="articleBody"><h3 id="Cursor_CursorAdapter_以及_ContentProvider三者之间的关系">Cursor CursorAdapter 以及 ContentProvider三者之间的关系</h3><h4 id="题外话">题外话</h4><p>工作了两年，用了太多的开源库，现在回头才发现，自己已经把基础都快丢干净了，甚是羞愧，这段时间为了帮助我弟学习安卓，自己也准备慢慢把这些重要的知识都给捡回来，要不自己真的要被淘汰了。</p>
+<h4 id="进入正题">进入正题</h4><p>我们一般在写ContentProvider的时候，我们会在query中添加如下代码</p>
 <pre><code><span class="keyword">if</span>(<span class="built_in">cursor</span>!=<span class="keyword">null</span>){
     <span class="built_in">cursor</span>.setNotificationUri(getContext().getContentResolver(),url);
 }
@@ -491,7 +489,7 @@ mContentResolver.registerContentObserver(mNotifyUri, <span class="keyword">true<
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cursor_CursorAdapter_以及_ContentProvider三者之间的关系"><span class="nav-number">1.</span> <span class="nav-text">Cursor CursorAdapter 以及 ContentProvider三者之间的关系</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Cursor和ContentProvider的关系"><span class="nav-number">1.1.</span> <span class="nav-text">Cursor和ContentProvider的关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cursor和CursorAdapter的关系"><span class="nav-number">1.2.</span> <span class="nav-text">Cursor和CursorAdapter的关系</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cursor_CursorAdapter_以及_ContentProvider三者之间的关系"><span class="nav-number">1.</span> <span class="nav-text">Cursor CursorAdapter 以及 ContentProvider三者之间的关系</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#题外话"><span class="nav-number">1.1.</span> <span class="nav-text">题外话</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进入正题"><span class="nav-number">1.2.</span> <span class="nav-text">进入正题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cursor和CursorAdapter的关系"><span class="nav-number">1.3.</span> <span class="nav-text">Cursor和CursorAdapter的关系</span></a></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
