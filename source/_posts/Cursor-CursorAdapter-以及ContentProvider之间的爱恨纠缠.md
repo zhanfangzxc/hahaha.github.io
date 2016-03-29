@@ -9,9 +9,13 @@ tags:
 
 ### Cursor CursorAdapter 以及 ContentProvider三者之间的关系
 
-#### Cursor和ContentProvider的关系
+#### 题外话
 
-在写ContentProvider的时候，我们会在query中添加如下代码
+工作了两年，用了太多的开源库，现在回头才发现，自己已经把基础都快丢干净了，甚是羞愧，这段时间为了帮助我弟学习安卓，自己也准备慢慢把这些重要的知识都给捡回来，要不自己真的要被淘汰了。
+
+#### 进入正题
+
+我们一般在写ContentProvider的时候，我们会在query中添加如下代码
 
 	 if(cursor!=null){
 	 	cursor.setNotificationUri(getContext().getContentResolver(),url);
