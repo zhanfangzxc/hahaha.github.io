@@ -178,6 +178,309 @@
           
           
             
+              <a class="post-title-link" href="/2016/03/30/Handler机制/" itemprop="url">
+                Handler机制
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2016-03-30T10:33:46+08:00" content="2016-03-30">
+            2016-03-30
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/03/30/Handler机制/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/30/Handler机制/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h4 id="创建Handler">创建Handler</h4><p>如果在子线程中尝试进行ui操作的话，程序就会崩溃，此时就需要用Handler来实现线程间的通信。</p>
+<p>所以代码如下：</p>
+<pre><code><span class="operator"><span class="keyword">Handler</span> mHander = <span class="keyword">new</span> <span class="keyword">Handler</span>();</span>
+</code></pre><p>如果把这句代码按如下方式写：</p>
+<pre><code><span class="keyword">new</span> Thread(){
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>{
+    <span class="comment">//在子线程中创建Handler</span>
+        mHandler = <span class="keyword">new</span> Handler();
+    }
+}.run();
+</code></pre><p>此时就会报错，原因是不能在没有调用Looper.prepare()的情况下创建Handler。</p>
+<p>现在我们将上面的代码改成如下代码：</p>
+<pre><code><span class="keyword">new</span> Thread(){
+    <span class="annotation">@Override</span>
+    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>{
+        Looper.prepare();
+        mHandler = <span class="keyword">new</span> Handler();
+    }
+}.run();
+</code></pre><p>现在看一下prepare方法做了什么？</p>
+<pre><code>  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">prepare</span>(<span class="params">boolean quitAllowed</span>) </span>{
+    <span class="keyword">if</span> (sThreadLocal.<span class="keyword">get</span>() != <span class="keyword">null</span>) {
+        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Only one Looper may be created per thread"</span>);
+    }
+    sThreadLocal.<span class="keyword">set</span>(<span class="keyword">new</span> Looper(quitAllowed));
+}
+</code></pre><p>从这里我们看到他创建了一个新的Looper，并且我们看到了在一个线程中只能创建一个Looper。</p>
+<p>可是转念一想为什么在子线程中创建Handler需要调用呢，我们看一下Handler的构造函数：</p>
+<pre><code> <span class="keyword">public</span> Handler(Callback callback, <span class="keyword">boolean</span> async) {
+    <span class="keyword">if</span> (FIND_POTENTIAL_LEAKS) {
+        <span class="keyword">final</span> <span class="keyword">Class</span>&lt;? <span class="keyword">extends</span> Handler&gt; klass = getClass();
+        <span class="keyword">if</span> ((klass.isAnonymousClass() || klass.isMemberClass() || klass.isLocalClass()) &amp;&amp;
+                (klass.getModifiers() &amp; Modifier.<span class="keyword">STATIC</span>) == <span class="number">0</span>) {
+            Log.w(TAG, <span class="string">"The following Handler class should be static or leaks might occur: "</span> +
+                klass.getCanonicalName());
+        }
+    }
+    <span class="comment">//而这里是什么意思呢？</span>
+    mLooper = Looper.myLooper();
+    <span class="keyword">if</span> (mLooper == <span class="keyword">null</span>) {
+    <span class="comment">//这里就是我们报错的地方</span>
+        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(
+            <span class="string">"Can't create handler inside thread that has not called Looper.prepare()"</span>);
+    }
+    mQueue = mLooper.mQueue;
+    mCallback = callback;
+    mAsynchronous = async;
+}
+</code></pre><p>结合上面的源码，我们来看看Looper.myLopper函数的作用：</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="annotation">@Nullable</span> <span class="function">Looper <span class="title">myLooper</span><span class="params">()</span> </span>{
+    <span class="comment">//从ThreadLocal中获取到一个Looper对象</span>
+    <span class="function"><span class="keyword">return</span> sThreadLocal.<span class="title">get</span><span class="params">()</span></span>;
+}
+</code></pre><p>ThreadLocal是用来存储Looper对象的集合，每个线程只能存在一个Looper，所以myLooper的作用就是返回一个Looper，但是Looper对象是在何时给设置进去的呢，这个就是我们上面说的prepare的作用了。</p>
+<p>相反的，我们又会问，那么ui线程的Looper是什么时候初始化的呢，其实在系统启动的时候，就会在ActivityThread的main方法中初始化一个主线程的Looper。</p>
+<pre><code><span class="comment">//这个方法看着会不会感觉格外的熟悉</span>
+Looper<span class="built_in">.</span>prepareMainLooper();
+
+ActivityThread <span class="keyword">thread</span> = <span class="literal">new</span> ActivityThread();
+<span class="keyword">thread</span><span class="built_in">.</span>attach(<span class="literal">false</span>);
+
+<span class="keyword">if</span> (sMainThreadHandler == <span class="built_in">null</span>) {
+    sMainThreadHandler = <span class="keyword">thread</span><span class="built_in">.</span>getHandler();
+}
+
+<span class="keyword">if</span> (<span class="literal">false</span>) {
+    Looper<span class="built_in">.</span>myLooper()<span class="built_in">.</span>setMessageLogging(<span class="literal">new</span>
+    LogPrinter(<span class="keyword">Log</span><span class="built_in">.</span>DEBUG, <span class="string">"ActivityThread"</span>));
+}
+
+<span class="comment">// End of event ActivityThreadMain.</span>
+Trace<span class="built_in">.</span>traceEnd(Trace<span class="built_in">.</span>TRACE_TAG_ACTIVITY_MANAGER);
+Looper<span class="built_in">.</span><span class="keyword">loop</span>();
+</code></pre><p>从上面我们我们看到了相似的代码Looper.prepareMainLooper();</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">prepareMainLooper</span><span class="params">()</span> </span>{
+<span class="comment">//此处也是先调用了prepare方法创建了一个Looper，然后设置进ThreadLocal中，所以之后再创建Handler的时候，就不需要调用Looper的prepare方法了。</span>
+    prepare(<span class="keyword">false</span>);
+    <span class="keyword">synchronized</span> (Looper.class) {
+        <span class="keyword">if</span> (sMainLooper != <span class="keyword">null</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"The main Looper has already been prepared."</span>);
+        }
+        sMainLooper = myLooper();
+    }
+}
+</code></pre><h4 id="创建Message">创建Message</h4><p>代码如下：</p>
+<pre><code><span class="keyword">Message</span> <span class="keyword">message</span> = new <span class="keyword">Message</span>();
+//<span class="keyword">Message</span>的这些变量都可以用来设置值
+<span class="keyword">message</span>.what = <span class="number">1</span>;
+<span class="keyword">message</span>.arg1 = <span class="number">1</span>;
+<span class="keyword">message</span>.arg2 = <span class="number">2</span>;
+<span class="keyword">message</span>.obj=<span class="string">""</span>
+mHandler.sendMessage(<span class="keyword">message</span>);
+</code></pre><p>我们看到发送消息是通过Handler来发送的，那么消息究竟是被发送到哪里了呢？</p>
+<pre><code><span class="comment">//一步步往下看，发下具体实现在这里</span>
+ <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">sendMessageAtTime</span><span class="params">(Message msg, <span class="keyword">long</span> uptimeMillis)</span> </span>{
+     <span class="comment">//这个从字面上来看应该是一个消息队列</span>
+    MessageQueue queue = mQueue;
+    <span class="keyword">if</span> (queue == <span class="keyword">null</span>) {
+        RuntimeException e = <span class="keyword">new</span> RuntimeException(
+                <span class="keyword">this</span> + <span class="string">" sendMessageAtTime() called with no mQueue"</span>);
+        Log.w(<span class="string">"Looper"</span>, e.getMessage(), e);
+        <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+    <span class="comment">//uptimeMillis表示消息发送的时间，这个值等于系统开机到当前时间的毫秒数再加上延迟时间</span>
+    <span class="function"><span class="keyword">return</span> <span class="title">enqueueMessage</span><span class="params">(queue, msg, uptimeMillis)</span></span>;
+}
+</code></pre><p>我们看到msg又被传到了enqueueMessage方法中，这个方法具体做了什么呢：</p>
+<p>我们去看Looper类的源码，发现在Looper的构造函数中创建了一个MessageQueue对象，这个对象就是用来维护消息的消息队列，接着看上面提到的这个方法：</p>
+<pre><code><span class="comment">//消息的入队操作</span>
+<span class="function">final boolean <span class="title">enqueueMessage</span>(<span class="params">Message msg, <span class="keyword">long</span> <span class="keyword">when</span></span>) </span>{  
+<span class="keyword">if</span> (msg.<span class="keyword">when</span> != <span class="number">0</span>) {  
+    <span class="keyword">throw</span> <span class="keyword">new</span> AndroidRuntimeException(msg + <span class="string">" This message is already in use."</span>);  
+}  
+<span class="keyword">if</span> (msg.target == <span class="keyword">null</span> &amp;&amp; !mQuitAllowed) {  
+    <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Main thread not allowed to quit"</span>);  
+}  
+synchronized (<span class="keyword">this</span>) {  
+    <span class="keyword">if</span> (mQuiting) {  
+        RuntimeException e = <span class="keyword">new</span> RuntimeException(msg.target + <span class="string">" sending message to a Handler on a dead thread"</span>);  
+        Log.w(<span class="string">"MessageQueue"</span>, e.getMessage(), e);  
+        <span class="keyword">return</span> <span class="keyword">false</span>;  
+    } <span class="function"><span class="keyword">else</span> <span class="title">if</span> (<span class="params">msg.target == <span class="keyword">null</span></span>) </span>{  
+        mQuiting = <span class="keyword">true</span>;  
+    }  
+    msg.<span class="keyword">when</span> = <span class="keyword">when</span>;  
+    <span class="comment">//mMessage表示当前待处理的消息</span>
+    Message p = mMessages;  
+    <span class="keyword">if</span> (p == <span class="keyword">null</span> || <span class="keyword">when</span> == <span class="number">0</span> || <span class="keyword">when</span> &lt; p.<span class="keyword">when</span>) {  
+    <span class="comment">//如果传进来的消息的时间&lt;待处理的消息时间</span>
+    <span class="comment">//那么就把待处理消息放到该消息之后</span>
+    <span class="comment">//然后把该消息给设置为当前待处理消息</span>
+        msg.next = p;  
+        mMessages = msg;  
+        <span class="keyword">this</span>.notify();  
+    } <span class="keyword">else</span> { 
+        <span class="comment">//相反的就把该消息加到待处理消息之后 </span>
+        Message prev = <span class="keyword">null</span>;  
+        <span class="keyword">while</span> (p != <span class="keyword">null</span> &amp;&amp; p.<span class="keyword">when</span> &lt;= <span class="keyword">when</span>) {  
+            prev = p;  
+            p = p.next;  
+        }  
+        msg.next = prev.next;  
+        prev.next = msg;  
+        <span class="keyword">this</span>.notify();  
+    }  
+}  
+<span class="keyword">return</span> <span class="keyword">true</span>;  
+}  
+</code></pre><p>以上的就是插入消息队列的逻辑，具体的看代码的注释。</p>
+<p>然后循环处理消息的代码在Looper类的loop方法中，源码如下：</p>
+<pre><code> <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>{
+ <span class="comment">//首先获取Looper对象</span>
+    <span class="keyword">final</span> Looper me = myLooper();
+    <span class="keyword">if</span> (me == <span class="keyword">null</span>) {
+        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"No Looper; Looper.prepare() wasn't called on this thread."</span>);
+    }
+    <span class="keyword">final</span> MessageQueue queue = me.mQueue;
+
+    <span class="comment">// Make sure the identity of this thread is that of the local process,</span>
+    <span class="comment">// and keep track of what that identity token actually is.</span>
+    Binder.clearCallingIdentity();
+    <span class="keyword">final</span> <span class="keyword">long</span> ident = Binder.clearCallingIdentity();
+
+    <span class="keyword">for</span> (;;) {
+    <span class="comment">//对消息队列中的消息无限循环</span>
+        Message msg = queue.next(); <span class="comment">// might block</span>
+        <span class="keyword">if</span> (msg == <span class="keyword">null</span>) {
+            <span class="comment">// No message indicates that the message queue is quitting.</span>
+            <span class="keyword">return</span>;
+        }
+
+        <span class="comment">// This must be in a local variable, in case a UI event sets the logger</span>
+        Printer logging = me.mLogging;
+        <span class="keyword">if</span> (logging != <span class="keyword">null</span>) {
+            logging.println(<span class="string">"&gt;&gt;&gt;&gt;&gt; Dispatching to "</span> + msg.<span class="keyword">target</span> + <span class="string">" "</span> +
+                    msg.callback + <span class="string">": "</span> + msg.what);
+        }
+        <span class="comment">//此处就是将待处理的消息分发给Handler去处理</span>
+        <span class="comment">//</span>
+        msg.<span class="keyword">target</span>.dispatchMessage(msg);
+
+        <span class="keyword">if</span> (logging != <span class="keyword">null</span>) {
+            logging.println(<span class="string">"&lt;&lt;&lt;&lt;&lt; Finished to "</span> + msg.<span class="keyword">target</span> + <span class="string">" "</span> + msg.callback);
+        }
+
+        <span class="comment">// Make sure that during the course of dispatching the</span>
+        <span class="comment">// identity of the thread wasn't corrupted.</span>
+        <span class="keyword">final</span> <span class="keyword">long</span> newIdent = Binder.clearCallingIdentity();
+        <span class="keyword">if</span> (ident != newIdent) {
+            Log.wtf(TAG, <span class="string">"Thread identity changed from 0x"</span>
+                    + Long.toHexString(ident) + <span class="string">" to 0x"</span>
+                    + Long.toHexString(newIdent) + <span class="string">" while dispatching to "</span>
+                    + msg.<span class="keyword">target</span>.getClass().getName() + <span class="string">" "</span>
+                    + msg.callback + <span class="string">" what="</span> + msg.what);
+        }
+        <span class="comment">//回收消息</span>
+        msg.recycleUnchecked();
+    }
+}
+</code></pre><p>上面的msg.target实际上就是一个Handler对象，所以具体处理消息的功能还是得依靠Handler，也就是我们经常重写的handleMessage。</p>
+<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">dispatchMessage</span><span class="params">(Message msg)</span> </span>{
+    <span class="keyword">if</span> (msg.callback != <span class="keyword">null</span>) {
+        handleCallback(msg);
+    } <span class="keyword">else</span> {
+        <span class="keyword">if</span> (mCallback != <span class="keyword">null</span>) {
+            <span class="keyword">if</span> (mCallback.handleMessage(msg)) {
+                <span class="keyword">return</span>;
+            }
+        }
+
+        handleMessage(msg);
+    }
+}
+</code></pre><p>最终我们就是通过handleMessage方法来处理的消息，但是这是个空方法，是需要被实现的。</p>
+<h4 id="疑问">疑问</h4><p>创建Message的方式：</p>
+<pre><code><span class="number">1</span> 、<span class="keyword">Message</span> <span class="keyword">message</span> = new Messge();
+
+<span class="comment">//此时获取的是之前被回收的存在全局消息池中的消息对象</span>
+<span class="number">2</span>、<span class="keyword">Message</span> <span class="keyword">message</span> = mHandler.obtain();
+</code></pre><p>所以说，如果使用第一种方式创建Message的话，那么是怎么实现Message与Handler的关联的?</p>
+<h4 id="综上所述">综上所述</h4><ul>
+<li><p>创建一个Handler，并且实现handleMessage()方法</p>
+</li>
+<li><p>如果是在子线程中创建Handler，那么必须先调用Looper.prepare()方法为当前线程创建一个Looper对象。</p>
+</li>
+<li><p>Looper对象的构造函数中会持有一个MessageQueue对象，这个是个消息队列，用来存储和取出消息。</p>
+</li>
+<li><p>当使用Handler发送消息的时候，调用MessageQueue的enqueueMessage方法进行消息的入队操作</p>
+</li>
+<li><p>然后消息的出队操作是靠Looper的loop方法来实现的，然后把出队的消息再通过Message所持有的Handler对象的dispatchMessage方法来对消息进行处理</p>
+</li>
+</ul>
+<h4 id="扩展阅读">扩展阅读</h4><p><a href="http://blog.csdn.net/guolin_blog/article/details/9991569" target="_blank" rel="external">Android异步消息处理机制完全解析，带你从源码的角度彻底理解</a></p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/03/29/Cursor-CursorAdapter-以及ContentProvider之间的爱恨纠缠/" itemprop="url">
                 Cursor CursorAdapter 以及ContentProvider之间的爱恨纠缠
               </a>
@@ -1288,74 +1591,6 @@ imageView.setImageBitmap(bitmap)<span class="comment">;</span>
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/01/11/使用RxJava控件缓存数据/" itemprop="url">
-                使用RxJava控件缓存数据
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2016-01-11T11:41:28+08:00" content="2016-01-11">
-            2016-01-11
-          </time>
-        </span>
-
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/01/11/使用RxJava控件缓存数据/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/11/使用RxJava控件缓存数据/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"></span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1394,7 +1629,7 @@ imageView.setImageBitmap(bitmap)<span class="comment">;</span>
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">37</span>
+              <span class="site-state-item-count">38</span>
               <span class="site-state-item-name">文章</span>
             </a>
           </div>
@@ -1408,7 +1643,7 @@ imageView.setImageBitmap(bitmap)<span class="comment">;</span>
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">34</span>
+              <span class="site-state-item-count">35</span>
               <span class="site-state-item-name">標籤</span>
               </a>
           </div>

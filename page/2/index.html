@@ -178,6 +178,74 @@
           
           
             
+              <a class="post-title-link" href="/2016/01/11/使用RxJava控件缓存数据/" itemprop="url">
+                使用RxJava控件缓存数据
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          發表於
+          <time itemprop="dateCreated" datetime="2016-01-11T11:41:28+08:00" content="2016-01-11">
+            2016-01-11
+          </time>
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/01/11/使用RxJava控件缓存数据/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/11/使用RxJava控件缓存数据/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"></span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/01/07/adb常用命令/" itemprop="url">
                 adb常用命令
               </a>
@@ -1813,103 +1881,6 @@ org<span class="class">.gradle</span><span class="class">.daemon</span>=true
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/" itemprop="url">
-                实现RecyclerView的下拉刷新和上拉加载更多
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          發表於
-          <time itemprop="dateCreated" datetime="2015-11-04T16:28:14+08:00" content="2015-11-04">
-            2015-11-04
-          </time>
-        </span>
-
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/04/实现RecyclerView的下拉刷新和上拉加载更多/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>这两天项目中牵涉了对于RecyclerView的上拉加载更多和下拉刷新的功能，所以总结一下:</p>
-<p>我们的下拉刷新使用的是<strong>android.support.v4.widget.SwipeRefreshLayout</strong>,而上拉加载更多使用的方案是通过给RecyclerView添加<strong>footerview</strong>来实现的。</p>
-<p>所以代码是这样的:</p>
-<pre><code>mSwipeRefreshLayout.setOnRefreshListener(<span class="keyword">this</span>);
-
-<span class="annotation">@Override</span>
-<span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onRefresh</span><span class="params">()</span></span>{
-    <span class="comment">//在这里执行下拉刷新的功能</span>
-}
-
-<span class="comment">//以下是上拉加载更多的方法</span>
-<span class="keyword">int</span> lastVisibleItem<span class="comment">//最后一条可见的item</span>
-mRvMessage.addOnScrollListener(<span class="keyword">new</span> RecyclerView.OnScrollListener() {
-            <span class="annotation">@Override</span>
-            <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onScrollStateChanged</span><span class="params">(RecyclerView recyclerView, <span class="keyword">int</span> newState)</span> </span>{
-                <span class="keyword">super</span>.onScrollStateChanged(recyclerView, newState);
-                <span class="keyword">int</span> totalCount = mLinearLayoutManager.getItemCount();<span class="comment">//RecyclerView中的总的条目的数量(此处代表的是可见的和不可见的总数)</span>
-                <span class="keyword">if</span>(newState == RecyclerView.SCROLL_STATE_IDLE &amp;&amp; lastVisibleItem + <span class="number">1</span>==totalCount){
-                        <span class="comment">//此处添加加载更多的代码，一般为取数据库或者加载网络等</span>
-                }
-            }
-
-            <span class="annotation">@Override</span>
-            <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onScrolled</span><span class="params">(RecyclerView recyclerView, <span class="keyword">int</span> dx, <span class="keyword">int</span> dy)</span> </span>{
-                <span class="keyword">super</span>.onScrolled(recyclerView, dx, dy);
-                <span class="comment">//每次滑动的时候要更新最后一条可见的item的id</span>
-                lastVisibleItem = mLinearLayoutManager.findLastVisibleItemPosition();
-            }
-        });
-</code></pre></span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1948,7 +1919,7 @@ mRvMessage.addOnScrollListener(<span class="keyword">new</span> RecyclerView.OnS
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">37</span>
+              <span class="site-state-item-count">38</span>
               <span class="site-state-item-name">文章</span>
             </a>
           </div>
@@ -1962,7 +1933,7 @@ mRvMessage.addOnScrollListener(<span class="keyword">new</span> RecyclerView.OnS
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">34</span>
+              <span class="site-state-item-count">35</span>
               <span class="site-state-item-name">標籤</span>
               </a>
           </div>
