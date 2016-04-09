@@ -114,7 +114,8 @@ ThreadLocal是用来存储Looper对象的集合，每个线程只能存在一个
         }
     }
     
-#### 创建Message用来发送消息
+
+#### 创建Message
 
 代码如下：
 
@@ -282,5 +283,7 @@ ThreadLocal是用来存储Looper对象的集合，每个线程只能存在一个
 
 - 然后消息的出队操作是靠Looper的loop方法来实现的，然后把出队的消息再通过Message所持有的Handler对象的dispatchMessage方法来对消息进行处理
 
+#### 扩展阅读
 
-		
+[Android异步消息处理机制完全解析，带你从源码的角度彻底理解](http://blog.csdn.net/guolin_blog/article/details/9991569)
+
