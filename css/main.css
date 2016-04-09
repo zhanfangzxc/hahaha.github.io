@@ -1055,7 +1055,11 @@ body {
   width: 4px;
   height: 4px;
   border-radius: 50%;
+<<<<<<< HEAD
   background: #bf28ff;
+=======
+  background: #abff13;
+>>>>>>> 595d9675036a1d1835b03ccbc9be8e5216ccd9dd
 }
 .sidebar-nav {
   margin: 0;

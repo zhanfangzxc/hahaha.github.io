@@ -67,7 +67,7 @@ new Thread(){
     public void run(){
     //在子线程中创建Handler
         mHand">
-<meta property="og:updated_time" content="2016-03-30T10:07:30.000Z">
+<meta property="og:updated_time" content="2016-04-09T07:19:24.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Handler机制">
 <meta name="twitter:description" content="创建Handler如果在子线程中尝试进行ui操作的话，程序就会崩溃，此时就需要用Handler来实现线程间的通信。
@@ -140,7 +140,7 @@ new Thread(){
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
             <i class="menu-item-icon icon-next-home"></i> <br />
-            首頁
+            首页
           </a>
         </li>
       
@@ -148,7 +148,7 @@ new Thread(){
         <li class="menu-item menu-item-categories">
           <a href="/categories" rel="section">
             <i class="menu-item-icon icon-next-categories"></i> <br />
-            分類
+            分类
           </a>
         </li>
       
@@ -156,7 +156,7 @@ new Thread(){
         <li class="menu-item menu-item-about">
           <a href="/about" rel="section">
             <i class="menu-item-icon icon-next-about"></i> <br />
-            關於
+            关于
           </a>
         </li>
       
@@ -164,7 +164,7 @@ new Thread(){
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             <i class="menu-item-icon icon-next-archives"></i> <br />
-            歸檔
+            归档
           </a>
         </li>
       
@@ -172,7 +172,7 @@ new Thread(){
         <li class="menu-item menu-item-tags">
           <a href="/tags" rel="section">
             <i class="menu-item-icon icon-next-tags"></i> <br />
-            標籤
+            标签
           </a>
         </li>
       
@@ -212,7 +212,7 @@ new Thread(){
 
       <div class="post-meta">
         <span class="post-time">
-          發表於
+          发表于
           <time itemprop="dateCreated" datetime="2016-03-30T10:33:46+08:00" content="2016-03-30">
             2016-03-30
           </time>
@@ -325,7 +325,7 @@ Looper<span class="built_in">.</span><span class="keyword">loop</span>();
         sMainLooper = myLooper();
     }
 }
-</code></pre><h4 id="创建Message用来发送消息">创建Message用来发送消息</h4><p>代码如下：</p>
+</code></pre><h4 id="创建Message">创建Message</h4><p>代码如下：</p>
 <pre><code><span class="keyword">Message</span> <span class="keyword">message</span> = new <span class="keyword">Message</span>();
 //<span class="keyword">Message</span>的这些变量都可以用来设置值
 <span class="keyword">message</span>.what = <span class="number">1</span>;
@@ -473,6 +473,7 @@ synchronized (<span class="keyword">this</span>) {
 <li><p>然后消息的出队操作是靠Looper的loop方法来实现的，然后把出队的消息再通过Message所持有的Handler对象的dispatchMessage方法来对消息进行处理</p>
 </li>
 </ul>
+<h4 id="扩展阅读">扩展阅读</h4><p><a href="http://blog.csdn.net/guolin_blog/article/details/9991569" target="_blank" rel="external">Android异步消息处理机制完全解析，带你从源码的角度彻底理解</a></p>
 </span>
       
     </div>
@@ -545,10 +546,10 @@ synchronized (<span class="keyword">this</span>) {
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目錄
+            文章目录
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview">
-            本站概覽
+            站点概览
           </li>
         </ul>
       
@@ -563,21 +564,21 @@ synchronized (<span class="keyword">this</span>) {
           <div class="site-state-item site-state-posts">
             <a href="/archives">
               <span class="site-state-item-count">38</span>
-              <span class="site-state-item-name">文章</span>
+              <span class="site-state-item-name">日志</span>
             </a>
           </div>
 
           <div class="site-state-item site-state-categories">
             <a href="/categories">
               <span class="site-state-item-count">2</span>
-              <span class="site-state-item-name">分類</span>
+              <span class="site-state-item-name">分类</span>
               </a>
           </div>
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
               <span class="site-state-item-count">35</span>
-              <span class="site-state-item-name">標籤</span>
+              <span class="site-state-item-name">标签</span>
               </a>
           </div>
 
@@ -621,7 +622,7 @@ synchronized (<span class="keyword">this</span>) {
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建Handler"><span class="nav-number">1.</span> <span class="nav-text">创建Handler</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建Message用来发送消息"><span class="nav-number">2.</span> <span class="nav-text">创建Message用来发送消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#疑问"><span class="nav-number">3.</span> <span class="nav-text">疑问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#综上所述"><span class="nav-number">4.</span> <span class="nav-text">综上所述</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建Handler"><span class="nav-number">1.</span> <span class="nav-text">创建Handler</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建Message"><span class="nav-number">2.</span> <span class="nav-text">创建Message</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#疑问"><span class="nav-number">3.</span> <span class="nav-text">疑问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#综上所述"><span class="nav-number">4.</span> <span class="nav-text">综上所述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#扩展阅读"><span class="nav-number">5.</span> <span class="nav-text">扩展阅读</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
@@ -646,11 +647,11 @@ synchronized (<span class="keyword">this</span>) {
 </div>
 
 <div class="powered-by">
-  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 強力驅動
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
 </div>
 
 <div class="theme-info">
-  主題 -
+  主题 -
   <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
     NexT
   </a>
